@@ -1,8 +1,7 @@
 {
-  "name": "hc-management",
+  "name": "@hc-management",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "private": true,
   "workspaces": [
     "backend",

@@ -12,17 +12,37 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id       Int    @id(map: "PK_users_id") @default(autoincrement())
+  userName String
+  passwordHash String
+
+  createdMenuItem     MenuItem[] @relation("menuItemCreatedUser")
+  lastUpdatedMenuItem MenuItem[] @relation("menuItemLastUpdatedUser")
+  createdOrders       Order[]    @relation("orderCreatedUser")
+  lastUpdatedOrders   Order[]    @relation("orderLastUpdatedUser")
+  finishedOrders      Order[]    @relation("orderFinishedUser")
+
+  @@unique([userName], map: "UNIQUE_userName")
+  @@map("users")
+}
+
 model MenuItem {
-  id                           Int               @id(map: "PK_menuItems_id") @default(autoincrement())
-  name                         String
-  unit                         String?
-  createdDateTime              DateTime          @default(now())
-  lastUpdatedDateTime          DateTime          @default(now())
-  defaultPriceBeforeVatPerUnit Int               @default(0)
-  defaultVatPercentagePerUnit  Int               @default(0)
-  categoryId                   Int?
-  category                     MenuCategory? @relation(fields: [categoryId], references: [id], map: "FK_menuItems_menuCategories_categoryId")
-  orderItems                   OrderItem[]
+  id                            Int       @id(map: "PK_menuItems_id") @default(autoincrement())
+  name                          String
+  unit                          String?
+  createdDateTime               DateTime  @default(now())
+  lastUpdatedDateTime           DateTime? @default(now())
+  defaultAmountBeforeVatPerUnit Int       @default(0) @map("defaultAmountBeforeVatPerUnit")
+  defaultVatPercentagePerUnit   Int       @default(0)
+  categoryId                    Int?
+  createdUserId                 Int
+  lastUpdatedUserId             Int?
+
+  category        MenuCategory? @relation(fields: [categoryId], references: [id], map: "FK_menuItems_menuCategories_categoryId")
+  orderItems      OrderItem[]
+  createdUser     User          @relation("menuItemCreatedUser", fields: [createdUserId], references: [id], map: "FK_menuItems_users_createdUserId")
+  lastUpdatedUser User?         @relation("menuItemLastUpdatedUser", fields: [lastUpdatedUserId], references: [id], map: "FK_menuItems_users_lastUpdatedUserId")
 
   @@unique([name], map: "UNIQUE_menuItems_name")
   @@map("menuItems")
@@ -47,12 +67,20 @@ model Seating {
 }
 
 model Order {
-  id        Int    @id(map: "PK_orders_id") @default(autoincrement())
-  name      String
-  createdDateTime DateTime
-  seatingId Int
+  id                  Int       @id(map: "PK_orders_id") @default(autoincrement())
+  createdDateTime     DateTime
+  lastUpdatedDateTime DateTime?
+  finishedDateTime    DateTime?
+  cachedItemAmount    Int
+  createdUserId       Int
+  lastUpdatedUserId   Int?
+  finishedUserId      Int?
+  seatingId           Int
 
-  seating Seating @relation(fields: [seatingId], references: [id], map: "FK_orders_seatings_seatingId")
+  createdUser     User    @relation("orderCreatedUser", fields: [createdUserId], references: [id], map: "FK_orders_users_createdUserId")
+  lastUpdatedUser User?   @relation("orderLastUpdatedUser", fields: [lastUpdatedUserId], references: [id], map: "FK_orders_users_lastUpdatedUserId")
+  finishedUser    User?   @relation("orderFinishedUser", fields: [finishedUserId], references: [id], map: "FK_orders_users_finishedUserId")
+  seating         Seating @relation(fields: [seatingId], references: [id], map: "FK_orders_seatings_seatingId")
 }
 
 model OrderItem {

@@ -2,16 +2,26 @@
   "name": "shared",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
+  "exports": {
+    "./dtos": {
+      "types": "./src/dtos/index.ts",
+      "import": "./src/dtos/index.ts"
+    }
+  },
   "devDependencies": {
     "@types/node": "^22.20.1",
     "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@js-temporal/polyfill": "^0.5.1",
+    "valibot": "^1.4.2"
   }
 }

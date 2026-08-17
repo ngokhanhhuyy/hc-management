@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../prisma/generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model MenuItem {
+  id                           Int               @id(map: "PK_menuItems_id") @default(autoincrement())
+  name                         String
+  unit                         String?
+  createdDateTime              DateTime          @default(now())
+  lastUpdatedDateTime          DateTime          @default(now())
+  defaultPriceBeforeVatPerUnit Int               @default(0)
+  defaultVatPercentagePerUnit  Int               @default(0)
+  categoryId                   Int?
+  category                     MenuCategory? @relation(fields: [categoryId], references: [id], map: "FK_menuItems_menuCategories_categoryId")
+  orderItems                   OrderItem[]
+
+  @@unique([name], map: "UNIQUE_menuItems_name")
+  @@map("menuItems")
+}
+
+model MenuCategory {
+  id    Int        @id(map: "PK_menuCategories_id") @default(autoincrement())
+  name  String
+  items MenuItem[]
+
+  @@unique([name], map: "UNIQUE_menuCategories_name")
+  @@map("menuCategories")
+}
+
+model Seating {
+  id     Int     @id(map: "PK_seatings_id") @default(autoincrement())
+  name   String
+  orders Order[]
+
+  @@unique([name], map: "UNIQUE_seatings_name")
+  @@map("seatings")
+}
+
+model Order {
+  id        Int    @id(map: "PK_orders_id") @default(autoincrement())
+  name      String
+  createdDateTime DateTime
+  seatingId Int
+
+  seating Seating @relation(fields: [seatingId], references: [id], map: "FK_orders_seatings_seatingId")
+}
+
+model OrderItem {
+  id       Int @id(map: "PK_orderItems_id") @default(autoincrement())
+  quantity Int
+
+  menuItemId Int
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id], map: "FK_orderItems_menuItems_menuItemId")
+
+  @@map("orderItems")
+}

@@ -8,6 +8,7 @@ export const AuthenticationVerifyUserNameAndPasswordRequestDto = v.object({
   password: v.pipe(v.string(), v.minLength(1)),
 });
 
+export type AuthenticationChangePasswordRequestDto = v.InferOutput<typeof AuthenticationChangePasswordRequestDto>;
 export const AuthenticationChangePasswordRequestDto = v.object({
   newPassword: v.pipe(v.string(), v.minLength(ValidationContracts.User.PasswordMinLength)),
 });

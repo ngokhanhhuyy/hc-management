@@ -1,18 +1,9 @@
 import * as v from "valibot";
 import { Temporal } from "@js-temporal/polyfill";
 import { ValidationContracts } from "../constants/index.js";
-import { MenuCategoryBasicResponseDto } from "./menuCategoryDtos.js";
-import { UserBasicResponseDto } from "./userDtos.js";
+import { MenuCategoryBasicResponseDto, UserBasicResponseDto, MenuItemBasicResponseDto } from "./sharedDtos.js";
+import {  } from "./userDtos.js";
 import { ISODateToTemporalPlainDateTransformer, NullableISODateToTemporalPlainDateTransformer } from "./transformer.js";
-
-export type MenuItemBasicResponseDto = v.InferOutput<typeof MenuItemBasicResponseDto>;
-export const MenuItemBasicResponseDto = v.object({
-  id: v.number(),
-  name: v.string(),
-  unit: v.nullable(v.string()),
-  defaultPriceBeforeVatPerUnit: v.number(),
-  defaultVatPercentagePerUnit: v.number(),
-});
 
 export type MenuItemDetailResponseDto = v.InferOutput<typeof MenuItemDetailResponseDto>;
 export const MenuItemDetailResponseDto = v.object({

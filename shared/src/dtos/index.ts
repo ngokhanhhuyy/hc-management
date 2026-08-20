@@ -5,3 +5,5 @@ export * from "./seatingDtos.js";
 export * from "./orderDtos.js";
 export * from "./orderItemDtos.js";
 export * from "./userDtos.js";
+export * from "./sharedDtos.js";
+export * from "./errorDtos.js";

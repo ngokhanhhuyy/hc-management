@@ -1,7 +1,7 @@
-import type { IAppContainer } from "../dependencyInjection";
+import type { IScopedServiceProvider } from "../dependencyInjection";
 
 declare module "hono" {
   interface ContextVariableMap {
-    container: IAppContainer;
+    provider: IScopedServiceProvider;
   }
 }

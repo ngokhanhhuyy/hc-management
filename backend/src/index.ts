@@ -1,9 +1,21 @@
 import { Hono } from "hono";
+import { dependencyInjectionMiddleware, errorFilterMiddleware, authenticationMiddleware } from "./middlewares";
+import { authenticationApi, userApi } from "./controllers";
 
-const app = new Hono();
+const app = new Hono()
+  .use(dependencyInjectionMiddleware)
+  .use(authenticationMiddleware)
+  .onError(errorFilterMiddleware)
+  .route("/api/authentication", authenticationApi)
+  .route("/api/users", userApi)
+  .get("/", (context) => {
+    return context.text("Hello Hono!");
+  })
+  .all("/health-check", (context) => context.body(null, 200));
 
-app.get("/", (c) => {
-  return c.text("Hello Hono!");
-});
+export default {
+  port: 5000,
+  fetch: app.fetch
+};
 
-export default app;
+export type AppType = typeof app;

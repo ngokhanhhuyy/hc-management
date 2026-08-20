@@ -9,8 +9,11 @@
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
+    "@hc-management/backend": "workspace:*",
+    "@hc-management/shared": "workspace:*",
     "@react-router/node": "^8",
     "@react-router/serve": "^8",
+    "hono": "^4.13.2",
     "isbot": "^5.1.36",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",

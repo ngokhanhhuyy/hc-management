@@ -1,10 +1,10 @@
 import * as v from "valibot";
 import { ValidationContracts } from "../constants/index.js";
+import { UserBasicResponseDto } from "./sharedDtos.js";
 
-export type UserBasicResponseDto = v.InferOutput<typeof UserBasicResponseDto>;
-export const UserBasicResponseDto = v.object({
-  id: v.number(),
-  userName: v.string()
+export type UserDetailResponseDto = v.InferOutput<typeof UserDetailResponseDto>;
+export const UserDetailResponseDto = v.object({
+  ...UserBasicResponseDto.entries
 });
 
 export type UserCreateRequestDto = v.InferOutput<typeof UserCreateRequestDto>;

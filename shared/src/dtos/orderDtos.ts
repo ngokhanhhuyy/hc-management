@@ -2,8 +2,11 @@ import * as v from "valibot";
 import type { Implements } from "../helpers/index.js";
 import type { IListRequestDto, IListResponseDto } from "./interfaces.js";
 import { ISODateToTemporalPlainDateTransformer, NullableISODateToTemporalPlainDateTransformer } from "./transformer.js";
-import { SeatingBasicResponseDto } from "./seatingDtos.js";
-import { UserBasicResponseDto } from "./userDtos.js";
+import {
+  SeatingBasicResponseDto,
+  UserBasicResponseDto,
+  OrderBasicResponseDto
+} from "./sharedDtos.js";
 
 export type OrderListRequestDto = Implements<IListRequestDto, v.InferOutput<typeof OrderListRequestDto>>;
 export const OrderListRequestDto = v.object({
@@ -14,14 +17,6 @@ export const OrderListRequestDto = v.object({
   page: v.optional(v.number(), 1),
   resultsPerPage: v.optional(v.pipe(v.number(), v.minValue(5), v.maxValue(50)), 15),
   createdDate: v.optional(v.nullable(v.pipe(v.string(), v.isoDate())), null)
-});
-
-export type OrderBasicResponseDto = v.InferOutput<typeof OrderBasicResponseDto>;
-export const OrderBasicResponseDto = v.object({
-  id: v.number(),
-  itemAmount: v.number(),
-  isFinished: v.boolean(),
-  seating: SeatingBasicResponseDto
 });
 
 export type OrderListResponseDto = Implements<

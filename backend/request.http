@@ -1,0 +1,29 @@
+@host = http://127.0.0.1:5000
+@basePath = {{host}}/api
+
+# @name GetAccessCookie
+// @no-log
+POST {{basePath}}/authentication/get-access-cookie HTTP/2.0
+Content-Type: application/json
+
+{
+    "userName": "admin",
+    "password": "admin"
+}
+
+###
+@accessCookie = {{GetAccessCookie.response.headers.set-cookie}}
+
+
+###
+# @name UserDetail
+GET {{basePath}}/users/31
+Content-Type: application/json
+Cookie: {{accessCookie}}
+
+
+###
+# @name HealthCheck
+GET {{host}}/health-check
+Content-Type: application/json
+Cookie: {{accessCookie}}

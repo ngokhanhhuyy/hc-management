@@ -246,6 +246,9 @@ importers:
       '@hc-management/shared':
         specifier: workspace:*
         version: link:../shared
+      '@hono/standard-validator':
+        specifier: ^0.4.0
+        version: 0.4.0(@standard-schema/spec@1.1.0)(hono@4.13.2)
       '@js-temporal/polyfill':
         specifier: ^0.5.1
         version: 0.5.1
@@ -264,9 +267,15 @@ importers:
       hono:
         specifier: ^4.13.2
         version: 4.13.2
+      jose:
+        specifier: ^6.2.9
+        version: 6.2.9
       pg:
         specifier: ^8.23.0
         version: 8.23.0
+      valibot:
+        specifier: ^1.4.2
+        version: 1.4.2(typescript@7.0.2)
     devDependencies:
       '@types/bun':
         specifier: latest
@@ -283,12 +292,21 @@ importers:
 
   frontend:
     dependencies:
+      '@hc-management/backend':
+        specifier: workspace:*
+        version: link:../backend
+      '@hc-management/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@react-router/node':
         specifier: ^8
         version: 8.3.0(react-router@8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@5.9.3)
       '@react-router/serve':
         specifier: ^8
         version: 8.3.0(react-router@8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@5.9.3)
+      hono:
+        specifier: ^4.13.2
+        version: 4.13.2
       isbot:
         specifier: ^5.1.36
         version: 5.2.1
@@ -703,6 +721,12 @@ packages:
   '@eslint/plugin-kit@0.7.2':
     resolution: {integrity: sha512-+CNAzxglkrpNf/kKywqQfk74QjtceuOE7Qm+AF8miRvPF/wmmK5+OJOgVh3AVTT3RP2mH3+FOaxlE5v72owk0A==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
+
+  '@hono/standard-validator@0.4.0':
+    resolution: {integrity: sha512-MxOm1asDh9j7c1D0KiWwppSbFgAQxTRO4YEhjMrJn3lF1BIcXenPdgjSGKDRfQmZdaTaMA8slQLETgVOKyJxFw==}
+    peerDependencies:
+      '@standard-schema/spec': ^1.0.0
+      hono: '>=4.11.2'
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -2260,6 +2284,9 @@ packages:
     resolution: {integrity: sha512-AC/7JofJvZGrrneWNaEnJeOLUx+JlGt7tNa0wZiRPT4MY1wmfKjt2+6O2p2uz2+skll8OZZmJMNqeke7kKbNgQ==}
     hasBin: true
 
+  jose@6.2.9:
+    resolution: {integrity: sha512-XrchZOFZUl/T3vTwRe8XK+cJrGtMF4th1ARnDfwbBXFKThGhlsxEE4Zu03AD/bjJSt/9jT/mxrOCkJWOg77aPA==}
+
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -3519,6 +3546,11 @@ snapshots:
     dependencies:
       '@eslint/core': 1.2.1
       levn: 0.4.1
+
+  '@hono/standard-validator@0.4.0(@standard-schema/spec@1.1.0)(hono@4.13.2)':
+    dependencies:
+      '@standard-schema/spec': 1.1.0
+      hono: 4.13.2
 
   '@humanfs/core@0.19.2':
     dependencies:
@@ -5230,6 +5262,8 @@ snapshots:
       set-function-name: 2.0.2
 
   jiti@2.7.0: {}
+
+  jose@6.2.9: {}
 
   js-tokens@4.0.0: {}
 

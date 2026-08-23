@@ -1,8 +1,8 @@
 import "dotenv/config";
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "../generated/client";
-import { BcryptPasswordHasher } from "../../src/services/common/authentication/passwordHasher";
+import { PrismaClient } from "../database/client";
+import { BcryptPasswordHasher } from "../common/authentication/passwordHasher";
 
 const connectionString = `${process.env.DATABASE_URL}`;
 const pool = new Pool({ connectionString });

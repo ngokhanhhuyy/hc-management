@@ -3,7 +3,7 @@
 
 # @name GetAccessCookie
 // @no-log
-POST {{basePath}}/authentication/get-access-cookie HTTP/2.0
+POST {{host}}/api/authentication/get-access-cookie
 Content-Type: application/json
 
 {
@@ -14,13 +14,63 @@ Content-Type: application/json
 ###
 @accessCookie = {{GetAccessCookie.response.headers.set-cookie}}
 
-
 ###
-# @name UserDetail
-GET {{basePath}}/users/31
+# @name ClearAccessCookie
+// @no-log
+POST {{basePath}}/authentication/clear-access-cookie
 Content-Type: application/json
 Cookie: {{accessCookie}}
 
+###
+@accessCookie = {{GetAccessCookie.response.headers.set-cookie}}
+
+###
+# @name ChangePassword
+// @no-log
+POST {{host}}/api/authentication/change-password
+Content-Type: application/json
+
+{
+    "newPassword": "myPassword"
+}
+
+###
+# @name UserDetail
+GET {{basePath}}/users/1
+Content-Type: application/json
+Cookie: {{accessCookie}}
+
+###
+# @name MenuCategoryAll
+GET {{basePath}}/menu-categories
+Content-Type: application/json
+Cookie: {{accessCookie}}
+
+###
+# @name MenuCategorySingle
+GET {{basePath}}/menu-categories/8
+Content-Type: application/json
+Cookie: {{accessCookie}}
+
+###
+# @name MenuCategoryCreate
+POST {{basePath}}/menu-categories
+Content-Type: application/json
+Cookie: {{accessCookie}}
+
+{
+    "name": "Test Category"
+}
+
+###
+# @name MenuCategoryUpdate
+PUT {{basePath}}/menu-categories/6
+Content-Type: application/json
+Cookie: {{accessCookie}}
+
+{
+    "name": "Test Category 1"
+}
 
 ###
 # @name HealthCheck

@@ -23,5 +23,6 @@ SQL
 cd ..
 
 unset PGPASSWORD
-pnpm dlx prisma generate
-pnpm dlx prisma db push
+pnpm exec drizzle-kit generate --config=drizzle.config.ts
+pnpm exec drizzle-kit push --config=drizzle.config.ts
+rm -rf ./drizzle

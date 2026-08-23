@@ -1,8 +1,8 @@
 import * as v from "valibot";
 import { ValidationContracts } from "../constants/index.js";
 
-export type MenuCategoryuUpsertRequestDto = v.InferOutput<typeof MenuCategoryuUpsertRequestDto>;
-export const MenuCategoryuUpsertRequestDto = v.object({
+export type MenuCategoryUpsertRequestDto = v.InferOutput<typeof MenuCategoryUpsertRequestDto>;
+export const MenuCategoryUpsertRequestDto = v.object({
   name: v.pipe(
     v.string(),
     v.minLength(ValidationContracts.MenuCategory.NameMinLength),

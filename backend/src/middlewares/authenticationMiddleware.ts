@@ -6,15 +6,6 @@ import { AuthenticationError } from "@hc-management/shared/errors";
 import * as v from "valibot";
 
 export const authenticationMiddleware = createMiddleware(async (context, next) => {
-  const ignoredPaths = [
-    "/api/authentication/get-access-cookie"
-  ];
-
-  if (ignoredPaths.find(path => context.req.path.includes(path))) {
-    await next();
-    return;
-  }
-
   const cookieValue = getCookie(context, "Authorization");
   const expectedPrefix = "Bearer ";
   if (!cookieValue || cookieValue.length <= expectedPrefix.length || !cookieValue.startsWith(expectedPrefix)) {

@@ -1,20 +1,19 @@
-import { asClass, asFunction, asValue, type AwilixContainer } from "awilix";
+import { asClass, asValue, type AwilixContainer } from "awilix";
 import type { Context } from "hono";
 import { rootServiceContainer, type ISingletonContainer as ISingletonServiceContainer } from "./container";
-import { AuthenticationController, UserController } from "#/controllers";
 import {
   CallerDetailProvider,
   type ICallerDetailProvider } from "#/services/common/authentication/callerDetailProvider";
-import { AuthenticationService, type IAuthenticationService } from "#/services/authenticationService";
-import { UserService, type IUserService } from "#/services/userService";
+import { AuthenticationService, type IAuthenticationService } from "#/services/features/authenticationService.js";
+import { MenuCategoryService, type IMenuCategoryService } from "#/services/features/menuCategoryService.js";
+import { UserService, type IUserService } from "#/services/features/userService.js";
 
 export interface IScopedServiceContainer {
   httpContext: Context;
   serviceProvider: IScopedServiceProvider;
   callerDetailProvider: ICallerDetailProvider;
-  authenticationController: AuthenticationController;
-  userController: UserController;
   authenticationService: IAuthenticationService;
+  menuCategoryService: IMenuCategoryService;
   userService: IUserService;
 }
 
@@ -43,9 +42,8 @@ export function createScopedServiceProvider(context: Context): IScopedServicePro
     httpContext: asValue(context),
     serviceProvider: asValue(serviceProvider),
     callerDetailProvider: asClass(CallerDetailProvider),
-    authenticationController: asClass(AuthenticationController),
-    userController: asClass(UserController),
     authenticationService: asClass(AuthenticationService),
+    menuCategoryService: asClass(MenuCategoryService),
     userService: asClass(UserService)
   } satisfies DependecyRegistrations<IScopedServiceContainer>);
 

@@ -1,13 +1,15 @@
 import { Hono } from "hono";
-import { dependencyInjectionMiddleware, errorFilterMiddleware, authenticationMiddleware } from "./middlewares";
-import { authenticationApi, userApi } from "./controllers";
+import {
+  dependencyInjectionMiddleware,
+  errorFilterMiddleware,
+  requestLogglerMiddleware
+} from "./middlewares";
+import { buildApp } from "./mvc";
 
-const app = new Hono()
+const app = buildApp(app => app
   .use(dependencyInjectionMiddleware)
-  .use(authenticationMiddleware)
-  .onError(errorFilterMiddleware)
-  .route("/api/authentication", authenticationApi)
-  .route("/api/users", userApi)
+  .use(requestLogglerMiddleware)
+  .onError(errorFilterMiddleware))
   .get("/", (context) => {
     return context.text("Hello Hono!");
   })
@@ -15,7 +17,7 @@ const app = new Hono()
 
 export default {
   port: 5000,
-  fetch: app.fetch
+  fetch: app.fetch,
 };
 
 export type AppType = typeof app;

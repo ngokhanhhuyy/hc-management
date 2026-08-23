@@ -3,7 +3,8 @@ export const displayNames = {
   userName: "Tên người dùng",
   password: "Mật khẩu",
   confirmationPassword: "Mật khẩu xác nhận",
-  newPassword: "Mật khẩu mới"
+  newPassword: "Mật khẩu mới",
+  name: "Tên"
 };
 
 export function getDisplayNameByKey(key: string): string {

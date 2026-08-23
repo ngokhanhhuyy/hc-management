@@ -6,4 +6,4 @@
 **/.vscode
 **/dist
 
-backend/prisma/generated
+backend/src/services/database/*

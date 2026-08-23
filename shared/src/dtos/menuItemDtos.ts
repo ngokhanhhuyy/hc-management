@@ -8,10 +8,8 @@ import { ISODateToTemporalPlainDateTransformer, NullableISODateToTemporalPlainDa
 export type MenuItemDetailResponseDto = v.InferOutput<typeof MenuItemDetailResponseDto>;
 export const MenuItemDetailResponseDto = v.object({
   ...MenuItemBasicResponseDto.entries,
-  createdDateTime: v.pipe(v.string(), v.isoDate(), ISODateToTemporalPlainDateTransformer),
-  lastUpdatedDateTime: v.pipe(
-    v.nullable(v.pipe(v.string(), v.isoDate())),
-    NullableISODateToTemporalPlainDateTransformer),
+  createdDateTime: v.pipe(v.string(), v.isoDate()),
+  lastUpdatedDateTime: v.nullable(v.pipe(v.string(), v.isoDate())),
   category: v.nullable(MenuCategoryBasicResponseDto),
   createdUser: UserBasicResponseDto,
   lastUpdatedUser: v.nullable(UserBasicResponseDto)

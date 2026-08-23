@@ -11,6 +11,10 @@
   "license": "ISC",
   "type": "module",
   "exports": {
+    "./api": {
+      "types": "./src/api/index.ts",
+      "import": "./src/api/index.ts"
+    },
     "./dtos": {
       "types": "./src/dtos/index.ts",
       "import": "./src/dtos/index.ts"

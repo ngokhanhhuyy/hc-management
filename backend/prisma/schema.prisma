@@ -5,7 +5,7 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../prisma/generated"
+  output   = "../src/services/database"
 }
 
 datasource db {
@@ -13,9 +13,10 @@ datasource db {
 }
 
 model User {
-  id       Int    @id(map: "PK_users_id") @default(autoincrement())
-  userName String
+  id           Int     @id(map: "PK_users_id") @default(autoincrement())
+  userName     String
   passwordHash String
+  isDeleted    Boolean @default(false)
 
   createdMenuItem     MenuItem[] @relation("menuItemCreatedUser")
   lastUpdatedMenuItem MenuItem[] @relation("menuItemLastUpdatedUser")
@@ -32,17 +33,19 @@ model MenuItem {
   name                          String
   unit                          String?
   createdDateTime               DateTime  @default(now())
-  lastUpdatedDateTime           DateTime? @default(now())
+  lastUpdatedDateTime           DateTime?
+  deletedDateTime               DateTime?
   defaultAmountBeforeVatPerUnit Int       @default(0) @map("defaultAmountBeforeVatPerUnit")
   defaultVatPercentagePerUnit   Int       @default(0)
   categoryId                    Int?
   createdUserId                 Int
   lastUpdatedUserId             Int?
+  deletedUserId                 Int?
 
-  category        MenuCategory? @relation(fields: [categoryId], references: [id], map: "FK_menuItems_menuCategories_categoryId")
+  category        MenuCategory? @relation(fields: [categoryId], references: [id], map: "FK_menuItems_menuCategories_categoryId", onUpdate: Cascade, onDelete: SetNull)
   orderItems      OrderItem[]
-  createdUser     User          @relation("menuItemCreatedUser", fields: [createdUserId], references: [id], map: "FK_menuItems_users_createdUserId")
-  lastUpdatedUser User?         @relation("menuItemLastUpdatedUser", fields: [lastUpdatedUserId], references: [id], map: "FK_menuItems_users_lastUpdatedUserId")
+  createdUser     User          @relation("menuItemCreatedUser", fields: [createdUserId], references: [id], map: "FK_menuItems_users_createdUserId", onUpdate: Cascade, onDelete: Restrict)
+  lastUpdatedUser User?         @relation("menuItemLastUpdatedUser", fields: [lastUpdatedUserId], references: [id], map: "FK_menuItems_users_lastUpdatedUserId", onUpdate: Cascade, onDelete: Restrict)
 
   @@unique([name], map: "UNIQUE_menuItems_name")
   @@map("menuItems")
@@ -58,8 +61,10 @@ model MenuCategory {
 }
 
 model Seating {
-  id     Int     @id(map: "PK_seatings_id") @default(autoincrement())
-  name   String
+  id        Int     @id(map: "PK_seatings_id") @default(autoincrement())
+  name      String
+  isDeleted Boolean @default(false)
+
   orders Order[]
 
   @@unique([name], map: "UNIQUE_seatings_name")
@@ -68,8 +73,9 @@ model Seating {
 
 model Order {
   id                  Int       @id(map: "PK_orders_id") @default(autoincrement())
-  createdDateTime     DateTime
+  createdDateTime     DateTime  @default(now())
   lastUpdatedDateTime DateTime?
+  deletedDateTime     DateTime?
   finishedDateTime    DateTime?
   cachedItemAmount    Int
   createdUserId       Int
@@ -77,18 +83,22 @@ model Order {
   finishedUserId      Int?
   seatingId           Int
 
-  createdUser     User    @relation("orderCreatedUser", fields: [createdUserId], references: [id], map: "FK_orders_users_createdUserId")
-  lastUpdatedUser User?   @relation("orderLastUpdatedUser", fields: [lastUpdatedUserId], references: [id], map: "FK_orders_users_lastUpdatedUserId")
-  finishedUser    User?   @relation("orderFinishedUser", fields: [finishedUserId], references: [id], map: "FK_orders_users_finishedUserId")
-  seating         Seating @relation(fields: [seatingId], references: [id], map: "FK_orders_seatings_seatingId")
+  createdUser     User        @relation("orderCreatedUser", fields: [createdUserId], references: [id], map: "FK_orders_users_createdUserId", onUpdate: Cascade, onDelete: Restrict)
+  lastUpdatedUser User?       @relation("orderLastUpdatedUser", fields: [lastUpdatedUserId], references: [id], map: "FK_orders_users_lastUpdatedUserId", onUpdate: Cascade, onDelete: Restrict)
+  finishedUser    User?       @relation("orderFinishedUser", fields: [finishedUserId], references: [id], map: "FK_orders_users_finishedUserId", onUpdate: Cascade, onDelete: Restrict)
+  seating         Seating     @relation(fields: [seatingId], references: [id], map: "FK_orders_seatings_seatingId", onUpdate: Cascade, onDelete: Restrict)
+  orderItems      OrderItem[]
 }
 
 model OrderItem {
-  id       Int @id(map: "PK_orderItems_id") @default(autoincrement())
-  quantity Int
-
+  id         Int @id(map: "PK_orderItems_id") @default(autoincrement())
+  quantity   Int
+  orderId    Int
   menuItemId Int
-  menuItem   MenuItem @relation(fields: [menuItemId], references: [id], map: "FK_orderItems_menuItems_menuItemId")
 
+  order    Order    @relation(fields: [orderId], references: [id], map: "FK_orderItems_orders_orderId", onUpdate: Cascade, onDelete: Cascade)
+  menuItem MenuItem @relation(fields: [menuItemId], references: [id], map: "FK_orderItems_menuItems_menuItemId", onUpdate: Cascade, onDelete: Restrict)
+
+  @@unique([orderId, menuItemId], map: "UNIQUE_orderItems_orderId_menuItemId")
   @@map("orderItems")
 }

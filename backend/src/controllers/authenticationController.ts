@@ -1,30 +1,38 @@
-import { Hono, type Context } from "hono";
-import { generateCookie, setCookie } from "hono/cookie";
+import { type Context } from "hono";
+import { setCookie, deleteCookie } from "hono/cookie";
 import { SignJWT } from "jose";
-import { BaseController, type EmptyResult } from "./baseController";
-import type { IServiceContainer } from "#/dependencyInjection";
-import type { IAuthenticationService } from "#/services/authenticationService";
-import type { IUserService } from "#/services/userService";
+import { BaseController } from "#/mvc/baseController";
+import { route, httpPost, fromJson, producesResponseType, authorized } from "#/mvc";
+import type { IAuthenticationService } from "#/services/features/authenticationService.js";
+import type { IUserService } from "#/services/features/userService.js";
+import type { IAuthenticationApi, ApiActionJsonArgs, EmptyResponse } from "@hc-management/shared/api";
 import {
-  AuthenticationVerifyUserNameAndPasswordRequestDto,
-  AuthenticationChangePasswordRequestDto
+  AuthenticationVerifyUserNameAndPasswordRequestDto as GetAccessCookieRequestDto,
+  AuthenticationChangePasswordRequestDto as ChangePasswordRequestDto
 } from "@hc-management/shared/dtos";
 
-export class AuthenticationController extends BaseController {
+@route("/api/authentication")
+export class AuthenticationController extends BaseController implements IAuthenticationApi {
   private readonly authenticationService: IAuthenticationService;
   private readonly userService: IUserService;
 
-  public constructor({ httpContext }: IServiceContainer) {
+  public constructor(httpContext: Context) {
     super(httpContext);
-
-    this.authenticationService = this.getRequiredService("authenticationService");
-    this.userService = this.getRequiredService("userService");
+    this.authenticationService = this.serviceProvider.getRequiredService("authenticationService");
+    this.userService = this.serviceProvider.getRequiredService("userService");
   }
 
-  public async signInAsync(requestDto: AuthenticationVerifyUserNameAndPasswordRequestDto): Promise<EmptyResult> {
-    await this.authenticationService.verifyUserNameAndPasswordAsync(requestDto);
+  @httpPost("/get-access-cookie")
+  @fromJson(GetAccessCookieRequestDto)
+  @producesResponseType(200)
+  @producesResponseType(400)
+  @producesResponseType(401)
+  @producesResponseType(403)
+  @producesResponseType(422)
+  public async getAccessCookieAsync(args: ApiActionJsonArgs<GetAccessCookieRequestDto>): Promise<EmptyResponse> {
+    await this.authenticationService.verifyUserNameAndPasswordAsync(args.json);
     const secretKey = new TextEncoder().encode(process.env.SECRET_KEY!);
-    const userDetailResonseDto = await this.userService.getDetailByUserNameAsync(requestDto.userName);
+    const userDetailResonseDto = await this.userService.getDetailByUserNameAsync(args.json.userName);
     const token = await new SignJWT(userDetailResonseDto)
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
@@ -40,22 +48,26 @@ export class AuthenticationController extends BaseController {
     return this.ok();
   }
 
-  public async changePasswordAsync(requestDto: AuthenticationChangePasswordRequestDto): Promise<EmptyResult> {
-    await this.authenticationService.changePasswordAsync(requestDto);
+  @httpPost("/clear-access-cookie")
+  @authorized
+  @producesResponseType(200)
+  @producesResponseType(401)
+  public async clearAccessCookieAsync(): Promise<EmptyResponse> {
+    deleteCookie(this.httpContext, "Authorization");
     return this.ok();
   }
 
-  public static getInstance(context: Context): AuthenticationController {
-    return context.get("provider").getRequiredService("authenticationController");
+
+  @httpPost("/change-password")
+  @authorized
+  @fromJson(ChangePasswordRequestDto)
+  @producesResponseType(200)
+  @producesResponseType(400)
+  @producesResponseType(401)
+  @producesResponseType(403)
+  @producesResponseType(422)
+  public async changePasswordAsync(args: ApiActionJsonArgs<ChangePasswordRequestDto>): Promise<EmptyResponse> {
+    await this.authenticationService.changePasswordAsync(args.json);
+    return this.ok();
   }
 }
-
-export const authenticationApi = new Hono()
-  .post(
-    "/get-access-cookie",
-    AuthenticationController.validateJson(AuthenticationVerifyUserNameAndPasswordRequestDto),
-    (context => AuthenticationController.getInstance(context).signInAsync(context.req.valid("json"))))
-  .post(
-    "/change-password",
-    AuthenticationController.validateJson(AuthenticationChangePasswordRequestDto),
-    (context => AuthenticationController.getInstance(context).changePasswordAsync(context.req.valid("json"))));

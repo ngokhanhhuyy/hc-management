@@ -5,7 +5,7 @@ export const MenuItemBasicResponseDto = v.object({
   id: v.number(),
   name: v.string(),
   unit: v.nullable(v.string()),
-  defaultPriceBeforeVatPerUnit: v.number(),
+  defaultAmountBeforeVatPerUnit: v.number(),
   defaultVatPercentagePerUnit: v.number(),
 });
 

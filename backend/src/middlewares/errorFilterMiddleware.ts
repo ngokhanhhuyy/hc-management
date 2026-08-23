@@ -20,10 +20,6 @@ export const errorFilterMiddleware = async (error: Error, context: Context) => {
     instance: context.req.url
   };
 
-  const getMessage = (responseDto: ProblemDetails): string => {
-    return JSON.stringify(responseDto);
-  };
-
   if (error instanceof ValidationError) {
     return context.json({
       ...baseResponseDto,

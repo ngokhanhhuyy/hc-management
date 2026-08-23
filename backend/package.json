@@ -22,6 +22,8 @@
     "@prisma/client": "^7.9.1",
     "awilix": "^13.0.5",
     "dotenv": "^17.4.2",
+    "drizzle-kit": "1.0.0-rc.4",
+    "drizzle-orm": "1.0.0-rc.4",
     "hono": "^4.13.2",
     "jose": "^6.2.9",
     "pg": "^8.23.0",
@@ -31,6 +33,7 @@
     "@types/bun": "latest",
     "@types/pg": "^8.21.0",
     "prisma": "^7.9.1",
-    "tsx": "^4.23.12"
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2"
   }
 }

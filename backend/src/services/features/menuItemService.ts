@@ -1,99 +1,122 @@
-import type { PrismaClient, MenuItem } from "#/prisma/client";
 import type { IServiceContainer } from "#/dependencyInjection";
-import { dtoFactories } from "../common/dtos";
+import type { ICallerDetailProvider } from "../common/authentication";
+import type { IMenuItemDtoFactory } from "../common/dtos";
 import { errorFactories, IDatabaseErrorHandler } from "../common/errors";
-import type { MenuItemBasicResponseDto, MenuItemDetailResponseDto, MenuItemUpsertRequestDto } from "@hc-management/shared/dtos";
+import type { IClock } from "../common/time";
+import type { PrismaClient, MenuItem } from "../database/client";
+import type {
+  MenuItemBasicResponseDto,
+  MenuItemDetailResponseDto,
+  MenuItemUpsertRequestDto
+} from "@hc-management/shared/dtos";
 import { NotFoundError } from "@hc-management/shared/errors";
 
 export interface IMenuItemService {
-  getAllAsync(categoryName?: string): Promise<MenuItemBasicResponseDto[]>;
+  getAllAsync(categoryId?: number): Promise<MenuItemBasicResponseDto[]>;
   getDetailAsync(id: number): Promise<MenuItemDetailResponseDto>;
   createAsync(requestDto: MenuItemUpsertRequestDto): Promise<number>;
   updateAsync(id: number, requestDto: MenuItemUpsertRequestDto): Promise<void>;
   deleteAsync(id: number): Promise<void>;
 }
 
-export class MenuItemService implements IMenuCategoryService {
-  private readonly prisma: PrismaClient;
+export class MenuItemService implements IMenuItemService {
+  private readonly database: PrismaClient;
   private readonly databaseErrorHandler: IDatabaseErrorHandler;
+  private readonly menuItemDtoFactory: IMenuItemDtoFactory;
+  private readonly callerDetailProvider: ICallerDetailProvider;
+  private readonly clock: IClock;
 
-  public constructor({ prisma, databaseErrorHandler }: IServiceContainer) {
-    this.prisma = prisma;
-    this.databaseErrorHandler = databaseErrorHandler;
+  public constructor(dependencies: IServiceContainer) {
+    this.database = dependencies.prisma;
+    this.databaseErrorHandler = dependencies.databaseErrorHandler;
+    this.menuItemDtoFactory = dependencies.menuItemDtoFactory;
+    this.callerDetailProvider = dependencies.callerDetailProvider;
+    this.clock = dependencies.clock;
   }
 
-  public async getAllAsync(): Promise<MenuCategoryBasicResponseDto[]> {
-    const menuCategories = await this.prisma.menuCategory.findMany();
-    return menuCategories.map(dtoFactories.menuCategory.basicResponseDto);
+  public async getAllAsync(categoryId?: number): Promise<MenuItemBasicResponseDto[]> {
+    const menuItems = await this.database.menuItem.findMany({
+      where: { categoryId }
+    });
+
+    return menuItems.map(mc => this.menuItemDtoFactory.createBasicResponseDto(mc));
   }
 
-  public async getSingleAsync(id: number): Promise<MenuCategoryBasicResponseDto> {
-    const menuCategory = await this.prisma.menuCategory.findUnique({
+  public async getDetailAsync(id: number): Promise<MenuItemDetailResponseDto> {
+    const menuItem = await this.database.menuItem.findUnique({
       where: { id }
     });
 
-    if (!menuCategory) {
+    if (!menuItem) {
       throw new NotFoundError();
     }
 
-    return dtoFactories.menuCategory.basicResponseDto(menuCategory);
+    return this.menuItemDtoFactory.createDetailResponseDto(menuItem);
   }
 
-  public async createAsync(requestDto: MenuCategoryUpsertRequestDto): Promise<number> {
+  public async createAsync(requestDto: MenuItemUpsertRequestDto): Promise<number> {
     try {
-      const menuCategory = await this.prisma.menuCategory.create({
+      const menuItem = await this.database.menuItem.create({
         data: {
-          name: requestDto.name
+          name: requestDto.name,
+          unit: requestDto.unit,
+          defaultAmountBeforeVatPerUnit: requestDto.defaultAmountBeforeVatPerUnit,
+          defaultVatPercentagePerUnit: requestDto.defaultAmountBeforeVatPerUnit,
+          categoryId: requestDto.categoryId,
+          createdUserId: this.callerDetailProvider.getCallerId()
         }
       });
 
-      return menuCategory.id;
-    } catch (error: any) {
-      const handledResult = this.databaseErrorHandler.handle<MenuCategory>(error);
-      if (handledResult?.type === "UniqueConstraintViolation" && handledResult?.violatedColumnNames.includes("name")) {
-        throw errorFactories.operationError.createDuplicated("name", "name");
-      }
-
-      throw error;
+      return menuItem.id;
+    } catch (error) {
+      throw this.convertModificationError(error);
     }
   }
 
-  public async updateAsync(id: number, requestDto: MenuCategoryUpsertRequestDto): Promise<void> {
+  public async updateAsync(id: number, requestDto: MenuItemUpsertRequestDto): Promise<void> {
     try {
-      await this.prisma.menuCategory.update({
-        data: { name: requestDto.name },
+      await this.database.menuItem.update({
+        data: {
+          name: requestDto.name,
+          unit: requestDto.unit,
+          defaultAmountBeforeVatPerUnit: requestDto.defaultAmountBeforeVatPerUnit,
+          defaultVatPercentagePerUnit: requestDto.defaultVatPercentagePerUnit,
+          categoryId: requestDto.categoryId,
+          lastUpdatedDateTime: 
+        },
         where: { id }
       });
-    } catch (error: any) {
-      const handledResult = this.databaseErrorHandler.handle<MenuCategory>(error);
-      if (handledResult?.type === "RecordNotFound") {
-        throw new NotFoundError();
-      }
-
-      if (handledResult?.type === "UniqueConstraintViolation" && handledResult?.violatedColumnNames.includes("name")) {
-        throw errorFactories.operationError.createDuplicated("name", "name");
-      }
-
-      throw error;
+    } catch (error) {
+      throw this.convertModificationError(error);
     }
   }
 
   public async deleteAsync(id: number): Promise<void> {
     try {
-      await this.prisma.menuCategory.delete({
+      await this.database.menuCategory.delete({
         where: { id }
       });
-    } catch (error: any) {
-      const handledResult = this.databaseErrorHandler.handle<MenuCategory>(error);
-      if (handledResult?.type === "RecordNotFound") {
-        throw new NotFoundError();
-      }
-
-      if (handledResult?.type === "UniqueConstraintViolation" && handledResult?.violatedColumnNames.includes("name")) {
-        throw errorFactories.operationError.createDuplicated("name", "name");
-      }
-
-      throw error;
+    } catch (error) {
+      throw this.convertModificationError(error);
     }
+  }
+
+  private convertModificationError(error: unknown): unknown {
+    const handledResult = this.databaseErrorHandler.handle<MenuItem>(error);
+
+    if (handledResult?.type === "RecordNotFound") {
+      throw new NotFoundError();
+    }
+
+    if (handledResult?.type === "UniqueConstraintViolation" && handledResult?.violatedColumnNames.includes("name")) {
+      return errorFactories.operationError.createDuplicated("name", "name");
+    }
+
+    const isForeignKeyConstraintViolation = handledResult?.type === "ForeignKeyConstraintViolation";
+    if (isForeignKeyConstraintViolation && handledResult?.violatedColumnNames.includes("categoryId")) {
+      return errorFactories.operationError.createNotFound("menuCategory");
+    }
+
+    return error;
   }
 }

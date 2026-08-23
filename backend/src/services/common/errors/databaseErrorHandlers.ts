@@ -1,4 +1,4 @@
-import { Prisma } from "#/prisma/client";
+import { Prisma } from "../../database/client";
 
 type DatabaseErrorType =
   | "UniqueConstraintViolation"
@@ -26,11 +26,11 @@ export type DatabaseErrorHandledResult<TEntity extends object> = {
 };
 
 export interface IDatabaseErrorHandler {
-  handle<TEntity extends object>(error: any): DatabaseErrorHandledResult<TEntity> | null;
+  handle<TEntity extends object>(error: unknown): DatabaseErrorHandledResult<TEntity> | null;
 }
 
 export class PrismaDatabaseErrorHandler implements IDatabaseErrorHandler {
-  public handle<TEntity extends object>(error: any): DatabaseErrorHandledResult<TEntity> | null {
+  public handle<TEntity extends object>(error: unknown): DatabaseErrorHandledResult<TEntity> | null {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       let errorType: DatabaseErrorType;
       switch (error.code) {

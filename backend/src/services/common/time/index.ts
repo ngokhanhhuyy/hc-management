@@ -1,17 +1,18 @@
 import { Temporal } from "@js-temporal/polyfill";
+import "dotenv";
 
-let timezone = parseInt(import.meta.env.TIMEZONE as string);
-if (isNaN(timezone)) {
-  timezone = 7;
-}
+const timezone = process.env.TIMEZONE ?? "Asia/Ho_Chi_Minh";
 
 export interface IClock {
   today(): Temporal.PlainDate;
   now(): Temporal.PlainDateTime;
+  getTodayJSDate(): Date;
+  getNowJSDate(): Date;
   convertJSDateToTemporalPlainDateTime(jsDate: Date): Temporal.PlainDateTime;
   convertJSDateToTemporalPlainDate(jsDate: Date): Temporal.PlainDate;
   convertJSDateToDateISOString(jsDate: Date): string;
   convertJSDateToDateTimeISOString(jsDate: Date): string;
+  convertTemporalPlainDateTimeToJSDate(dateTime: Temporal.PlainDateTime): Date;
 }
 
 export class Clock implements IClock {
@@ -28,8 +29,10 @@ export class Clock implements IClock {
   }
 
   public convertJSDateToTemporalPlainDateTime(jsDate: Date): Temporal.PlainDateTime {
-    const isoString = jsDate.toISOString().split(".")[0];
-    return Temporal.PlainDateTime.from(isoString).add({ hours: timezone });
+    return Temporal.Instant
+      .fromEpochMilliseconds(jsDate.getTime())
+      .toZonedDateTimeISO(timezone)
+      .toPlainDateTime();
   }
 
   public convertJSDateToDateISOString(jsDate: Date): string {
@@ -38,5 +41,9 @@ export class Clock implements IClock {
 
   public convertJSDateToDateTimeISOString(jsDate: Date): string {
     return this.convertJSDateToTemporalPlainDateTime(jsDate).toString();
+  }
+
+  public convertTemporalPlainDateTimeToJSDate(dateTime: Temporal.PlainDateTime): Date {
+    return new Date(dateTime.toZonedDateTime(timezone).epochMilliseconds);
   }
 }

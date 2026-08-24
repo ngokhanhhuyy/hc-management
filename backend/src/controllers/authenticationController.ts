@@ -2,10 +2,10 @@ import { type Context } from "hono";
 import { setCookie, deleteCookie } from "hono/cookie";
 import { SignJWT } from "jose";
 import { BaseController } from "#/mvc/baseController";
-import { route, httpPost, fromJson, producesResponseType, authorized } from "#/mvc";
+import { route, httpPost, fromBody, producesResponseType, authorized } from "#/mvc";
 import type { IAuthenticationService } from "#/services/features/authenticationService.js";
 import type { IUserService } from "#/services/features/userService.js";
-import type { IAuthenticationApi, ApiActionJsonArgs, EmptyResponse } from "@hc-management/shared/api";
+import type { IAuthenticationApi } from "@hc-management/shared/api";
 import {
   AuthenticationVerifyUserNameAndPasswordRequestDto as GetAccessCookieRequestDto,
   AuthenticationChangePasswordRequestDto as ChangePasswordRequestDto
@@ -23,16 +23,16 @@ export class AuthenticationController extends BaseController implements IAuthent
   }
 
   @httpPost("/get-access-cookie")
-  @fromJson(GetAccessCookieRequestDto)
+  @fromBody(0, GetAccessCookieRequestDto)
   @producesResponseType(200)
   @producesResponseType(400)
   @producesResponseType(401)
   @producesResponseType(403)
   @producesResponseType(422)
-  public async getAccessCookieAsync(args: ApiActionJsonArgs<GetAccessCookieRequestDto>): Promise<EmptyResponse> {
-    await this.authenticationService.verifyUserNameAndPasswordAsync(args.json);
+  public async getAccessCookieAsync(requestDto: GetAccessCookieRequestDto): Promise<void> {
+    await this.authenticationService.verifyUserNameAndPasswordAsync(requestDto);
     const secretKey = new TextEncoder().encode(process.env.SECRET_KEY!);
-    const userDetailResonseDto = await this.userService.getDetailByUserNameAsync(args.json.userName);
+    const userDetailResonseDto = await this.userService.getDetailByUserNameAsync(requestDto.userName);
     const token = await new SignJWT(userDetailResonseDto)
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
@@ -52,7 +52,7 @@ export class AuthenticationController extends BaseController implements IAuthent
   @authorized
   @producesResponseType(200)
   @producesResponseType(401)
-  public async clearAccessCookieAsync(): Promise<EmptyResponse> {
+  public async clearAccessCookieAsync(): Promise<void> {
     deleteCookie(this.httpContext, "Authorization");
     return this.ok();
   }
@@ -60,14 +60,14 @@ export class AuthenticationController extends BaseController implements IAuthent
 
   @httpPost("/change-password")
   @authorized
-  @fromJson(ChangePasswordRequestDto)
+  @fromBody(0, ChangePasswordRequestDto)
   @producesResponseType(200)
   @producesResponseType(400)
   @producesResponseType(401)
   @producesResponseType(403)
   @producesResponseType(422)
-  public async changePasswordAsync(args: ApiActionJsonArgs<ChangePasswordRequestDto>): Promise<EmptyResponse> {
-    await this.authenticationService.changePasswordAsync(args.json);
+  public async changePasswordAsync(requestDto: ChangePasswordRequestDto): Promise<void> {
+    await this.authenticationService.changePasswordAsync(requestDto);
     return this.ok();
   }
 }

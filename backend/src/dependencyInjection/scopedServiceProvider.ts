@@ -6,6 +6,7 @@ import {
   type ICallerDetailProvider } from "#/services/common/authentication/callerDetailProvider";
 import { AuthenticationService, type IAuthenticationService } from "#/services/features/authenticationService.js";
 import { MenuCategoryService, type IMenuCategoryService } from "#/services/features/menuCategoryService.js";
+import { MenuItemService, type IMenuItemService } from "#/services/features/menuItemService";
 import { UserService, type IUserService } from "#/services/features/userService.js";
 
 export interface IScopedServiceContainer {
@@ -14,6 +15,7 @@ export interface IScopedServiceContainer {
   callerDetailProvider: ICallerDetailProvider;
   authenticationService: IAuthenticationService;
   menuCategoryService: IMenuCategoryService;
+  menuItemService: IMenuItemService;
   userService: IUserService;
 }
 
@@ -44,6 +46,7 @@ export function createScopedServiceProvider(context: Context): IScopedServicePro
     callerDetailProvider: asClass(CallerDetailProvider),
     authenticationService: asClass(AuthenticationService),
     menuCategoryService: asClass(MenuCategoryService),
+    menuItemService: asClass(MenuItemService),
     userService: asClass(UserService)
   } satisfies DependecyRegistrations<IScopedServiceContainer>);
 

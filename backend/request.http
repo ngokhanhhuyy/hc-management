@@ -59,7 +59,7 @@ Content-Type: application/json
 Cookie: {{accessCookie}}
 
 {
-    "name": "Test Category"
+    "name": "Test Category 2"
 }
 
 ###

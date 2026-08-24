@@ -1,6 +1,6 @@
-import type { PrismaClient, MenuCategory } from "../prisma/client";
+import type { PrismaClient, MenuCategory } from "../database/client";
 import type { IServiceContainer } from "#/dependencyInjection";
-import { dtoFactories } from "../common/dtos";
+import type { IMenuCategoryDtoFactory } from "../common/dtos";
 import { errorFactories, IDatabaseErrorHandler } from "../common/errors";
 import type { MenuCategoryBasicResponseDto, MenuCategoryUpsertRequestDto } from "@hc-management/shared/dtos";
 import { NotFoundError } from "@hc-management/shared/errors";
@@ -17,15 +17,17 @@ export interface IMenuCategoryService {
 export class MenuCategoryService implements IMenuCategoryService {
   private readonly prisma: PrismaClient;
   private readonly databaseErrorHandler: IDatabaseErrorHandler;
+  private readonly menuCategoryDtoFactory: IMenuCategoryDtoFactory;
 
-  public constructor({ prisma, databaseErrorHandler }: IServiceContainer) {
+  public constructor({ prisma, databaseErrorHandler, menuCategoryDtoFactory }: IServiceContainer) {
     this.prisma = prisma;
     this.databaseErrorHandler = databaseErrorHandler;
+    this.menuCategoryDtoFactory = menuCategoryDtoFactory;
   }
 
   public async getAllAsync(): Promise<MenuCategoryBasicResponseDto[]> {
     const menuCategories = await this.prisma.menuCategory.findMany();
-    return menuCategories.map(dtoFactories.menuCategory.basicResponseDto);
+    return menuCategories.map((mc) => this.menuCategoryDtoFactory.createBasicResponseDto(mc));
   }
 
   public async getSingleAsync(id: number): Promise<MenuCategoryBasicResponseDto> {
@@ -37,7 +39,7 @@ export class MenuCategoryService implements IMenuCategoryService {
       throw new NotFoundError();
     }
 
-    return dtoFactories.menuCategory.basicResponseDto(menuCategory);
+    return this.menuCategoryDtoFactory.createBasicResponseDto(menuCategory);
   }
 
   public async createAsync(requestDto: MenuCategoryUpsertRequestDto): Promise<number> {

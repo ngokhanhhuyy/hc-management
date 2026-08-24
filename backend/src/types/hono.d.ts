@@ -5,5 +5,6 @@ declare module "hono" {
   interface ContextVariableMap {
     provider: IScopedServiceProvider;
     validatedData: ApiActionArgs | undefined;
+    routeActionArgs: any[] | undefined;
   }
 }

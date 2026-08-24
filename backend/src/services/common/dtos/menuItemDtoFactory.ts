@@ -1,6 +1,6 @@
 import type { IClock } from "../time";
 import type { IUserDtoFactory } from "./userDtoFactory";
-import { createMenuCategoryBasicResponseDto } from "./menuCategoryDtoFactories";
+import type { IMenuCategoryDtoFactory } from "./menuCategoryDtoFactory";
 import type { IServiceContainer } from "#/dependencyInjection";
 import type { MenuItem, MenuCategory, User } from "#/services/database/client";
 import type { MenuItemBasicResponseDto, MenuItemDetailResponseDto } from "@hc-management/shared/dtos";
@@ -18,10 +18,12 @@ export interface IMenuItemDtoFactory {
 
 export class MenuItemDtoFactory implements IMenuItemDtoFactory {
   private readonly userDtoFactory: IUserDtoFactory;
+  private readonly menuCategoryDtoFactory: IMenuCategoryDtoFactory;
   private readonly clock: IClock;
 
-  public constructor({ userDtoFactory, clock }: IServiceContainer) {
+  public constructor({ userDtoFactory, menuCategoryDtoFactory, clock }: IServiceContainer) {
     this.userDtoFactory = userDtoFactory;
+    this.menuCategoryDtoFactory = menuCategoryDtoFactory;
     this.clock = clock;
   }
 
@@ -41,7 +43,7 @@ export class MenuItemDtoFactory implements IMenuItemDtoFactory {
       createdDateTime: this.clock.convertJSDateToDateTimeISOString(menuItem.createdDateTime),
       lastUpdatedDateTime: menuItem.lastUpdatedDateTime &&
         this.clock.convertJSDateToDateTimeISOString(menuItem.lastUpdatedDateTime),
-      category: menuItem.category && createMenuCategoryBasicResponseDto(menuItem.category),
+      category: menuItem.category && this.menuCategoryDtoFactory.createBasicResponseDto(menuItem.category),
       createdUser: this.userDtoFactory.createBasicResponseDto(menuItem.createdUser),
       lastUpdatedUser: menuItem.lastUpdatedUser && this.userDtoFactory.createBasicResponseDto(menuItem.lastUpdatedUser),
     };

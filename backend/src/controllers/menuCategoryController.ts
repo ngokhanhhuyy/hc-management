@@ -6,20 +6,13 @@ import {
   httpPost,
   httpPut,
   httpDelete,
-  fromJson,
+  fromBody,
   producesResponseType,
   authorized,
-  fromParam
+  fromRoute
 } from "#/mvc";
 import type { IMenuCategoryService } from "#/services/features/menuCategoryService.js";
-import type {
-  IMenuCategoryApi,
-  ApiActionArgs,
-  ApiActionIdParamArgs,
-  ApiActionJsonArgs,
-  JsonResponse,
-  EmptyResponse
-} from "@hc-management/shared/api";
+import type { IMenuCategoryApi } from "@hc-management/shared/api";
 import {
   MenuCategoryUpsertRequestDto as UpsertRequestDto,
   type MenuCategoryBasicResponseDto as BasicResponseDto
@@ -37,56 +30,56 @@ export class MenuCategoryController extends BaseController implements IMenuCateg
 
   @httpGet("/")
   @producesResponseType<BasicResponseDto[]>(200)
-  public async getAllAsync(): Promise<JsonResponse<BasicResponseDto[]>> {
+  public async getAllAsync(): Promise<BasicResponseDto[]> {
     return this.ok(await this.menuCategoryService.getAllAsync());
   }
 
   @httpGet("/:id{[0-9]+}")
-  @fromParam("id", (v) => v.toNumber())
+  @fromRoute(0, "id", (v) => v.toNumber())
   @producesResponseType<BasicResponseDto>(200)
   @producesResponseType(401)
   @producesResponseType(403)
   @producesResponseType(404)
-  public async getSingleAsync(args: ApiActionIdParamArgs<number>): Promise<JsonResponse<BasicResponseDto>> {
-    return this.ok(await this.menuCategoryService.getSingleAsync(args.params.id));
+  public async getSingleAsync(id: number): Promise<BasicResponseDto> {
+    return this.ok(await this.menuCategoryService.getSingleAsync(id));
   }
 
   @httpPost("/")
-  @fromJson(UpsertRequestDto)
+  @fromBody(0, UpsertRequestDto)
   @producesResponseType<number>(201)
   @producesResponseType(400)
   @producesResponseType(401)
   @producesResponseType(403)
   @producesResponseType(422)
-  public async createAsync(args: ApiActionJsonArgs<UpsertRequestDto>): Promise<JsonResponse<number>> {
-    const createdId = await this.menuCategoryService.createAsync(args.json);
+  public async createAsync(requestDto: UpsertRequestDto): Promise<number> {
+    const createdId = await this.menuCategoryService.createAsync(requestDto);
     return this.created(`/api/menu-category/${createdId}`, createdId);
   }
 
   @httpPut("/:id{[0-9]+}")
-  @fromParam("id", (v) => v.toNumber())
-  @fromJson(UpsertRequestDto)
+  @fromRoute(0, "id", (v) => v.toNumber())
+  @fromBody(1, UpsertRequestDto)
   @producesResponseType(200)
   @producesResponseType(400)
   @producesResponseType(401)
   @producesResponseType(403)
   @producesResponseType(404)
   @producesResponseType(422)
-  public async updateAsync(args: ApiActionArgs<{ id: number }, undefined, UpsertRequestDto>): Promise<EmptyResponse> {
-    await this.menuCategoryService.updateAsync(args.params.id, args.json);
+  public async updateAsync(id: number, requestDto: UpsertRequestDto): Promise<void> {
+    await this.menuCategoryService.updateAsync(id, requestDto);
     return this.ok();
   }
 
   @httpDelete("/:id{[0-9]+}")
-  @fromParam("id", (v) => v.toNumber())
-  @fromJson(UpsertRequestDto)
+  @fromRoute(0, "id", (v) => v.toNumber())
+  @fromBody(1, UpsertRequestDto)
   @producesResponseType(200)
   @producesResponseType(401)
   @producesResponseType(403)
   @producesResponseType(404)
   @producesResponseType(422)
-  public async deleteAsync(args: ApiActionIdParamArgs<number>): Promise<EmptyResponse> {
-    await this.menuCategoryService.deleteAsync(args.params.id);
+  public async deleteAsync(id: number): Promise<void> {
+    await this.menuCategoryService.deleteAsync(id);
     return this.ok();
   }
 }

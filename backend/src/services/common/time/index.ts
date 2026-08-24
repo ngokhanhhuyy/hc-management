@@ -6,8 +6,8 @@ const timezone = process.env.TIMEZONE ?? "Asia/Ho_Chi_Minh";
 export interface IClock {
   today(): Temporal.PlainDate;
   now(): Temporal.PlainDateTime;
-  getTodayJSDate(): Date;
-  getNowJSDate(): Date;
+  // getTodayJSDate(): Date;
+  // getNowJSDate(): Date;
   convertJSDateToTemporalPlainDateTime(jsDate: Date): Temporal.PlainDateTime;
   convertJSDateToTemporalPlainDate(jsDate: Date): Temporal.PlainDate;
   convertJSDateToDateISOString(jsDate: Date): string;

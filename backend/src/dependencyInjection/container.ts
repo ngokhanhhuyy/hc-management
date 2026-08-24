@@ -3,7 +3,14 @@ import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "#/services/database/client";
 import { type IPasswordHasher, BcryptPasswordHasher } from "#/services/common/authentication/passwordHasher";
-import { IMenuItemDtoFactory, type IUserDtoFactory, UserDtoFactory, MenuItemDtoFactory } from "#/services/common/dtos";
+import {
+  type IUserDtoFactory,
+  type IMenuCategoryDtoFactory,
+  type IMenuItemDtoFactory,
+  UserDtoFactory,
+  MenuCategoryDtoFactory,
+  MenuItemDtoFactory
+} from "#/services/common/dtos";
 import { type IDatabaseErrorHandler, PrismaDatabaseErrorHandler } from "#/services/common/errors";
 import { type IClock, Clock } from "#/services/common/time";
 
@@ -13,6 +20,7 @@ export interface ISingletonContainer {
   databaseErrorHandler: IDatabaseErrorHandler;
   userDtoFactory: IUserDtoFactory;
   menuItemDtoFactory: IMenuItemDtoFactory;
+  menuCategoryDtoFactory: IMenuCategoryDtoFactory;
   clock: IClock;
 }
 
@@ -26,6 +34,7 @@ rootServiceContainer.register({
   databaseErrorHandler: asClass(PrismaDatabaseErrorHandler).singleton(),
   userDtoFactory: asClass(UserDtoFactory),
   menuItemDtoFactory: asClass(MenuItemDtoFactory),
+  menuCategoryDtoFactory: asClass(MenuCategoryDtoFactory),
   clock: asClass(Clock).singleton()
 } satisfies DependecyRegistrations<ISingletonContainer>);
 

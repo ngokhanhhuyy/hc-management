@@ -12,7 +12,7 @@ export type ApiActionArgs<
 export type ApiActionJsonArgs<TJson extends JsonValue> = ApiActionArgs<undefined, undefined, TJson>;
 export type ApiActionParamsArgs<TParams extends object> = ApiActionArgs<TParams>;
 export type ApiActionIdParamArgs<TId extends string | number> = ApiActionArgs<{ id: TId }>;
-export type ApiActionQueryArgs<TQuery extends object> = ApiActionArgs<undefined, TQuery>;
+export type ApiActionQueryArgs<TQuery extends object | undefined> = ApiActionArgs<undefined, TQuery>;
 export type ApiActionEmptyArgs = ApiActionArgs<undefined, undefined, undefined>;
 
 export type JsonResponse<TResponseDto extends JsonValue> = Omit<Response, "json"> & {

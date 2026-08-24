@@ -1,9 +1,11 @@
 import * as v from "valibot";
-import { Temporal } from "@js-temporal/polyfill";
 import { ValidationContracts } from "../constants/index.js";
 import { MenuCategoryBasicResponseDto, UserBasicResponseDto, MenuItemBasicResponseDto } from "./sharedDtos.js";
-import {  } from "./userDtos.js";
-import { ISODateToTemporalPlainDateTransformer, NullableISODateToTemporalPlainDateTransformer } from "./transformer.js";
+
+export type MenuItemListRequestDto = v.InferOutput<typeof MenuItemListRequestDto>;
+export const MenuItemListRequestDto = v.object({
+  categoryId: v.optional(v.number())
+});
 
 export type MenuItemDetailResponseDto = v.InferOutput<typeof MenuItemDetailResponseDto>;
 export const MenuItemDetailResponseDto = v.object({
@@ -24,7 +26,7 @@ export const MenuItemUpsertRequestDto = v.object({
   unit: v.nullable(v.pipe(
     v.string(),
     v.maxLength(ValidationContracts.MenuItem.UnitMaxLength))),
-  defaultPriceBeforeVatPerUnit: v.pipe(
+  defaultAmountBeforeVatPerUnit: v.pipe(
     v.number(),
     v.minValue(ValidationContracts.MenuItem.DefaultPriceBeforeVatPerUnitMinValue)),
   defaultVatPercentagePerUnit: v.pipe(

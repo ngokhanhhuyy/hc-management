@@ -2,12 +2,12 @@
   "name": "@hc-management/backend",
   "scripts": {
     "start": "bun src/index.ts",
-    "dev": "bun run --hot src/index.ts"
+    "dev": "bun run --hot src/index.ts",
+    "build": "bun build ./src/index.ts --compile --outfile ./dist/hcmanagement"
   },
   "type": "module",
   "imports": {
-    "#/*": "./src/*",
-    "#/prisma/*": "./prisma/generated/*"
+    "#/*": "./src/*"
   },
   "exports": {
     ".": {

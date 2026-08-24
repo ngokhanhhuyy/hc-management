@@ -2,9 +2,9 @@ import type { IServiceContainer } from "#/dependencyInjection";
 import type { ICallerDetailProvider } from "../common/authentication";
 import type { IMenuItemDtoFactory } from "../common/dtos";
 import { errorFactories, IDatabaseErrorHandler } from "../common/errors";
-import type { IClock } from "../common/time";
-import type { PrismaClient, MenuItem } from "../database/client";
+import type { Prisma, PrismaClient, MenuItem } from "../database/client";
 import type {
+  MenuItemListRequestDto,
   MenuItemBasicResponseDto,
   MenuItemDetailResponseDto,
   MenuItemUpsertRequestDto
@@ -12,7 +12,7 @@ import type {
 import { NotFoundError } from "@hc-management/shared/errors";
 
 export interface IMenuItemService {
-  getAllAsync(categoryId?: number): Promise<MenuItemBasicResponseDto[]>;
+  getListAsync(requestDto: MenuItemListRequestDto): Promise<MenuItemBasicResponseDto[]>;
   getDetailAsync(id: number): Promise<MenuItemDetailResponseDto>;
   createAsync(requestDto: MenuItemUpsertRequestDto): Promise<number>;
   updateAsync(id: number, requestDto: MenuItemUpsertRequestDto): Promise<void>;
@@ -24,21 +24,21 @@ export class MenuItemService implements IMenuItemService {
   private readonly databaseErrorHandler: IDatabaseErrorHandler;
   private readonly menuItemDtoFactory: IMenuItemDtoFactory;
   private readonly callerDetailProvider: ICallerDetailProvider;
-  private readonly clock: IClock;
 
   public constructor(dependencies: IServiceContainer) {
     this.database = dependencies.prisma;
     this.databaseErrorHandler = dependencies.databaseErrorHandler;
     this.menuItemDtoFactory = dependencies.menuItemDtoFactory;
     this.callerDetailProvider = dependencies.callerDetailProvider;
-    this.clock = dependencies.clock;
   }
 
-  public async getAllAsync(categoryId?: number): Promise<MenuItemBasicResponseDto[]> {
-    const menuItems = await this.database.menuItem.findMany({
-      where: { categoryId }
-    });
+  public async getListAsync(requestDto: MenuItemListRequestDto): Promise<MenuItemBasicResponseDto[]> {
+    let conditions: Prisma.MenuItemWhereInput = { };
+    if (requestDto.categoryId != null) {
+      conditions = { categoryId: requestDto.categoryId };
+    }
 
+    const menuItems = await this.database.menuItem.findMany({ where: conditions });
     return menuItems.map(mc => this.menuItemDtoFactory.createBasicResponseDto(mc));
   }
 
@@ -82,7 +82,7 @@ export class MenuItemService implements IMenuItemService {
           defaultAmountBeforeVatPerUnit: requestDto.defaultAmountBeforeVatPerUnit,
           defaultVatPercentagePerUnit: requestDto.defaultVatPercentagePerUnit,
           categoryId: requestDto.categoryId,
-          lastUpdatedDateTime: 
+          lastUpdatedDateTime: new Date()
         },
         where: { id }
       });
@@ -93,7 +93,8 @@ export class MenuItemService implements IMenuItemService {
 
   public async deleteAsync(id: number): Promise<void> {
     try {
-      await this.database.menuCategory.delete({
+      await this.database.menuCategory.update({
+        data: { deletedDateTime: new Date() },
         where: { id }
       });
     } catch (error) {

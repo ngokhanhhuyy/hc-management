@@ -1,10 +1,15 @@
 import { createMiddleware } from "hono/factory";
-import { controllerRoutes, registerRoute, type ControllerConstructor, type ControllerAction } from "./appBuilder";
+import { registerRoute, type ControllerConstructor } from "./appBuilder";
+import { BaseController } from "./baseController";
 import { ValidationError, type ErrorDetails } from "@hc-management/shared/errors";
 import * as v from "valibot";
-import { BaseController } from "./baseController";
 
-export function fromJson<TSchema extends v.GenericSchema>(schema: TSchema): ((target: BaseController, propertyKey: string) => void) {
+type ValidationDecoratorReturnType = ((target: BaseController, propertyKey: string) => void);
+
+export function fromBody<TSchema extends v.ObjectSchema<any, any>>(
+  index: number,
+  schema: TSchema): ValidationDecoratorReturnType
+{
   return function(target: BaseController, propertyKey: string): void {
     const controllerRoute = registerRoute({
       controllerConstructor: target.constructor as ControllerConstructor,
@@ -14,14 +19,13 @@ export function fromJson<TSchema extends v.GenericSchema>(schema: TSchema): ((ta
     const middleware = createMiddleware(async (context, next) => {
       const json = await context.req.json();
       const output = validate(schema, json);
-      let validatedData = context.get("validatedData");
-      if (!validatedData) {
-        validatedData = { };
-        context.set("validatedData", validatedData);
+      let routeActionArgs = context.get("routeActionArgs");
+      if (!routeActionArgs) {
+        routeActionArgs = Array.from({ length: index + 1 });
+        context.set("routeActionArgs", routeActionArgs);
       }
 
-      validatedData.json = output;
-
+      routeActionArgs[index] = output;
       await next();
     });
 
@@ -30,9 +34,10 @@ export function fromJson<TSchema extends v.GenericSchema>(schema: TSchema): ((ta
 }
 
 type TransformersFactory<TTransfomer extends v.GenericPipeAction> = (valibot: typeof v) => TTransfomer;
-export function fromParam<TTransfomer extends v.GenericPipeAction>(
+export function fromRoute<TTransfomer extends v.GenericPipeAction>(
+  index: number,
   paramName: string,
-  transfomerFactory?: TransformersFactory<TTransfomer>)
+  transfomerFactory?: TransformersFactory<TTransfomer>): ValidationDecoratorReturnType
 {
   return function(target: BaseController, propertyKey: string): void {
     const controllerRoute = registerRoute({
@@ -46,21 +51,45 @@ export function fromParam<TTransfomer extends v.GenericPipeAction>(
     const middleware = createMiddleware(async (context, next) => {
       const paramsData = context.req.param(paramName);
       if (paramsData === undefined) {
-        throw new Error(`Param with name "${paramName}" in action "${propertyKey}" doesn't exist.`);
+        throw new Error(`Route param with name "${paramName}" in action "${propertyKey}" doesn't exist.`);
       }
 
       const output = validate(schema, paramsData);
-
-      let validatedData = context.get("validatedData");
-      if (!validatedData) {
-        validatedData = { };
-        context.set("validatedData", validatedData);
-      }
-
-      if (!validatedData.params) {
-        validatedData.params = { [paramName]: output };
-      }
       
+      let routeActionArgs = context.get("routeActionArgs");
+      if (!routeActionArgs) {
+        routeActionArgs = Array.from({ length: index + 1 });
+        context.set("routeActionArgs", routeActionArgs);
+      }
+
+      routeActionArgs[index] = output;
+      await next();
+    });
+
+    controllerRoute.middlewares.push(middleware);
+  };
+}
+
+export function fromQuery<TSchema extends v.ObjectSchema<any, any>>(
+  index: number,
+  schema: TSchema): ValidationDecoratorReturnType
+{
+  return function(target: BaseController, propertyKey: string): void {
+    const controllerRoute = registerRoute({
+      controllerConstructor: target.constructor as ControllerConstructor,
+      actionName: propertyKey,
+    });
+
+    const middleware = createMiddleware(async (context, next) => {
+      const queries = context.req.queries();
+      const output = validate(schema, queries);
+      let routeActionArgs = context.get("routeActionArgs");
+      if (!routeActionArgs) {
+        routeActionArgs = Array.from({ length: index + 1 });
+        context.set("routeActionArgs", routeActionArgs);
+      }
+
+      routeActionArgs[index] = output;
       await next();
     });
 
@@ -91,7 +120,6 @@ function validate<TSchema extends v.GenericSchema>(schema: TSchema, data: any): 
       }
 
       errorDetails[propertyPath] = issue.message;
-      console.log(propertyPath);
     }
 
     throw new ValidationError(errorDetails);

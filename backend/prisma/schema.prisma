@@ -32,9 +32,9 @@ model MenuItem {
   id                            Int       @id(map: "PK_menuItems_id") @default(autoincrement())
   name                          String
   unit                          String?
-  createdDateTime               DateTime  @default(now())
-  lastUpdatedDateTime           DateTime?
-  deletedDateTime               DateTime?
+  createdDateTime               DateTime  @default(now()) @db.Timestamptz(0)
+  lastUpdatedDateTime           DateTime? @db.Timestamptz(0)
+  deletedDateTime               DateTime? @db.Timestamptz(0)
   defaultAmountBeforeVatPerUnit Int       @default(0) @map("defaultAmountBeforeVatPerUnit")
   defaultVatPercentagePerUnit   Int       @default(0)
   categoryId                    Int?
@@ -73,10 +73,10 @@ model Seating {
 
 model Order {
   id                  Int       @id(map: "PK_orders_id") @default(autoincrement())
-  createdDateTime     DateTime  @default(now())
-  lastUpdatedDateTime DateTime?
-  deletedDateTime     DateTime?
-  finishedDateTime    DateTime?
+  createdDateTime     DateTime  @default(now()) @db.Timestamptz(0)
+  lastUpdatedDateTime DateTime? @db.Timestamptz(0)
+  deletedDateTime     DateTime? @db.Timestamptz(0)
+  finishedDateTime    DateTime? @db.Timestamptz(0)
   cachedItemAmount    Int
   createdUserId       Int
   lastUpdatedUserId   Int?

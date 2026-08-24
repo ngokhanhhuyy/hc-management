@@ -1,7 +1,7 @@
-import { type PrismaClient, type User, Prisma } from "#/prisma/client";
+import type { PrismaClient, User } from "../database/client";
 import type { IServiceContainer } from "#/dependencyInjection";
-import { IPasswordHasher } from "../common/authentication/passwordHasher";
-import { dtoFactories } from "../common/dtos";
+import type { IPasswordHasher } from "../common/authentication/passwordHasher";
+import type { IUserDtoFactory } from "../common/dtos";
 import { errorFactories, type IDatabaseErrorHandler } from "../common/errors";
 import type { UserDetailResponseDto, UserCreateRequestDto } from "@hc-management/shared/dtos";
 import { NotFoundError } from "@hc-management/shared/errors";
@@ -16,11 +16,13 @@ export class UserService implements IUserService {
   private readonly prisma: PrismaClient;
   private readonly databaseErrorHandler: IDatabaseErrorHandler;
   private readonly passwordHasher: IPasswordHasher;
+  private readonly userDtoFactory: IUserDtoFactory;
 
-  public constructor({ prisma, databaseErrorHandler, passwordHasher }: IServiceContainer) {
+  public constructor({ prisma, databaseErrorHandler, passwordHasher, userDtoFactory }: IServiceContainer) {
     this.prisma = prisma;
     this.databaseErrorHandler = databaseErrorHandler;
     this.passwordHasher = passwordHasher;
+    this.userDtoFactory = userDtoFactory;
   }
 
   public async getDetailByIdAsync(id: number): Promise<UserDetailResponseDto> {
@@ -61,6 +63,6 @@ export class UserService implements IUserService {
       throw new NotFoundError();
     }
 
-    return dtoFactories.user.detailResponseDto(user);
+    return this.userDtoFactory.createDetailResponseDto(user);
   }
 }

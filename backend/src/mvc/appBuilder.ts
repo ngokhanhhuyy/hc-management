@@ -2,16 +2,7 @@ import { Hono, type Context, type MiddlewareHandler } from "hono";
 import type { BaseController } from "./baseController";
 
 export type ControllerConstructor = new (context: Context) => BaseController;
-export type ControllerAction = (...args: any[]) => Promise<Response>;
-
-export type ControllerActionArgs<
-    TParams extends object | undefined = undefined,
-    TQuery extends object | undefined = undefined,
-    TJson = any> = {
-  params: TParams;
-  query: TQuery;
-  json: TJson;
-};
+export type ControllerAction = (...args: any[]) => Promise<any>;
 
 export type HttpMethod = "get" | "query" | "post" | "put" | "delete" | "option";
 type ControllerPath = {
@@ -64,7 +55,12 @@ export function buildApp(builderOptions?: (app: Hono) => void): Hono {
         const action: ControllerAction = controller[route.actionName as keyof typeof controller];
         const controllerAction = action.bind(controller);
 
-        return await controllerAction(context.get("validatedData"));
+        const response = await controllerAction(...context.get("routeActionArgs") ?? []);
+        if (response === undefined) {
+          return context.body(null);
+        }
+
+        return context.json(response);
       } ;
 
       mapper(route.path, handler);

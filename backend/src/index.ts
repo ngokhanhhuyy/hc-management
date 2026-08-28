@@ -1,23 +1,18 @@
-import { Hono } from "hono";
-import {
-  dependencyInjectionMiddleware,
-  errorFilterMiddleware,
-  requestLogglerMiddleware
-} from "./middlewares";
-import { buildApp } from "./mvc";
+import { serveStatic } from "hono/bun";
+import { dependencyInjectionMiddleware, errorFilterMiddleware, requestLogglerMiddleware } from "./middlewares";
+import { buildApp } from "./framework/mvc";
+import "dotenv";
 
 const app = buildApp(app => app
   .use(dependencyInjectionMiddleware)
   .use(requestLogglerMiddleware)
+  .use("/static/*", serveStatic({ root: "./" }))
   .onError(errorFilterMiddleware))
-  .get("/", (context) => {
-    return context.text("Hello Hono!");
-  })
   .all("/health-check", (context) => context.body(null, 200));
 
 export default {
-  port: 5000,
   fetch: app.fetch,
+  port: process.env.PORT ?? 5000
 };
 
 export type AppType = typeof app;

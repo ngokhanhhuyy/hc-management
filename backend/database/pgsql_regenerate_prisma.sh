@@ -23,6 +23,7 @@ SQL
 cd ..
 
 unset PGPASSWORD
-pnpm dlx prisma generate
-pnpm dlx prisma db push
-pnpm dlx prisma db seed
+rm -rf ../src/core/database/*
+pnpm exec prisma generate
+pnpm exec prisma db push
+pnpm exec prisma db seed

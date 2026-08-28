@@ -1,6 +1,6 @@
 import { getCookie } from "hono/cookie";
 import { createMiddleware } from "hono/factory";
-import { jwtVerify } from "jose";
+import { jwtVerify, type JWTPayload } from "jose";
 import { UserDetailResponseDto } from "@hc-management/shared/dtos";
 import { AuthenticationError } from "@hc-management/shared/errors";
 import * as v from "valibot";
@@ -14,10 +14,21 @@ export const authenticationMiddleware = createMiddleware(async (context, next) =
 
   const secretKey = new TextEncoder().encode(process.env.SECRET_KEY!);
   const cookieToken = cookieValue.slice(expectedPrefix.length);
-  const { payload } = await jwtVerify(cookieToken, secretKey);
+  let payload: JWTPayload;
+  try {
+    const verifyResult = await jwtVerify(cookieToken, secretKey);
+    payload = verifyResult.payload;
+  } catch (error) {
+    throw new AuthenticationError();
+  }
+  
   if (!v.is(UserDetailResponseDto, payload)) {
     throw new AuthenticationError();
   }
+
+  const serviceProvider = context.get("provider");
+  const callerDetailProvider = serviceProvider.getRequiredService("callerDetailProvider");
+  callerDetailProvider.setCallerDetail(payload);
 
   await next();
 });

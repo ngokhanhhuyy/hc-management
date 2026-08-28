@@ -8,7 +8,7 @@ Content-Type: application/json
 
 {
     "userName": "admin",
-    "password": "admin"
+    "password": "admin47b1"
 }
 
 ###
@@ -22,16 +22,14 @@ Content-Type: application/json
 Cookie: {{accessCookie}}
 
 ###
-@accessCookie = {{GetAccessCookie.response.headers.set-cookie}}
-
-###
 # @name ChangePassword
 // @no-log
 POST {{host}}/api/authentication/change-password
 Content-Type: application/json
+Cookie: {{accessCookie}}
 
 {
-    "newPassword": "myPassword"
+    "newPassword": "admin47b1"
 }
 
 ###

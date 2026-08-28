@@ -1,20 +1,22 @@
 import { type Context } from "hono";
 import {
   BaseController,
+  controller,
   route,
   httpGet,
   httpPost,
   fromRoute,
   producesResponseType,
-  authorized,
+  authorize,
   fromBody
-} from "#/mvc";
-import type { IUserService } from "#/services/features/userService.js";
+} from "#/framework/mvc";
+import type { IUserService } from "#/core/services/userService";
 import type { IUserApi } from "@hc-management/shared/api";
 import { UserCreateRequestDto, type UserDetailResponseDto } from "@hc-management/shared/dtos";
 
+@controller
 @route("/api/users")
-@authorized
+@authorize
 export class UserController extends BaseController implements IUserApi {
   private readonly userService: IUserService;
 
@@ -24,7 +26,7 @@ export class UserController extends BaseController implements IUserApi {
   }
 
   @httpGet("/:id{[0-9]+}")
-  @fromRoute(0, "id", v => v.toNumber())
+  @fromRoute(0, "id", "number")
   @producesResponseType<UserDetailResponseDto>(200)
   @producesResponseType(404)
   public async getDetailAsync(id: number): Promise<UserDetailResponseDto> {

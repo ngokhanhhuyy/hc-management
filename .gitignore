@@ -6,4 +6,4 @@
 **/.vscode
 **/dist
 
-backend/src/services/database/*
+backend/src/core/database/*

@@ -1,4 +1,4 @@
-import type { IScopedServiceProvider } from "../dependencyInjection";
+import type { IScopedServiceProvider } from "#/framework/dependencyInjection";
 import type { ApiActionArgs } from "@hc-management/shared/api";
 
 declare module "hono" {

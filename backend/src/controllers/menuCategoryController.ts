@@ -1,6 +1,7 @@
 import { type Context } from "hono";
-import { BaseController } from "#/mvc/baseController";
 import {
+  BaseController,
+  controller,
   route,
   httpGet,
   httpPost,
@@ -8,18 +9,19 @@ import {
   httpDelete,
   fromBody,
   producesResponseType,
-  authorized,
+  authorize,
   fromRoute
-} from "#/mvc";
-import type { IMenuCategoryService } from "#/services/features/menuCategoryService.js";
+} from "#/framework/mvc";
+import type { IMenuCategoryService } from "#/core/services/menuCategoryService";
 import type { IMenuCategoryApi } from "@hc-management/shared/api";
 import {
   MenuCategoryUpsertRequestDto as UpsertRequestDto,
   type MenuCategoryBasicResponseDto as BasicResponseDto
 } from "@hc-management/shared/dtos";
 
+@controller
 @route("/api/menu-categories")
-@authorized
+@authorize
 export class MenuCategoryController extends BaseController implements IMenuCategoryApi {
   private readonly menuCategoryService: IMenuCategoryService;
 
@@ -35,7 +37,7 @@ export class MenuCategoryController extends BaseController implements IMenuCateg
   }
 
   @httpGet("/:id{[0-9]+}")
-  @fromRoute(0, "id", (v) => v.toNumber())
+  @fromRoute(0, "id", "number")
   @producesResponseType<BasicResponseDto>(200)
   @producesResponseType(401)
   @producesResponseType(403)
@@ -57,7 +59,7 @@ export class MenuCategoryController extends BaseController implements IMenuCateg
   }
 
   @httpPut("/:id{[0-9]+}")
-  @fromRoute(0, "id", (v) => v.toNumber())
+  @fromRoute(0, "id", "number")
   @fromBody(1, UpsertRequestDto)
   @producesResponseType(200)
   @producesResponseType(400)
@@ -71,8 +73,7 @@ export class MenuCategoryController extends BaseController implements IMenuCateg
   }
 
   @httpDelete("/:id{[0-9]+}")
-  @fromRoute(0, "id", (v) => v.toNumber())
-  @fromBody(1, UpsertRequestDto)
+  @fromRoute(0, "id", "number")
   @producesResponseType(200)
   @producesResponseType(401)
   @producesResponseType(403)

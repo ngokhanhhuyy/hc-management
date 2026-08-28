@@ -1,16 +1,17 @@
-import { type Context } from "hono";
+import { Context } from "hono";
 import { setCookie, deleteCookie } from "hono/cookie";
 import { SignJWT } from "jose";
-import { BaseController } from "#/mvc/baseController";
-import { route, httpPost, fromBody, producesResponseType, authorized } from "#/mvc";
-import type { IAuthenticationService } from "#/services/features/authenticationService.js";
-import type { IUserService } from "#/services/features/userService.js";
+import { BaseController } from "#/framework/mvc/baseController";
+import { controller, route, httpGet, httpPost, fromBody, producesResponseType, authorize } from "#/framework/mvc";
+import type { IAuthenticationService } from "#/core/services/authenticationService";
+import type { IUserService } from "#/core/services/userService";
 import type { IAuthenticationApi } from "@hc-management/shared/api";
 import {
   AuthenticationVerifyUserNameAndPasswordRequestDto as GetAccessCookieRequestDto,
   AuthenticationChangePasswordRequestDto as ChangePasswordRequestDto
 } from "@hc-management/shared/dtos";
 
+@controller
 @route("/api/authentication")
 export class AuthenticationController extends BaseController implements IAuthenticationApi {
   private readonly authenticationService: IAuthenticationService;
@@ -49,7 +50,7 @@ export class AuthenticationController extends BaseController implements IAuthent
   }
 
   @httpPost("/clear-access-cookie")
-  @authorized
+  @authorize
   @producesResponseType(200)
   @producesResponseType(401)
   public async clearAccessCookieAsync(): Promise<void> {
@@ -57,9 +58,17 @@ export class AuthenticationController extends BaseController implements IAuthent
     return this.ok();
   }
 
+  @httpGet("/check-status")
+  @authorize
+  @producesResponseType(200)
+  @producesResponseType(401)
+  public async checkStatusAsync(): Promise<void> {
+    return this.ok();
+  }
+
 
   @httpPost("/change-password")
-  @authorized
+  @authorize
   @fromBody(0, ChangePasswordRequestDto)
   @producesResponseType(200)
   @producesResponseType(400)

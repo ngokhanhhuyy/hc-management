@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import type { Implements } from "../helpers/index.js";
 import type { IListRequestDto, IListResponseDto } from "./interfaces.js";
-import { ISODateToTemporalPlainDateTransformer, NullableISODateToTemporalPlainDateTransformer } from "./transformer.js";
+import { OrderItemDetailResponseDto, OrderItemUpsertRequestDto } from "./orderItemDtos.js";
 import {
   SeatingBasicResponseDto,
   UserBasicResponseDto,
@@ -31,16 +31,21 @@ export const OrderListResponseDto = v.object({
 export type OrderDetailResponseDto = v.InferOutput<typeof OrderDetailResponseDto>;
 export const OrderDetailResponseDto = v.object({
   id: v.number(),
-  createdDateTime: v.pipe(v.string(), v.isoDate(), ISODateToTemporalPlainDateTransformer),
-  lastUpdatedDateTime: v.pipe(
-    v.nullable(v.pipe(v.string(), v.isoDate())),
-    NullableISODateToTemporalPlainDateTransformer),
-  finishedDateTime: v.pipe(
-    v.nullable(v.pipe(v.string(), v.isoDate())),
-    NullableISODateToTemporalPlainDateTransformer),
+  createdDateTime: v.pipe(v.string(), v.isoDate()),
+  lastUpdatedDateTime: v.nullable(v.pipe(v.string(), v.isoDate())),
+  finishedDateTime: v.nullable(v.pipe(v.string(), v.isoDate())),
   itemAmount: v.number(),
+  items: v.array(OrderItemDetailResponseDto),
   createdUser: UserBasicResponseDto,
   lastUpdatedUser: v.nullable(UserBasicResponseDto),
   finishedUser: v.nullable(UserBasicResponseDto),
-  seating: SeatingBasicResponseDto
+  seating: SeatingBasicResponseDto,
+  concurrencyVersion: v.string()
+});
+
+export type OrderUpsertRequestDto = v.InferOutput<typeof OrderUpsertRequestDto>;
+export const OrderUpsertRequestDto = v.object({
+  seatingId: v.number(),
+  items: v.array(OrderItemUpsertRequestDto),
+  concurrencyVersion: v.nullable(v.string())
 });

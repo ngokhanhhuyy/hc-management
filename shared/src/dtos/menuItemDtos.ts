@@ -14,7 +14,7 @@ export const MenuItemDetailResponseDto = v.object({
   lastUpdatedDateTime: v.nullable(v.pipe(v.string(), v.isoDate())),
   category: v.nullable(MenuCategoryBasicResponseDto),
   createdUser: UserBasicResponseDto,
-  lastUpdatedUser: v.nullable(UserBasicResponseDto)
+  lastUpdatedUser: v.nullable(UserBasicResponseDto),
 });
 
 export type MenuItemUpsertRequestDto = v.InferOutput<typeof MenuItemUpsertRequestDto>;

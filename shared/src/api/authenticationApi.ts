@@ -1,11 +1,11 @@
-import type { EmptyResponse } from "./requestAndResponse.js";
 import type {
-  AuthenticationVerifyUserNameAndPasswordRequestDto as VerifyUserNameAndPasswordRequestDto,
-  AuthenticationChangePasswordRequestDto as ChangePasswordRequestDto
+  AuthenticationVerifyUserNameAndPasswordRequestDto,
+  AuthenticationChangePasswordRequestDto
 } from "../dtos/index.js";
 
 export interface IAuthenticationApi {
-  getAccessCookieAsync(requestDto: VerifyUserNameAndPasswordRequestDto): Promise<void>;
+  getAccessCookieAsync(requestDto: AuthenticationVerifyUserNameAndPasswordRequestDto): Promise<void>;
   clearAccessCookieAsync(): Promise<void>;
-  changePasswordAsync(requestDto: ChangePasswordRequestDto): Promise<void>;
+  checkStatusAsync(): Promise<void>;
+  changePasswordAsync(requestDto: AuthenticationChangePasswordRequestDto): Promise<void>;
 }

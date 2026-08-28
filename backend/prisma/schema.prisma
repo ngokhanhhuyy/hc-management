@@ -5,7 +5,7 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../src/services/database"
+  output   = "../src/core/database"
 }
 
 datasource db {
@@ -13,10 +13,11 @@ datasource db {
 }
 
 model User {
-  id           Int     @id(map: "PK_users_id") @default(autoincrement())
-  userName     String
-  passwordHash String
-  isDeleted    Boolean @default(false)
+  id                 Int     @id(map: "PK_users_id") @default(autoincrement())
+  userName           String
+  passwordHash       String
+  isDeleted          Boolean @default(false)
+  concurrencyVersion String  @default(uuid())
 
   createdMenuItem     MenuItem[] @relation("menuItemCreatedUser")
   lastUpdatedMenuItem MenuItem[] @relation("menuItemLastUpdatedUser")
@@ -41,6 +42,7 @@ model MenuItem {
   createdUserId                 Int
   lastUpdatedUserId             Int?
   deletedUserId                 Int?
+  concurrencyVersion            String    @default(uuid())
 
   category        MenuCategory? @relation(fields: [categoryId], references: [id], map: "FK_menuItems_menuCategories_categoryId", onUpdate: Cascade, onDelete: SetNull)
   orderItems      OrderItem[]
@@ -52,18 +54,20 @@ model MenuItem {
 }
 
 model MenuCategory {
-  id    Int        @id(map: "PK_menuCategories_id") @default(autoincrement())
-  name  String
-  items MenuItem[]
+  id                 Int        @id(map: "PK_menuCategories_id") @default(autoincrement())
+  name               String
+  items              MenuItem[]
+  concurrencyVersion String     @default(uuid())
 
   @@unique([name], map: "UNIQUE_menuCategories_name")
   @@map("menuCategories")
 }
 
 model Seating {
-  id        Int     @id(map: "PK_seatings_id") @default(autoincrement())
-  name      String
-  isDeleted Boolean @default(false)
+  id                 Int     @id(map: "PK_seatings_id") @default(autoincrement())
+  name               String
+  isDeleted          Boolean @default(false)
+  concurrencyVersion String  @default(uuid())
 
   orders Order[]
 
@@ -82,19 +86,23 @@ model Order {
   lastUpdatedUserId   Int?
   finishedUserId      Int?
   seatingId           Int
+  concurrencyVersion  String    @default(uuid())
 
   createdUser     User        @relation("orderCreatedUser", fields: [createdUserId], references: [id], map: "FK_orders_users_createdUserId", onUpdate: Cascade, onDelete: Restrict)
   lastUpdatedUser User?       @relation("orderLastUpdatedUser", fields: [lastUpdatedUserId], references: [id], map: "FK_orders_users_lastUpdatedUserId", onUpdate: Cascade, onDelete: Restrict)
   finishedUser    User?       @relation("orderFinishedUser", fields: [finishedUserId], references: [id], map: "FK_orders_users_finishedUserId", onUpdate: Cascade, onDelete: Restrict)
   seating         Seating     @relation(fields: [seatingId], references: [id], map: "FK_orders_seatings_seatingId", onUpdate: Cascade, onDelete: Restrict)
-  orderItems      OrderItem[]
+  items           OrderItem[]
 }
 
 model OrderItem {
-  id         Int @id(map: "PK_orderItems_id") @default(autoincrement())
-  quantity   Int
-  orderId    Int
-  menuItemId Int
+  id                     Int    @id(map: "PK_orderItems_id") @default(autoincrement())
+  amountBeforeVatPerUnit Int
+  vatPercentagePerUnit   Int
+  quantity               Int
+  orderId                Int
+  menuItemId             Int
+  concurrencyVersion     String @default(uuid())
 
   order    Order    @relation(fields: [orderId], references: [id], map: "FK_orderItems_orders_orderId", onUpdate: Cascade, onDelete: Cascade)
   menuItem MenuItem @relation(fields: [menuItemId], references: [id], map: "FK_orderItems_menuItems_menuItemId", onUpdate: Cascade, onDelete: Restrict)

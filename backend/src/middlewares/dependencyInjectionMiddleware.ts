@@ -1,5 +1,5 @@
 import { createMiddleware } from "hono/factory";
-import { createScopedServiceProvider } from "#/dependencyInjection";
+import { createScopedServiceProvider } from "#/framework/dependencyInjection";
 
 export const dependencyInjectionMiddleware = createMiddleware(async (context, next) => {
   const scopedServiceProvider = createScopedServiceProvider(context);

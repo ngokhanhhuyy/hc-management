@@ -64,6 +64,7 @@ export default defineConfig([
       "@typescript-eslint/no-namespace": "off",
       "@typescript-eslint/no-empty-object-type": "off",
       "no-case-declarations": "off",
+      "@typescript-eslint/ban-ts-comment": "off"
     }
   },
 

@@ -1,0 +1,41 @@
+.select-input-menu {
+    background-color: rgba(var(--bs-body-bg-rgb), 0.75) !important;
+    border: none !important;
+    outline: 1px solid rgba(var(--bs-emphasis-color-rgb), 0.2);
+    max-height: 250px;
+    overflow-y: auto;
+    overscroll-behavior-y: none;
+    backdrop-filter: blur(10px);
+    animation-name: fade-in;
+    animation-duration: .15s;
+    animation-fill-mode: forwards;
+    top: calc(100% + 0.375rem) !important;
+}
+
+.select-input-menu-item {
+    padding: .15rem .5rem;
+    cursor: pointer;
+    white-space: normal !important;
+}
+
+.select-input-menu-item:hover {
+    background-color: rgba(var(--bs-emphasis-color-rgb), 0.1);
+}
+
+.select-input-menu-item.selected {
+    background-color: var(--bs-primary);
+    color: white;
+    filter: brightness(1.25);
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0%;
+        transform: scale(75%);
+    }
+
+    to {
+        opacity: 100%;
+        transform: scale(100%);
+    }
+}

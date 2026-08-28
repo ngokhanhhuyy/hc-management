@@ -11,6 +11,9 @@ export const ValidationContracts = {
     DefaultVatPercentagePerUnitMinValue: 0,
     DefaultVatPercentagePerUnitMaxValue: 100,
   },
+  Seating: {
+    NameMaxLength: 20
+  },
   OrderItem: {
     QuantityMinValue: 1,
   },

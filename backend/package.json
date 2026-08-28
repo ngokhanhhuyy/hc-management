@@ -1,8 +1,8 @@
 {
   "name": "@hc-management/backend",
   "scripts": {
-    "start": "bun src/index.ts",
-    "dev": "bun run --hot src/index.ts",
+    "start": "bun run src/index.ts",
+    "dev": "bun --hot run src/index.ts",
     "build": "bun build ./src/index.ts --compile --outfile ./dist/hcmanagement"
   },
   "type": "module",
@@ -30,6 +30,8 @@
     "valibot": "^1.4.2"
   },
   "devDependencies": {
+    "@hono/vite-build": "^1.11.1",
+    "@hono/vite-dev-server": "^0.26.1",
     "@types/bun": "latest",
     "@types/pg": "^8.21.0",
     "prisma": "^7.9.1",

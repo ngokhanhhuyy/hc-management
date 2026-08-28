@@ -7,7 +7,7 @@
     "types": ["bun"],
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
-    "experimentalDecorators": true,
+    "lib": ["es2022", "esnext.decorators", "dom", "DOM.Iterable"],
     "paths": {
       "#/*": ["./src/*"],
       "#/prisma/*": ["./prisma/generated/*"]

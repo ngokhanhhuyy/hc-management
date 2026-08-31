@@ -99,7 +99,7 @@ export class MenuItemService implements IMenuItemService {
 
   public async deleteAsync(id: number): Promise<void> {
     try {
-      await this.database.menuCategory.update({
+      await this.database.menuItem.update({
         data: { deletedDateTime: new Date() },
         where: { id }
       });

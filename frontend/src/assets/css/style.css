@@ -5,11 +5,6 @@
     margin: 0 !important;
 }
 
-html {
-    scrollbar-gutter: stable;
-    scrollbar-width: 20px;
-}
-
 body {
     background-color: var(--bs-light) !important;
     display: flex;

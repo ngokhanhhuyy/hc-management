@@ -1,0 +1,10 @@
+.seating-map-item {
+    border: 1px solid rgba(var(--bs-secondary-rgb), 0.25);
+    transition: box-shadow 0.2s;
+}
+
+.seating-map-item:hover {
+    border-color: rgba(var(--bs-secondary-rgb), 0.5);
+    box-shadow: var(--bs-box-shadow);
+    cursor: pointer;
+}

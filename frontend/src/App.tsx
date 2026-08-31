@@ -8,6 +8,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 
 // Child components.
 import SignInPage from "#/pages/authentication/SignInPage";
+import DashboardPage from "#/pages/dashboard/Dashboard";
 
 // Components.
 export default function App(): React.ReactNode {
@@ -52,12 +53,5 @@ export default function App(): React.ReactNode {
     );
   }
 
-  return (
-    <div className="d-flex flex-column gap-3">
-      <h1>Xin chào!</h1>
-      <button type="button" className="btn btn-primary" onClick={onSignOutAsync}>
-        Đăng xuất
-      </button>
-    </div>
-  );
+  return <DashboardPage />;
 }

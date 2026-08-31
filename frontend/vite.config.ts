@@ -4,6 +4,11 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
+  css: {
+    modules: {
+      localsConvention: "camelCaseOnly",
+    },
+  },
   server: {
     allowedHosts: ["frontend.khanhhuy.dev", "frontend-workstation.khanhhuy.dev", "frontend-wsl.khanhhuy.dev"],
     strictPort: true,

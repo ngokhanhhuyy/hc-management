@@ -65,7 +65,7 @@ model MenuCategory {
 
 model Seating {
   id                 Int     @id(map: "PK_seatings_id") @default(autoincrement())
-  name               String
+  name               String?
   isDeleted          Boolean @default(false)
   concurrencyVersion String  @default(uuid())
 
@@ -93,6 +93,8 @@ model Order {
   finishedUser    User?       @relation("orderFinishedUser", fields: [finishedUserId], references: [id], map: "FK_orders_users_finishedUserId", onUpdate: Cascade, onDelete: Restrict)
   seating         Seating     @relation(fields: [seatingId], references: [id], map: "FK_orders_seatings_seatingId", onUpdate: Cascade, onDelete: Restrict)
   items           OrderItem[]
+
+  @@map("orders")
 }
 
 model OrderItem {

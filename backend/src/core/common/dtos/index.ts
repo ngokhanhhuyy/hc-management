@@ -122,7 +122,8 @@ export class DtoFactory implements IDtoFactory {
       createdUser: this.createUserBasic(order.createdUser),
       lastUpdatedUser: order.lastUpdatedUser && this.createUserBasic(order.lastUpdatedUser),
       finishedUser: order.finishedUser && this.createUserBasic(order.finishedUser),
-      seating: this.createSeatingBasic(order.seating)
+      seating: this.createSeatingBasic(order.seating),
+      concurrencyVersion: order.concurrencyVersion
     };
   }
 
@@ -130,7 +131,8 @@ export class DtoFactory implements IDtoFactory {
     return {
       id: orderItem.id,
       quantity: orderItem.quantity,
-      menuItem: this.createMenuItemBasic(orderItem.menuItem)
+      menuItem: this.createMenuItemBasic(orderItem.menuItem),
+      concurrencyVersion: orderItem.concurrencyVersion
     };
   }
 }
@@ -145,7 +147,10 @@ type SeatingBasicResponseDtoFactoryArgs = Seating & {
   activeOrder?: Order | null;
 };
 
-type SeatingDetailResponseDtoFactoryArgs = SeatingBasicResponseDtoFactoryArgs;
+type SeatingDetailResponseDtoFactoryArgs = SeatingBasicResponseDtoFactoryArgs & {
+  createdUser: User;
+  lastUpdatedUser: User | null;
+};
 
 type OrderBasicResponseDtoFactoryArgs = Order & {
   seating: Seating;

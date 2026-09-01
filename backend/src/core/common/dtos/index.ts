@@ -3,6 +3,7 @@ import type {
   UserBasicResponseDto,
   UserDetailResponseDto,
   MenuItemBasicResponseDto,
+  MenuItemListResponseDto,
   MenuItemDetailResponseDto,
   MenuCategoryBasicResponseDto,
   SeatingBasicResponseDto,
@@ -17,6 +18,7 @@ export interface IDtoFactory {
   createUserBasic(user: User): UserBasicResponseDto;
   createUserDetail(user: User): UserDetailResponseDto;
   createMenuItemBasic(menuItem: MenuItem): MenuItemBasicResponseDto;
+  createMenuItemList(menuItems: MenuItem[], totalItemCount: number): MenuItemListResponseDto;
   createMenuItemDetail(menuItem: MenuItemDetailResponseDtoFactoryArgs): MenuItemDetailResponseDto;
   createMenuCategoryBasic(menuCategory: MenuCategory): MenuCategoryBasicResponseDto;
   createSeatingBasic(seating: SeatingBasicResponseDtoFactoryArgs): SeatingBasicResponseDto;
@@ -44,7 +46,6 @@ export class DtoFactory implements IDtoFactory {
       userName: user.userName
     };
   }
-  
 
   public createMenuItemBasic(menuItem: MenuItem): MenuItemBasicResponseDto {
     return {
@@ -54,6 +55,13 @@ export class DtoFactory implements IDtoFactory {
       defaultAmountBeforeVatPerUnit: menuItem.defaultAmountBeforeVatPerUnit,
       defaultVatPercentagePerUnit: menuItem.defaultVatPercentagePerUnit,
       isDeleted: menuItem.deletedDateTime != null
+    };
+  }
+
+  public createMenuItemList(menuItems: MenuItem[], totalItemCount: number): MenuItemListResponseDto {
+    return {
+      items: menuItems.map(mi => this.createMenuItemBasic(mi)),
+      totalItemCount
     };
   }
   

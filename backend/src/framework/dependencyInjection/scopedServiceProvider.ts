@@ -8,6 +8,7 @@ import { AuthenticationService, type IAuthenticationService } from "#/core/servi
 import { MenuCategoryService, type IMenuCategoryService } from "#/core/services/menuCategoryService";
 import { MenuItemService, type IMenuItemService } from "#/core/services/menuItemService";
 import { SeatingService, type ISeatingService } from "#/core/services/seatingService";
+import { OrderService, type IOrderService } from "#/core/services/orderService";
 import { UserService, type IUserService } from "#/core/services/userService";
 
 export interface IScopedServiceContainer {
@@ -18,6 +19,7 @@ export interface IScopedServiceContainer {
   menuCategoryService: IMenuCategoryService;
   menuItemService: IMenuItemService;
   seatingService: ISeatingService;
+  orderService: IOrderService;
   userService: IUserService;
 }
 
@@ -50,6 +52,7 @@ export function createScopedServiceProvider(context: Context): IScopedServicePro
     menuCategoryService: asClass(MenuCategoryService).scoped(),
     menuItemService: asClass(MenuItemService).scoped(),
     seatingService: asClass(SeatingService).scoped(),
+    orderService: asClass(OrderService).scoped(),
     userService: asClass(UserService).scoped()
   } satisfies DependecyRegistrations<IScopedServiceContainer>);
 

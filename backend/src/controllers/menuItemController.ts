@@ -10,21 +10,21 @@ import {
   httpDelete,
   fromBody,
   fromRoute,
-  fromQuery,
   producesResponseType,
   authorize,
+  fromQuery,
 } from "#/framework/mvc";
 import type { IMenuItemService } from "#/core/services/menuItemService";
 import type { IMenuItemApi } from "@hc-management/shared/api";
 import {
   MenuItemListRequestDto,
   MenuItemUpsertRequestDto,
-  type MenuItemBasicResponseDto,
+  type MenuItemListResponseDto,
   type MenuItemDetailResponseDto
 } from "@hc-management/shared/dtos";
 
 @controller
-@route("/api/menu-categories")
+@route("/api/menu-items")
 @authorize
 export class MenuItemController extends BaseController implements IMenuItemApi {
   private readonly menuItemService: IMenuItemService;
@@ -34,10 +34,10 @@ export class MenuItemController extends BaseController implements IMenuItemApi {
     this.menuItemService = this.serviceProvider.getRequiredService("menuItemService");
   }
 
-  @httpQuery("/")
+  @httpGet("/")
   @fromQuery(0, MenuItemListRequestDto)
-  @producesResponseType<MenuItemBasicResponseDto[]>(200)
-  public async getListAsync(requestDto: MenuItemListRequestDto): Promise<MenuItemBasicResponseDto[]> {
+  @producesResponseType<MenuItemListResponseDto>(200)
+  public async getListAsync(requestDto: MenuItemListRequestDto): Promise<MenuItemListResponseDto> {
     return this.ok(await this.menuItemService.getListAsync(requestDto));
   }
 

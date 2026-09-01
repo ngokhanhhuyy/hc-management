@@ -42,7 +42,11 @@ async function sendAsync(endpoint: string, options: RequestOptions): Promise<Res
   if (options.query) {
     const query: Record<string, string> = { };
     for (const [key, value] of Object.entries(options.query)) {
-      query[key] = value?.toString() ?? "";
+      if (value === undefined) {
+        continue;
+      }
+
+      query[key] = value?.toString() ?? "null";
     }
 
     const searchParams = new URLSearchParams(query);

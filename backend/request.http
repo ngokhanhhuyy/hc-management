@@ -8,7 +8,7 @@ Content-Type: application/json
 
 {
     "userName": "admin",
-    "password": "admin47b1"
+    "password": "admin"
 }
 
 ###
@@ -69,6 +69,13 @@ Cookie: {{accessCookie}}
 {
     "name": "Test Category 1"
 }
+
+###
+# @name MenuItemList
+GET {{basePath}}/menu-items?categoryId=1
+Content-Type: application/json
+Cookie: {{accessCookie}}
+
 
 ###
 # @name HealthCheck

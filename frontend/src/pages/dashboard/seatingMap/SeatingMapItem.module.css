@@ -8,3 +8,9 @@
     box-shadow: var(--bs-box-shadow);
     cursor: pointer;
 }
+
+.selected {
+    border-color: var(--bs-primary) !important;
+    outline: 1px solid var(--bs-primary);
+    box-shadow: var(--bs-box-shadow);
+}

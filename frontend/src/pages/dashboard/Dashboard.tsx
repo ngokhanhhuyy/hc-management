@@ -1,30 +1,45 @@
-import React, { useMemo } from "react";
+import React, { useState } from "react";
+import type { SeatingBasicModel } from "#/models";
+import { compute } from "#/helpers";
 
 // Child components.
 import { TabPanel, type TabPanelOption } from "#/components/ui";
 import SeatingMapTab from "./seatingMap/SeatingMapTab";
+import OrderUpsertTab from "./orderUpsert/OrderUpsertTab";
 
 // Components.
 export default function DashboardPage(): React.ReactNode {
+  // States.
+  const [selectedSeating, setSelectedSeating] = useState<SeatingBasicModel | null>(null); 
+
   // Computed.
-  const primaryTabPanelOptions = useMemo<TabPanelOption[]>(() => {
+  const currentTabKey = compute(() => selectedSeating ? "OrderUpsert" : "SeatingMap");
+
+  const primaryTabPanelOptions = compute<TabPanelOption[]>(() => {
     return [
       { key: "SeatingMap", displayName: "Sơ đồ bàn ăn" },
-      { key: "MenuItemList", displayName: "Danh sách món ăn" },
+      { key: "OrderUpsert", displayName: "Order", isDisabled: selectedSeating === null },
     ];
-  }, []);
-  
-  const secondaryTabPanelOptions = useMemo<TabPanelOption[]>(() => {
-    return [{ key: "", displayName: "Danh sách order" }];
-  }, []);
+  });
+
+  // Callbacks.
+  function onSeatingSelected(seating: SeatingBasicModel): void {
+    setSelectedSeating(seating);
+  }
+
+  function onTabSelected(selectedTabKey: string): void {
+    if (selectedTabKey === "SeatingMap") {
+      setSelectedSeating(null);
+    }
+  }
 
   // Templates.
-  function renderTabContent(currentTabKey: string): React.ReactNode {
-    if (currentTabKey === "SeatingMap") {
-      return <SeatingMapTab />;
+  function renderTabContent(): React.ReactNode {
+    if (selectedSeating) {
+      return <OrderUpsertTab seating={selectedSeating} />;
     }
 
-    return <></>;
+    return <SeatingMapTab onSeatingSelected={onSeatingSelected} />;
   }
 
   return (
@@ -33,13 +48,8 @@ export default function DashboardPage(): React.ReactNode {
         <div className="col h-100">
           <TabPanel
             options={primaryTabPanelOptions}
-            render={renderTabContent}
-          />
-        </div>
-        
-        <div className="col col-auto h-100" style={{ width: 450 }}>
-          <TabPanel
-            options={secondaryTabPanelOptions}
+            currentTabKey={currentTabKey}
+            onTabSelected={onTabSelected}
             render={renderTabContent}
           />
         </div>

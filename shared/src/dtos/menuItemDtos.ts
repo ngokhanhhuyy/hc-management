@@ -4,7 +4,17 @@ import { MenuCategoryBasicResponseDto, UserBasicResponseDto, MenuItemBasicRespon
 
 export type MenuItemListRequestDto = v.InferOutput<typeof MenuItemListRequestDto>;
 export const MenuItemListRequestDto = v.object({
-  categoryId: v.optional(v.number())
+  categoryId: v.optional(v.pipe(
+    v.array(v.union([v.string(), v.number()])),
+    v.transform(array => array[0]),
+    v.toNumber())
+  )
+});
+
+export type MenuItemListResponseDto = v.InferOutput<typeof MenuItemListResponseDto>;
+export const MenuItemListResponseDto = v.object({
+  items: v.array(MenuItemBasicResponseDto),
+  totalItemCount: v.number()
 });
 
 export type MenuItemDetailResponseDto = v.InferOutput<typeof MenuItemDetailResponseDto>;

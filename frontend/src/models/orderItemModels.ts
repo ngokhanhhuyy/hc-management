@@ -1,7 +1,5 @@
-import {
-  OrderItemDetailResponseDto,
-  type OrderItemUpsertRequestDto,
-  type MenuItemBasicResponseDto } from "@hc-management/shared/dtos";
+import { createMenuItemBasicModel, type MenuItemBasicModel } from "./sharedModels";
+import { OrderItemDetailResponseDto, type OrderItemUpsertRequestDto } from "@hc-management/shared/dtos";
 import * as v from "valibot";
 
 export type OrderItemUpsertModel = {
@@ -9,20 +7,20 @@ export type OrderItemUpsertModel = {
   amountBeforeVatPerUnit: number,
   vatPercentagePerUnit: number;
   quantity: number;
-  menuItem: number;
+  menuItem: MenuItemBasicModel;
   concurrencyVersion: string | null;
   toRequestDto(): OrderItemUpsertRequestDto;
 };
 
 export function createOrderItemUpsertModel(
-  arg: OrderItemDetailResponseDto | MenuItemBasicResponseDto): OrderItemUpsertModel
+  arg: OrderItemDetailResponseDto | MenuItemBasicModel): OrderItemUpsertModel
 {
   const model: OrderItemUpsertModel = {
     id: null,
     amountBeforeVatPerUnit: 0,
     vatPercentagePerUnit: 0,
     quantity: 1,
-    menuItemId: 0,
+    menuItem: null!,
     concurrencyVersion: null,
     toRequestDto(): OrderItemUpsertRequestDto {
       return {
@@ -30,7 +28,8 @@ export function createOrderItemUpsertModel(
         amountBeforeVatPerUnit: this.amountBeforeVatPerUnit,
         vatPercentagePerUnit: this.vatPercentagePerUnit,
         quantity: this.quantity,
-        menuItemId: this.menuItemId,
+        menuItemId: this.menuItem.id,
+        concurrencyVersion: this.concurrencyVersion
       };
     }
   };
@@ -39,7 +38,7 @@ export function createOrderItemUpsertModel(
     model.id = arg.id;
     model.amountBeforeVatPerUnit = arg.menuItem.defaultAmountBeforeVatPerUnit;
     model.vatPercentagePerUnit = arg.menuItem.defaultVatPercentagePerUnit;
-    model.menuItemId = arg.menuItem.id;
+    model.menuItem = createMenuItemBasicModel(arg.menuItem);
     model.concurrencyVersion = arg.concurrencyVersion;
 
     return model;
@@ -47,7 +46,7 @@ export function createOrderItemUpsertModel(
   
   model.amountBeforeVatPerUnit = arg.defaultAmountBeforeVatPerUnit;
   model.vatPercentagePerUnit = arg.defaultVatPercentagePerUnit;
-  model.menuItemId = arg.id;
+  model.menuItem = arg;
 
   return model;
 }

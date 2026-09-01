@@ -1,8 +1,27 @@
-import type { SeatingBasicResponseDto, OrderBasicResponseDto } from "@hc-management/shared/dtos";
+import type {
+  MenuCategoryBasicResponseDto,
+  MenuItemBasicResponseDto,
+  SeatingBasicResponseDto,
+  OrderBasicResponseDto
+} from "@hc-management/shared/dtos";
+
+export type MenuCategoryBasicModel = {
+  id: number;
+  name: string;
+};
+
+export type MenuItemBasicModel = {
+  id: number;
+  name: string;
+  unit: string | null;
+  defaultAmountBeforeVatPerUnit: number;
+  defaultVatPercentagePerUnit: number;
+  isDeleted: boolean;
+};
 
 export type SeatingBasicModel = {
   id: number;
-  name: string | null;
+  name: string;
   activeOrder: OrderBasicModel | null;
   isDeleted: boolean;
 };
@@ -13,10 +32,28 @@ export type OrderBasicModel = {
   isFinished: boolean;
 };
 
-export function createSeatingBasicModel(responseDto: SeatingBasicResponseDto): SeatingBasicModel {
+export function createMenuCategoryBasicModel(responseDto: MenuCategoryBasicResponseDto): MenuCategoryBasicModel {
+  return {
+    id: responseDto.id,
+    name: responseDto.name
+  };
+}
+
+export function createMenuItemBasicModel(responseDto: MenuItemBasicResponseDto): MenuItemBasicModel {
   return {
     id: responseDto.id,
     name: responseDto.name,
+    unit: responseDto.unit,
+    defaultAmountBeforeVatPerUnit: responseDto.defaultAmountBeforeVatPerUnit,
+    defaultVatPercentagePerUnit: responseDto.defaultVatPercentagePerUnit,
+    isDeleted: responseDto.isDeleted
+  };
+}
+
+export function createSeatingBasicModel(responseDto: SeatingBasicResponseDto): SeatingBasicModel {
+  return {
+    id: responseDto.id,
+    name: responseDto.name ?? `Bàn không tên ${responseDto.id}`,
     activeOrder: responseDto.activeOrder && createOrderBasicModel(responseDto.activeOrder),
     isDeleted: responseDto.isDeleted
   };

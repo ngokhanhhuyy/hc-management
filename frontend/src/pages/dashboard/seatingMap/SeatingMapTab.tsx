@@ -5,8 +5,13 @@ import { createSeatingBasicModel, type SeatingBasicModel } from "#/models";
 // Child components.
 import SeatingMapItem from "./SeatingMapItem";
 
+// Props.
+type SeatingMapTabProps = {
+  onSeatingSelected(seating: SeatingBasicModel): any;
+};
+
 // Components.
-export default function SeatingMapTab(): React.ReactNode {
+export default function SeatingMapTab(props: SeatingMapTabProps): React.ReactNode {
   // States.
   const [model, setModel] = useState<SeatingBasicModel[]>([]);
   const [isLoading, startTransition] = useTransition();
@@ -29,12 +34,23 @@ export default function SeatingMapTab(): React.ReactNode {
   }
   
   return (
-    <div className="row g-3 p-2">
-      {model.map((seating) => (
-        <div className="col col-xxl-2 col-xl-3 col-lg-4 col-md-4 col-6" key={seating.id}>
-          <SeatingMapItem model={seating} />
+    <div className="row g-0 h-100">
+      <div className="col h-100">
+        <div className="row g-3 p-2">
+          {model.map((seating) => (
+            <div className="col col-xxl-2 col-xl-3 col-lg-4 col-md-4 col-6" key={seating.id}>
+              <SeatingMapItem
+                model={seating}
+                onClick={() => props.onSeatingSelected(seating)}
+              />
+            </div>
+          ))}
         </div>
-      ))}
+      </div>
+
+      <div className="col col-xxl-2 col-xl-3 col-lg-4 border-start">
+        
+      </div>
     </div>
   );
 }

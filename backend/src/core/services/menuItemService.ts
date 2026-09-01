@@ -5,13 +5,13 @@ import type { IDatabaseErrorHandler, IErrorFactory } from "../common/errors";
 import type { Prisma, PrismaClient, MenuItem } from "../database/client";
 import type {
   MenuItemListRequestDto,
-  MenuItemBasicResponseDto,
+  MenuItemListResponseDto,
   MenuItemDetailResponseDto,
   MenuItemUpsertRequestDto
 } from "@hc-management/shared/dtos";
 
 export interface IMenuItemService {
-  getListAsync(requestDto: MenuItemListRequestDto): Promise<MenuItemBasicResponseDto[]>;
+  getListAsync(requestDto: MenuItemListRequestDto): Promise<MenuItemListResponseDto>;
   getDetailAsync(id: number): Promise<MenuItemDetailResponseDto>;
   createAsync(requestDto: MenuItemUpsertRequestDto): Promise<number>;
   updateAsync(id: number, requestDto: MenuItemUpsertRequestDto): Promise<void>;
@@ -33,14 +33,15 @@ export class MenuItemService implements IMenuItemService {
     this.callerDetailProvider = dependencies.callerDetailProvider;
   }
 
-  public async getListAsync(requestDto: MenuItemListRequestDto): Promise<MenuItemBasicResponseDto[]> {
+  public async getListAsync(requestDto: MenuItemListRequestDto): Promise<MenuItemListResponseDto> {
+    const totalItemCount = await this.database.menuItem.count();
     let conditions: Prisma.MenuItemWhereInput = { };
     if (requestDto.categoryId != null) {
       conditions = { categoryId: requestDto.categoryId };
     }
 
     const menuItems = await this.database.menuItem.findMany({ where: conditions });
-    return menuItems.map(mc => this.dtoFactory.createMenuItemBasic(mc));
+    return this.dtoFactory.createMenuItemList(menuItems, totalItemCount);
   }
 
   public async getDetailAsync(id: number): Promise<MenuItemDetailResponseDto> {

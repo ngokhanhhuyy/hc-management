@@ -2,7 +2,7 @@ import { createContext } from "react";
 
 // Types.
 export type FormFieldContextPayload = {
-  path: string;
+  path?: string;
   isValidated: boolean;
   hasError: boolean;
   displayName?: string;

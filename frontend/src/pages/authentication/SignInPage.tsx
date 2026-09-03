@@ -27,20 +27,21 @@ export default function SignInPage(props: SignInPageProps): React.ReactNode {
 
   // Templates.
   return (
-    <div className="container-fluid d-flex justify-content-center align-items-center w-100 h-100">
+    <div className="flex justify-center items-center w-full h-full">
       <Form
-        className="bg-white border rounded-3 w-100 shadow-sm"
+        className="panel"
         style={{ maxWidth: 350 }}
         submitAction={submitAsync}
         onSubmissionSucceeded={onSubmissionSucceeded}
+        submitOnEnterKeyPressed
       >
-        <div className="text-primary border-bottom p-3 pb-2">
-          <h3 className="w-100 text-center text-uppercase">
+        <div className="panel-header">
+          <span className="panel-header-title text-center w-full">
             Quán nhậu sân vườn
-          </h3>
+          </span>
         </div>
 
-        <div className="d-flex flex-column p-3 pt-2 gap-3">
+        <div className="panel-body flex flex-col p-3 pt-2 gap-3 min-w-75">
           <FormField path="userName">
             <TextInput
               value={model.userName}

@@ -1,71 +1,78 @@
-import React, { useRef, useContext } from "react";
-import { joinClassName } from "#/helpers";
+import React, { useRef, useEffect } from "react";
+import { joinClassName, compute } from "#/helpers";
 
-// Parent components.
-import { FormFieldContext } from "./FormFieldContext";
+// Child components.
+import Input from "./Input";
 
 // Props.
 export type NumberInputProps = {
   value: number;
-  onInput?(newValue: number): any;
-  onChange?(newValue: number): any;
+  onInput(newValue: number): any;
   min?: number;
   max?: number;
-} & Omit<React.ComponentPropsWithoutRef<"input">, "type" | "value" | "onInput" | "onChange" | "min" | "max">;
+  autoFocus?: boolean;
+} & Omit<React.ComponentPropsWithoutRef<"input">, "type" | "autoFocus" | "min" | "max" | "onInput">;
 
 // Component.
-export default function NumberInput(props: NumberInputProps) {
+export default function NumberInput(props: NumberInputProps): React.ReactNode {
   // Props.
-  const { value, onInput, onChange, min, max, ...domProps } = props;
-
-  // Dependencies.
-  const formFieldContext = useContext(FormFieldContext);
+  const { value, onInput, autoFocus, ...domProps } = props;
 
   // States.
-  const elementRef = useRef<HTMLInputElement>(null!);
+  const elementRef = useRef<HTMLInputElement | null>(null);
+
+  // Computed.
+  const computedValue = compute<string>(() => {
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  });
 
   // Callbacks.
-  function handleInput(): void {
-    if (!elementRef.current.value.length) {
-      props.onInput?.(0);
-      elementRef.current.value = "0";
+  function handleInput(event: React.FormEvent<HTMLInputElement>): void {
+    const inputElement = event.target as HTMLInputElement;
+    if (!inputElement.value.length) {
+      onInput(0);
       return;
     }
 
-    if (/\d+/.test(elementRef.current.value)) {
-      const parsedValue = parseInt(elementRef.current.value);
-      const minMaxEnforcedValue = enforceMinMax(parsedValue);
-      props.onInput?.(minMaxEnforcedValue);
-      elementRef.current.value = minMaxEnforcedValue.toString();
+    if (!/[0-9\s]+/g.test(inputElement.value)) {
+      return;
     }
+    
+    const parsedValue = parseInt(inputElement.value.replaceAll(" ", ""));
+    if (props.min != null && parsedValue < props.min) {
+      onInput(props.min);
+      return;
+    }
+
+    if (props.max != null && parsedValue > props.max) {
+      onInput(props.max);
+      return;
+    }
+
+    onInput(parsedValue);
   }
 
-  function enforceMinMax(value: number): number {
-    let enforcedValue = value;
-    if (min != null) {
-      enforcedValue = Math.max(min);
+  // Effect.
+  useEffect(() => {
+    if (props.autoFocus && elementRef.current) {
+      elementRef.current.focus();
     }
-
-    if (max != null) {
-      enforcedValue = Math.min(max);
-    }
-
-    return enforcedValue;
-  }
+  }, []);
 
   // Template.
-  return (
-    <input
-      {...domProps}
-      ref={elementRef}
-      type="number"
-      name={formFieldContext.path}
-      className={joinClassName(
-        "form-control",
-        formFieldContext.isValidated && formFieldContext.hasError && "is-invalid",
-        props.className)}
-      value={value}
-      onInput={handleInput}
-    />
-  );
+  function renderInput(className?: string, path?: string, displayName?: string) {
+    return (
+      <input
+        {...domProps}
+        ref={elementRef}
+        name={path}
+        className={joinClassName(className, props.className)}
+        placeholder={props.placeholder ?? displayName}
+        value={computedValue}
+        onInput={handleInput}
+      />
+    );
+  }
+
+  return <Input render={renderInput} />;
 }

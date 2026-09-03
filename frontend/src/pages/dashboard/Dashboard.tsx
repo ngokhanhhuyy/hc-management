@@ -18,7 +18,7 @@ export default function DashboardPage(): React.ReactNode {
   const primaryTabPanelOptions = compute<TabPanelOption[]>(() => {
     return [
       { key: "SeatingMap", displayName: "Sơ đồ bàn ăn" },
-      { key: "OrderUpsert", displayName: "Order", isDisabled: selectedSeating === null },
+      { key: "OrderUpsert", displayName: "Chọn món", isDisabled: selectedSeating === null },
     ];
   });
 
@@ -43,17 +43,13 @@ export default function DashboardPage(): React.ReactNode {
   }
 
   return (
-    <div className="container-fluid bg-light w-100 h-100 p-2">
-      <div className="row g-3 w-100 h-100">
-        <div className="col h-100">
-          <TabPanel
-            options={primaryTabPanelOptions}
-            currentTabKey={currentTabKey}
-            onTabSelected={onTabSelected}
-            render={renderTabContent}
-          />
-        </div>
-      </div>
+    <div className="bg-black/0.5 w-full h-full p-2">
+      <TabPanel
+        options={primaryTabPanelOptions}
+        currentTabKey={currentTabKey}
+        onTabSelected={onTabSelected}
+        render={renderTabContent}
+      />
     </div>
   );
 }

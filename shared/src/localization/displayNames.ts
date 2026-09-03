@@ -10,6 +10,7 @@ export const displayNames = {
   confirmationPassword: "Mật khẩu xác nhận",
   newPassword: "Mật khẩu mới",
   name: "Tên",
+  searchContent: "Nội dung tìm kiếm"
 };
 
 export function getDisplayNameByKey(key: string): string {

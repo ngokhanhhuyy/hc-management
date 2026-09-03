@@ -27,28 +27,25 @@ export default function SeatingMapTab(props: SeatingMapTabProps): React.ReactNod
   // Templates.
   if (isLoading) {
     return (
-      <div className="d-flex justify-content-center align-items-center opacity-50">
+      <div className="flex justify-center items-center opacity-50">
         Đang tải
       </div>
     );
   }
   
   return (
-    <div className="row g-0 h-100">
-      <div className="col h-100">
-        <div className="row g-3 p-2">
-          {model.map((seating) => (
-            <div className="col col-xxl-2 col-xl-3 col-lg-4 col-md-4 col-6" key={seating.id}>
-              <SeatingMapItem
-                model={seating}
-                onClick={() => props.onSeatingSelected(seating)}
-              />
-            </div>
-          ))}
-        </div>
+    <div className="grid grid-cols-[3fr_1fr] items-start h-full">
+      <div className="grid 2xl:grid-cols-7 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-2 items-start gap-3 p-3">
+        {model.map((seating) => (
+          <SeatingMapItem
+            model={seating}
+            onClick={() => props.onSeatingSelected(seating)}
+            key={seating.id}
+          />
+        ))}
       </div>
 
-      <div className="col col-xxl-2 col-xl-3 col-lg-4 border-start">
+      <div className="border-s border-black/15 h-full">
         
       </div>
     </div>

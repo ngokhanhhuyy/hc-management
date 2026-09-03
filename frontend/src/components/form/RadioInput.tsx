@@ -2,11 +2,8 @@ import React, { useContext } from "react";
 import { joinClassName, compute } from "#/helpers";
 import { FormFieldContext } from "./FormFieldContext";
 
-// Child components.
-import { CheckIcon } from "@heroicons/react/24/solid";
-
 // Props.
-type CheckBoxInputProps = {
+type RadioInputProps = {
   label?: string;
   isChecked: boolean;
   onInput(isChecked: boolean): any;
@@ -15,22 +12,15 @@ type CheckBoxInputProps = {
 };
 
 // Components.
-export default function CheckBoxInput(props: CheckBoxInputProps): React.ReactNode {
+export default function RadioInput(props: RadioInputProps): React.ReactNode {
   // Dependencies.
   const formFieldContext = useContext(FormFieldContext);
 
   // Computed.
   const className = compute<string | undefined>(() => {
     return joinClassName(
-      "border rounded w-4.5 h-4.5 p-0 self-center cursor-pointer transition-color duration-100 p-0.5",
-      props.isChecked
-        ? (
-          "bg-blue-600 dark:bg-blue-500 border-transparent"
-        ) : (
-          "bg-neutral-900/5 dark:bg-neutral-50/15 " +
-          "border-neutral-900/25 dark:border-neutral-50/25 " +
-          "hover:border-blue-600 dark:hover:border-blue-500"
-        ),
+      "border border-black/25 dark:border-white/25",
+      "rounded-full w-4.5 h-4.5 p-0.5 self-center cursor-pointer transition-color duration-100 p-0.5",
       props.disabled && "pointer-events-none opacity-50",
       props.className
     );
@@ -42,7 +32,7 @@ export default function CheckBoxInput(props: CheckBoxInputProps): React.ReactNod
       <input type="hidden" name={formFieldContext?.path} checked={props.isChecked} readOnly />
       <button type="button" className={className} onClick={() => props.onInput(!props.isChecked)}>
         {props.isChecked && (
-          <CheckIcon className="stroke-white fill-white" />
+          <div className="bg-blue-700 dark:bg-blue-400 rounded-full size-full" />
         )}
       </button>
       {props.label && <span>{props.label}</span>}

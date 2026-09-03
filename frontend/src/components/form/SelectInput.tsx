@@ -1,61 +1,72 @@
-import React, { useContext } from "react";
+import React from "react";
 import { joinClassName } from "#/helpers";
-import styles from "./SelectInput.module.css";
 
-// Parent components.
-import { FormFieldContext } from "./FormFieldContext";
+// Child component.
+import Input from "./Input";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import { CheckIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 
 // Props.
-export type SelectInputOption<TValue extends string> = {
-  value: TValue;
+export type SelectInputOption = {
+  value: string;
   displayName?: string;
 };
 
-export type SelectInputProps<TValue extends string> = {
-  options: SelectInputOption<TValue>[];
-  value: TValue;
-  onInput(newValue: TValue): any;
+export type SelectInputProps = {
+  options: SelectInputOption[];
+  value: string;
+  onInput(newValue: string): any;
   disabled?: boolean;
-} & Omit<React.ComponentPropsWithoutRef<"select">, "children" | "onInput">;
+} & Omit<React.ComponentPropsWithoutRef<"div">, "children">;
 
 // Component.
-export default function SelectInput<TValue extends string>(props: SelectInputProps<TValue>): React.ReactNode {
-  // Dependencies.
-  const formFieldContext = useContext(FormFieldContext);
-
+export default function SelectInput(props: SelectInputProps): React.ReactNode {
   // Template.
-  return (
-    <div className="dropdown">
-      <button
-        name={formFieldContext.path}
-        className={joinClassName(
-          "form-select text-start",
-          formFieldContext.isValidated && formFieldContext.hasError && "is-invalid",
-        )}
-        type="button"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-        disabled={props.disabled}
-      >
-        {props.options.filter(o => o.value === props.value).map(o => o.displayName)}
-      </button>
-      
-      <ul className={joinClassName("dropdown-menu w-100 p-1 rounded-lg shadow", styles.selectInputMenu)}>
-        {props.options.map((option, index) => (
-          <li className="w-100" key={index}>
-            <div
-              className={joinClassName(
-                "rounded small",
-                styles.selectInputMenuItem,
-                props.value === option.value && styles.selected,
-              )}
-              onClick={() => props.onInput(option.value)}
-            >
-              {option.displayName ?? option.value}
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+  function renderInput(className?: string, path?: string) {
+    return (
+      <Menu>
+        <input type="hidden" name={path} id={props.id} />
+
+        <MenuButton className={joinClassName(
+          className,
+          props.className,
+          "form-control text-start hover:cursor-pointer flex justify-between items-center pe-2 gap-2",
+          "data-open:border-blue-500 data-open:outline-blue-500"
+        )}>
+          <span>{props.options.find(option => option.value == props.value)?.displayName}</span>
+          <ChevronDownIcon className="size-4 shrink-0" />
+        </MenuButton>
+
+        <MenuItems
+          className={joinClassName(
+            "bg-white/50 dark:bg-neutral-800/65 border border-black/25 dark:border-white/25 outline-none",
+            "rounded-lg shadow-lg p-1.5 backdrop-blur-md origin-center",
+            "min-w-(--button-width) [--anchor-gap:--spacing(1.5)] max-h-full overflow-y-auto",
+            "origin-center transition duration-200 ease-out data-closed:scale-95 data-closed:opacity-0"
+          )}
+          anchor="bottom start"
+          modal={false}
+          transition
+        >
+          {props.options.map((option, index) => (
+            <MenuItem key={index}>
+              <div
+                className={joinClassName(
+                  "flex items-center gap-2 cursor-pointer px-3 py-1 rounded-lg",
+                  "data-focus:bg-blue-500 data-focus:text-white",
+                  option.value !== props.value && "ps-9"
+                )}
+                onClick={() => props.onInput(option.value)}
+              >
+                {option.value === props.value && (<CheckIcon className="size-4" />)}
+                <span>{option.displayName ?? option.value}</span>
+              </div>
+            </MenuItem>
+          ))}
+        </MenuItems>
+      </Menu>
+    );
+  }
+
+  return <Input render={renderInput} />;
 }

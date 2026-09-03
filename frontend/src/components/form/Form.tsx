@@ -1,51 +1,121 @@
-import React, { useState } from "react";
-import { FormContext, type FormContextPayload } from "./FormContext";
-import { compute } from "#/helpers";
-import { ValidationError, OperationError, type ErrorDetails } from "@hc-management/shared/errors";
+import React, { useState, useMemo, useRef } from "react";
+import { FormContext, type FormContextPayload, type SubmissionState } from "./FormContext";
+import { createErrorCollectionModel, type ErrorCollectionModel } from "#/models";
+import { ValidationError, OperationError } from "@hc-management/shared/errors";
+import { compute, joinClassName } from "#/helpers";
 
 // Props.
-type FormProps<TResult> = {
-  submitAction(): Promise<TResult>;
-  onSubmissionSucceeded?(result: TResult): any;
-  onSubmissionFailed?(error: unknown, isKnownError: boolean): any;
-} & Omit<React.ComponentPropsWithoutRef<"form">, "onSubmit">;
+type FormProps<TUpsertResult> = {
+  submitAction: () => Promise<TUpsertResult>;
+  onSubmissionSucceeded?: (result: TUpsertResult) => any;
+  onSubmissionFailed?: (error: Error, errorHandled: boolean) => any;
+  isModelDirty?: boolean;
+  submitOnEnterKeyPressed?: boolean;
+  render?(errorCollection: ErrorCollectionModel): React.ReactNode;
+} & React.ComponentPropsWithoutRef<"form">;
 
-// Components.
-export default function Form<TResult>(props: FormProps<TResult>): React.ReactNode {
+// Component.
+export default function Form<TUpsertResult>(props: FormProps<TUpsertResult>) {
   // Props.
-  const { submitAction, onSubmissionSucceeded, onSubmissionFailed, ...domProps } = props;
+  const {
+    render,
+    submitAction,
+    onSubmissionSucceeded,
+    onSubmissionFailed,
+    isModelDirty,
+    autoComplete = "off",
+    submitOnEnterKeyPressed = false,
+    ...domProps
+  } = props;
 
   // States.
-  const [isValidated, setIsValidated] = useState<boolean>(false);
-  const [errorDetails, setErrorDetails] = useState<ErrorDetails>({ });
+  const [errorCollection, setErrorCollection] = useState(createErrorCollectionModel);
+  const [submissionState, setSubmissionState] = useState<SubmissionState>("notSubmitting");
+  const elementRef = useRef<HTMLFormElement | null>(null);
 
   // Computed.
-  const formContextPayload = compute<FormContextPayload>(() => ({ isValidated, errorDetails }));
+  const submittingClassName = compute(() => {
+    if (submissionState === "submitting") {
+      return "opacity-50 pointer-events-none";
+    }
+  });
+  
+  const contextValue = useMemo<FormContextPayload>(() => {
+    return {
+      errorCollection,
+      submissionState,
+      isModelDirty
+    };
+  }, [errorCollection, submissionState, isModelDirty]);
 
   // Callbacks.
-  const handleSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
+  function handleKeyPressed(event: React.KeyboardEvent): void {
+    type InputElement = HTMLInputElement | HTMLButtonElement | HTMLSelectElement | HTMLTextAreaElement;
+    const isInputElement = (element: Element): element is InputElement => {
+      const typesToCheck = [HTMLInputElement, HTMLButtonElement, HTMLSelectElement, HTMLTextAreaElement] as const;
+      for (const typeToCheck of typesToCheck) {
+        if (document.activeElement?.contains(element) && document.activeElement instanceof typeToCheck) {
+          return true;
+        }
+      }
+
+      return false;
+    };
+
+    if (event.key === "Enter") {
+      if (submitOnEnterKeyPressed) {
+        return;
+      }
+
+      event.preventDefault();
+      if (document.activeElement && isInputElement(document.activeElement)) {
+        document.activeElement.blur();
+      }
+    }
+  }
+
+  async function handleUpsertingAsync(event: React.FormEvent): Promise<void> {
     event.preventDefault();
-    setIsValidated(true);
-    setErrorDetails({ });
-    
+    setErrorCollection(errorCollection => errorCollection.clear());
+    setSubmissionState("submitting");
+
     try {
       const result = await submitAction();
       onSubmissionSucceeded?.(result);
+      setSubmissionState("submissionSucceeded");
     } catch (error) {
+      setSubmissionState("notSubmitting");
       if (error instanceof ValidationError || error instanceof OperationError) {
-        setErrorDetails(error.details);
+        setErrorCollection(errorCollection => errorCollection.mapFromApplicationError(error));
         onSubmissionFailed?.(error, true);
         return;
       }
 
-      onSubmissionFailed?.(error, false);
+      onSubmissionFailed?.(error as Error, false);
+      throw error;
     }
-  };
+  }
 
-  // Templates.
+  // Template.
   return (
-    <FormContext.Provider value={formContextPayload}>
-      <form {...domProps} noValidate onSubmit={handleSubmit} />
+    <FormContext.Provider value={contextValue}>
+      <form
+        {...domProps}
+        autoComplete={autoComplete}
+        ref={elementRef}
+        className={joinClassName(
+          domProps.className,
+          submittingClassName,
+          "transition transition-500",
+          submissionState === "submitting" && "cursor-wait"
+        )}
+        noValidate
+        onSubmit={handleUpsertingAsync}
+        onKeyDown={handleKeyPressed}
+      >
+        {domProps.children}
+        {render?.(errorCollection)}
+      </form>
     </FormContext.Provider>
   );
 }

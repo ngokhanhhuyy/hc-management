@@ -5,6 +5,7 @@ import styles from "./SeatingMapItem.module.css";
 
 // Props.
 type SeatingMapItemProps = {
+  isSelected?: boolean;
   model: SeatingBasicModel;
   onClick(): any;
 };
@@ -14,11 +15,18 @@ export default function SeatingMapItem(props: SeatingMapItemProps): React.ReactN
   // Templates.
   return (
     <div
-      className={joinClassName("d-flex flex-column rounded-3 overflow-hidden", styles.seatingMapItem)}
+      className={joinClassName(
+        "seating-map-item border border-black/15 hover:border-blue-600/35",
+        "text-black hover:text-blue-800 flex flex-col rounded-lg overflow-hidden",
+        "hover:shadow-md hover:cursor-pointer transition-shadow duration-150",
+      )}
       onClick={props.onClick}
     >
-      <div className="border-bottom p-2 d-flex flex-column bg-white border-secondary-subtle">
-        <div className="d-flex justify-content-between align-items-center">
+      <div className={joinClassName(
+        "bg-white in-[.seating-map-item:hover]:bg-blue-600/10",
+        "flex flex-col p-2"
+      )}>
+        <div className="flex justify-between items-center">
           <span className="text-bold">
             Tình trạng
           </span>
@@ -33,7 +41,7 @@ export default function SeatingMapItem(props: SeatingMapItemProps): React.ReactN
             </span>
           )}
         </div>
-        <div className="d-flex justify-content-between align-items-center">
+        <div className="flex justify-between items-center">
           <span className="text-bold">
             Giá tiền
           </span>
@@ -50,7 +58,10 @@ export default function SeatingMapItem(props: SeatingMapItemProps): React.ReactN
         </div>
       </div>
 
-      <div className="bg-secondary-subtle px-3 text-center fw-bold">
+      <div className={joinClassName(
+        "bg-black/7.5 in-[.seating-map-item:hover]:bg-blue-600/20 border-t border-t-black/10",
+        "in-[.seating-map-item:hover]:border-t-blue-600/20 px-3 text-center font-bold"
+      )}>
         {props.model.name}
       </div>
     </div>

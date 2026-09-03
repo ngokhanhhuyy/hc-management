@@ -3,6 +3,7 @@ import type { MenuItemListRequestDto, MenuItemListResponseDto } from "@hc-manage
 
 export type MenuItemListModel = {
   category: MenuCategoryBasicModel | null;
+  searchContent: string;
   items: MenuItemBasicModel[];
   totalItemCount: number;
   mapFromResponseDto(responseDto: MenuItemListResponseDto): MenuItemListModel;
@@ -12,6 +13,7 @@ export type MenuItemListModel = {
 export function createMenuItemListModel(): MenuItemListModel {
   return {
     category: null,
+    searchContent: "",
     items: [],
     totalItemCount: 0,
     mapFromResponseDto(responseDto: MenuItemListResponseDto): MenuItemListModel {
@@ -23,7 +25,8 @@ export function createMenuItemListModel(): MenuItemListModel {
     },
     toRequestDto(): MenuItemListRequestDto {
       return {
-        categoryId: this.category?.id
+        categoryId: this.category?.id,
+        searchContent: this.searchContent || undefined
       };
     }
   };

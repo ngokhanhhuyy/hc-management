@@ -1,14 +1,18 @@
 import { createContext } from "react";
-import type { ErrorDetails } from "@hc-management/shared/errors";
+import { createErrorCollectionModel, type ErrorCollectionModel } from "#/models";
 
-// Types.
+// Type.
+export type SubmissionState = "notSubmitting" | "submitting" | "submissionSucceeded";
+
+// Payload.
 export type FormContextPayload = {
-  isValidated: boolean;
-  errorDetails: ErrorDetails;
+  errorCollection: ErrorCollectionModel;
+  submissionState: SubmissionState;
+  isModelDirty?: boolean;
 };
 
 // Context.
 export const FormContext = createContext<FormContextPayload>({
-  isValidated: false,
-  errorDetails: { }
+  errorCollection: createErrorCollectionModel(),
+  submissionState: "notSubmitting"
 });

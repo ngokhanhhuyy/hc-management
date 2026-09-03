@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { joinClassName } from "#/helpers";
-import styles from "./TabPanel.module.css";
 
 // Props.
 export type TabPanelOption = {
@@ -27,8 +26,8 @@ type TabButtonProps = {
 export function TabPanel(props: TabPanelProps): React.ReactNode {
   // Templates.
   return (
-    <div className="d-flex flex-column h-100">
-      <div className={joinClassName("d-flex justify-content-start align-items-end px-3", styles.tabButtonContainer)}>
+    <div className="flex flex-col h-full">
+      <div className="flex justify-start items-end px-4">
         {props.options.map((option, index) => (
           <TabButton
             isActive={props.currentTabKey === option.key}
@@ -40,7 +39,7 @@ export function TabPanel(props: TabPanelProps): React.ReactNode {
         ))}
       </div>
 
-      <div className="bg-white border rounded-3 flex-fill">
+      <div className="bg-white border border-black/15 rounded-xl flex-fill overflow-hidden z-0 h-full">
         {props.render(props.currentTabKey)}
       </div>
     </div>
@@ -52,13 +51,20 @@ export function TabButton(props: TabButtonProps): React.ReactNode {
   return (
     <button
       type="button"
-      className={joinClassName(styles.tabButton, props.isActive && styles.isActive)}
+      className={joinClassName(
+        "bg-white border border-b-0 border-black/25 rounded-t-lg px-3",
+        "flex justify-center items-center disabled:text-black/25 not-disabled:cursor-pointer",
+        //styles.tabButton,
+        props.isActive && "text-blue-600 font-bold border-blue-600 shadow-lg",
+        props.isActive && "rounded-none relative is-active py-1.5",
+        props.isActive && "outline-3 outline-blue-600/25",
+        !props.isActive && "py-1 not-first:rounded-tl-none not-last:rounded-tr-none",
+        !props.isActive && "[.is-active+&]:border-s-transparent has-[+_.is-active]:border-e-transparent"
+      )}
       disabled={props.isDisabled}
       onClick={props.onTabClicked}
     >
-      <span className="px-3 py-1">
-        {props.displayName}
-      </span>
+      {props.displayName}
     </button>
   );
 }

@@ -7,57 +7,97 @@ import { FormContext } from "./FormContext";
 import { FormFieldContext, type FormFieldContextPayload } from "./FormFieldContext";
 
 // Props.
-type FormFieldProps = {
-  path: string;
+export type FormFieldProps = {
+  path?: string;
   displayName?: string;
-  isRequired?: boolean;
-  children: React.ReactNode | React.ReactNode[];
-} & Omit<React.ComponentPropsWithoutRef<"div">, "name" | "path" | "children">;
+  children: React.ReactNode;
+  hideLabel?: boolean;
+  hideValidationMessage?: boolean;
+} & React.ComponentPropsWithoutRef<"div">;
 
 // Components.
-export default function FormField(props: FormFieldProps): React.ReactNode {
-  // Props.
-  const { className, path, displayName, isRequired, children, ...domProps } = props;
-
+export default function FormField(props: FormFieldProps) {
   // Dependencies.
   const formContext = useContext(FormContext);
 
   // Computed.
-  const computedDisplayName = useMemo<string>(() => {
-    if (displayName == null) {
-      const pathElements = path.split(".");
-      return getDisplayNameByKey(pathElements[pathElements.length - 1]);
+  const errorMessage = useMemo(() => {
+    if (!formContext || !formContext.errorCollection.isValidated || !props.path) {
+      return;
     }
 
-    return displayName;
+    const messages = formContext.errorCollection.details
+      .filter(d => d.propertyPath === props.path)
+      .map(d => d.message);
+
+    if (messages.length === 0) {
+      return;
+    }
+
+    return messages[0];
+  }, [formContext?.errorCollection.details]);
+
+  const displayName = useMemo(() => {
+    if (props.displayName) {
+      return props.displayName;
+    }
+
+    if (!props.path) {
+      return;
+    }
+    
+    const pathElements = props.path.split(".");
+    if (pathElements.length === 0) {
+      return;
+    }
+
+    const lastIndexerOmittedPathElement = pathElements[pathElements.length - 1].replace(/\[[0-9]]/g, "");
+    return getDisplayNameByKey(lastIndexerOmittedPathElement);
   }, []);
 
-  const errorMessage = compute<string | null>(() => {
-    const entry = Object.entries(formContext.errorDetails)
-      .find(([propertyPath]) => propertyPath === path);
-    return entry?.[1] ?? null;
+  const validationMessageClassName = compute<string | undefined>(() => {
+    if (formContext?.errorCollection.isValidated) {
+      if (errorMessage) {
+        return "field-validation-error";
+      }
+
+      return "field-validation-valid";
+    }
   });
 
-  const contextPayload = compute<FormFieldContextPayload>(() => ({
-    path,
-    isValidated: formContext.isValidated,
-    hasError: !!errorMessage,
-    displayName: computedDisplayName
-  }));
+  const contextPayload = useMemo<FormFieldContextPayload>(() => {
+    return {
+      isValidated: !!formContext?.errorCollection.isValidated,
+      hasError: !!errorMessage,
+      path: props.path,
+      displayName: displayName ?? undefined
+    };
+  }, [formContext?.errorCollection.details, displayName]);
 
   // Template.
   return (
-    <FormFieldContext.Provider value={contextPayload}>
-      <div {...domProps} className={joinClassName("form-group", errorMessage && "form-group-invalid", className)}>
-        <label htmlFor={props.path} className={joinClassName("form-label opacity-75", isRequired && "required")}>
-          {computedDisplayName}
+    <div className={joinClassName(
+      props.className,
+      "form-field flex flex-col justify-stretched",
+    )}>
+      {/* Label */}
+      {(!props.hideLabel && displayName) && (
+        <label htmlFor={props.path}>
+          {displayName}
         </label>
-        
-        {children}
-        {errorMessage && (
-          <span className="text-danger small">{errorMessage}</span>
-        )}
-      </div>
-    </FormFieldContext.Provider>
+      )}
+
+      {/* Input */}
+      <FormFieldContext.Provider value={contextPayload}>
+        {props.children}
+      </FormFieldContext.Provider>
+
+      {/* Message */}
+      {(!props.hideValidationMessage && errorMessage) && (
+        <span className={validationMessageClassName}>
+          {errorMessage}
+        </span>
+      )}
+    </div>
   );
 }

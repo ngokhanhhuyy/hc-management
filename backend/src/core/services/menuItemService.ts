@@ -37,7 +37,20 @@ export class MenuItemService implements IMenuItemService {
     const totalItemCount = await this.database.menuItem.count();
     let conditions: Prisma.MenuItemWhereInput = { };
     if (requestDto.categoryId != null) {
-      conditions = { categoryId: requestDto.categoryId };
+      conditions = {
+        ...conditions,
+        categoryId: requestDto.categoryId
+      };
+    }
+
+    if (requestDto.searchContent) {
+      conditions = {
+        ...conditions,
+        name: {
+          contains: requestDto.searchContent,
+          mode: "insensitive"
+        }
+      };
     }
 
     const menuItems = await this.database.menuItem.findMany({ where: conditions });

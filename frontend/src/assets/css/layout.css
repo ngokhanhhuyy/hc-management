@@ -1,0 +1,20 @@
+#root {
+    width: 100%;
+    height: auto;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    margin-inline: auto;
+
+    /* body:has(#navbar) & {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        justify-content: stretch;
+
+        @media (min-width: theme(screens.md)) {
+            grid-template-columns: auto 2fr;
+            max-width: --spacing(384);
+        }
+    } */
+}

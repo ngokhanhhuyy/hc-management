@@ -12,7 +12,8 @@
   },
   "dependencies": {
     "@hc-management/shared": "workspace:*",
-    "bootstrap-icons": "^1.13.1",
+    "@headlessui/react": "^2.2.10",
+    "@heroicons/react": "^2.2.0",
     "hono": "^4.13.2",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
@@ -20,10 +21,13 @@
   },
   "devDependencies": {
     "@popperjs/core": "^2.11.8",
+    "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^22",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "bootstrap": "^5.3.8",
+    "@vitejs/plugin-react": "^6.1.1",
+    "react-refresh": "^0.18.0",
+    "tailwindcss": "^4.3.3",
     "typescript": "^5.9.3",
     "vite": "^8.0.3"
   }

@@ -2,9 +2,6 @@ import React, { useState, useEffect, startTransition } from "react";
 import { api } from "#/api";
 import { AuthenticationError } from "@hc-management/shared/errors";
 import "#/assets/css/style.css";
-import "bootstrap";
-import "bootstrap/dist/css/bootstrap.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
 
 // Child components.
 import SignInPage from "#/pages/authentication/SignInPage";

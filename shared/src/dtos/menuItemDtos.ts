@@ -9,7 +9,10 @@ export const MenuItemListRequestDto = v.object({
     v.transform(array => array[0]),
     v.toNumber())
   ),
-  searchContent: v.optional(v.pipe(v.string(), v.minLength(2)))
+  searchContent: v.optional(v.pipe(
+    v.array(v.string()),
+    v.transform(array => array[0])
+  ))
 });
 
 export type MenuItemListResponseDto = v.InferOutput<typeof MenuItemListResponseDto>;

@@ -1,5 +1,6 @@
 import * as v from "valibot";
 import type { Implements } from "../helpers/index.js";
+import { errorMessages, displayNames } from "../localization/index.js";
 import type { IListRequestDto, IListResponseDto } from "./interfaces.js";
 import { OrderItemDetailResponseDto, OrderItemUpsertRequestDto } from "./orderItemDtos.js";
 import {
@@ -46,6 +47,21 @@ export const OrderDetailResponseDto = v.object({
 export type OrderUpsertRequestDto = v.InferOutput<typeof OrderUpsertRequestDto>;
 export const OrderUpsertRequestDto = v.object({
   seatingId: v.number(),
-  items: v.array(OrderItemUpsertRequestDto),
+  items: v.pipe(
+    v.array(OrderItemUpsertRequestDto),
+    v.minLength(1),
+    v.check((items) => {
+      const evaluatedMenuItemIds: number[] = [];
+      for (const item of items) {
+        if (evaluatedMenuItemIds.includes(item.menuItemId)) {
+          return false;
+        }
+
+        evaluatedMenuItemIds.push(item.menuItemId);
+      }
+
+      return true;
+    }, errorMessages.duplicated(displayNames.orderItem))
+  ),
   concurrencyVersion: v.nullable(v.string())
 });

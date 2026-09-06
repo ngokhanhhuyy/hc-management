@@ -65,7 +65,7 @@ model MenuCategory {
 
 model Seating {
   id                 Int     @id(map: "PK_seatings_id") @default(autoincrement())
-  name               String?
+  name               String
   isDeleted          Boolean @default(false)
   concurrencyVersion String  @default(uuid())
 

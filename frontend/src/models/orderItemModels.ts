@@ -9,12 +9,11 @@ export type OrderItemUpsertModel = {
   quantity: number;
   menuItem: MenuItemBasicModel;
   concurrencyVersion: string | null;
+  guid: string;
   toRequestDto(): OrderItemUpsertRequestDto;
 };
 
-export function createOrderItemUpsertModel(
-  arg: OrderItemDetailResponseDto | MenuItemBasicModel): OrderItemUpsertModel
-{
+export function createOrderItemUpsertModel(arg: OrderItemDetailResponseDto | MenuItemBasicModel): OrderItemUpsertModel {
   const model: OrderItemUpsertModel = {
     id: null,
     amountBeforeVatPerUnit: 0,
@@ -22,6 +21,7 @@ export function createOrderItemUpsertModel(
     quantity: 1,
     menuItem: null!,
     concurrencyVersion: null,
+    guid: crypto.randomUUID(),
     toRequestDto(): OrderItemUpsertRequestDto {
       return {
         id: this.id,

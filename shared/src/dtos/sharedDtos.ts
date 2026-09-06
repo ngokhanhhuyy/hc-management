@@ -26,7 +26,7 @@ export const OrderBasicResponseDto = v.object({
 export type SeatingBasicResponseDto = v.InferOutput<typeof SeatingBasicResponseDto>;
 export const SeatingBasicResponseDto = v.object({
   id: v.number(),
-  name: v.nullable(v.string()),
+  name: v.string(),
   activeOrder: v.nullable(OrderBasicResponseDto),
   isDeleted: v.boolean()
 });

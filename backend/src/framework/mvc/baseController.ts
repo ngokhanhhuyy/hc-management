@@ -41,7 +41,7 @@ export abstract class BaseController {
   protected created<TResponseDto extends JsonValue>(location: string, responseDto?: TResponseDto): TResponseDto | void {
     this.httpContext.header("Location", location);
     this.httpContext.status(201);
-    if (responseDto !== undefined) {
+    if (responseDto === undefined) {
       this.httpContext.res.headers.set("Content-Type", "application/json");
       return;
     }

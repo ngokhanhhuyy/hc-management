@@ -3,7 +3,7 @@
         --padding-inline: --spacing(3);
         --padding-block: --spacing(1);
         --min-height-coeffecient: 9;
-        background-color: rgba(0, 0, 0, 2.5%);
+        background-color: white;
         border: 1px solid rgba(0, 0, 0, 15%);
         border-radius: var(--radius-lg);
         padding-inline: var(--padding-inline);
@@ -36,9 +36,8 @@
                     outline-color: var(--color-blue-500);
                 }
 
-                .form-field.invalid:not(:disabled) &,
-                &.is-invalid:not(:disabled) {
-                    background: --alpha(var(--color-red-600) / 10%);
+                .form-field.invalid:not(:disabled) &, &.is-invalid:not(:disabled) {
+                    background-color: --alpha(var(--color-red-600) / 10%);
                     color: var(--color-red-600);
                     border-color: --alpha(var(--color-red-600) / 70%);
 

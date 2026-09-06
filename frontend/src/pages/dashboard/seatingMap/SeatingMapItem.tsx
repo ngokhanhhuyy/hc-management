@@ -1,7 +1,6 @@
 import React from "react";
 import type { SeatingBasicModel } from "#/models";
 import { joinClassName } from "#/helpers";
-import styles from "./SeatingMapItem.module.css";
 
 // Props.
 type SeatingMapItemProps = {
@@ -16,15 +15,15 @@ export default function SeatingMapItem(props: SeatingMapItemProps): React.ReactN
   return (
     <div
       className={joinClassName(
-        "seating-map-item border border-black/15 hover:border-blue-600/35",
+        "seating-map-item border border-black/15 hover:border-blue-600/50",
         "text-black hover:text-blue-800 flex flex-col rounded-lg overflow-hidden",
-        "hover:shadow-md hover:cursor-pointer transition-shadow duration-150",
+        "hover:shadow-md hover:cursor-pointer transition-colors duration-150",
       )}
       onClick={props.onClick}
     >
       <div className={joinClassName(
         "bg-white in-[.seating-map-item:hover]:bg-blue-600/10",
-        "flex flex-col p-2"
+        "flex flex-col p-2 transition-colors duration-150"
       )}>
         <div className="flex justify-between items-center">
           <span className="text-bold">
@@ -60,7 +59,7 @@ export default function SeatingMapItem(props: SeatingMapItemProps): React.ReactN
 
       <div className={joinClassName(
         "bg-black/7.5 in-[.seating-map-item:hover]:bg-blue-600/20 border-t border-t-black/10",
-        "in-[.seating-map-item:hover]:border-t-blue-600/20 px-3 text-center font-bold"
+        "in-[.seating-map-item:hover]:border-t-blue-600/20 px-3 text-center font-bold transition-colors duration-150"
       )}>
         {props.model.name}
       </div>

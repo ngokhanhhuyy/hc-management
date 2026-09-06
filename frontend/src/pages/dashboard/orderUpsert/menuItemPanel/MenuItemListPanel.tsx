@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { api } from "#/api";
 import {
   createMenuItemListModel,
@@ -12,11 +12,18 @@ import { displayNames } from "@hc-management/shared/localization";
 import { joinClassName } from "#/helpers";
 
 // Child components.
-import { Form, FormField, TextInput, RadioInput } from "#/components/form";
+import { Form, FormField, TextInput } from "#/components/form";
 import MenuItem from "./MenuItem";
+import MenuCategory from "./MenuCategory";
 
 // Props.
+export type MenuItemWithPickedQuantity = {
+  item: MenuItemBasicModel;
+  quantity: number;
+};
+
 type MenuItemListPanelProps = {
+  pickedItems: MenuItemWithPickedQuantity[];
   onPicked?(pickedMenuItem: MenuItemBasicModel): any;
 };
 
@@ -25,7 +32,8 @@ export default function MenuItemListPanel(props: MenuItemListPanelProps): React.
   // States.
   const [itemListModel, setItemListModel] = useState<MenuItemListModel>(createMenuItemListModel);
   const [categoryListModel, setCategoryListModel] = useState<MenuCategoryBasicModel[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [loadingState, setLoadingState] = useState<"initialLoading" | "reloading" | null>("initialLoading");
+  const latestLoadingRequestId = useRef<number>(-1);
 
   // Callbacks.
   async function submitAsync(): Promise<MenuItemListResponseDto> {
@@ -44,23 +52,34 @@ export default function MenuItemListPanel(props: MenuItemListPanelProps): React.
     };
 
     const loadCategoryListModelAsync = async () => {
+      const loadingRequestId = latestLoadingRequestId.current + 1;
+      latestLoadingRequestId.current = loadingRequestId;
+      
       const responseDtos = await api.menuCategory.getAllAsync();
-      setCategoryListModel(responseDtos.map(createMenuCategoryBasicModel));
+      if (latestLoadingRequestId.current === loadingRequestId) {
+        setCategoryListModel(responseDtos.map(createMenuCategoryBasicModel));
+      }
     };
 
     const loadAsync = async () => {
-      setIsLoading(true);
-      await Promise.all([
-        loadItemListModelAsync(),
-        loadCategoryListModelAsync()
-      ]);
+      if (loadingState === "initialLoading") {
+        await Promise.all([
+          loadItemListModelAsync(),
+          loadCategoryListModelAsync()
+        ]);
+
+        return;
+      }
+      
+      setLoadingState("reloading");
+      await loadItemListModelAsync();
     };
 
-    loadAsync().finally(() => setIsLoading(false));
-  }, []);
+    loadAsync().finally(() => setLoadingState(null));
+  }, [itemListModel.searchContent, itemListModel.category?.id]);
 
   // Templates.
-  if (isLoading) {
+  function renderSpinner(): React.ReactNode {
     return (
       <div className="flex flex-col justify-center items-center h-full gap-3">
         <span className="text-primary opacity-50">
@@ -70,8 +89,12 @@ export default function MenuItemListPanel(props: MenuItemListPanelProps): React.
     );
   }
 
+  if (loadingState === "initialLoading") {
+    return renderSpinner();
+  }
+
   return (
-    <div className="flex flex-col gap-3 p-3">
+    <div className="flex flex-col gap-3 h-full">
       <Form
         className="flex flex-col gap-3"
         submitAction={submitAsync}
@@ -79,36 +102,27 @@ export default function MenuItemListPanel(props: MenuItemListPanelProps): React.
       >
         <FormField path="searchContent" displayName={displayNames["searchContent"]} hideLabel>
           <TextInput
+            placeholder="Tìm kiếm tên món ăn ..."
             value={itemListModel.searchContent}
             onInput={(searchContent) => setItemListModel(m => ({ ...m, searchContent }))}
           />
         </FormField>
 
         <FormField path="categoryId" displayName={displayNames["menuCategory"]} hideLabel>
-          <div className="flex flex-wrap justify-start items-start gap-2 w-fit">
-            {categoryListModel.map((category) => (
-              <div
-                className="menu-category form-input-group w-fit rounded-lg cursor-pointer hover:shadow-md"
-                onClick={() => setItemListModel(m => ({ ...m, category }))}
-                key={category.id}
-              >
-                <div className={joinClassName(
-                  "form-input-group-text border-e-0",
-                  "in-[.menu-category:hover]:border-blue-600 transition-colors duration-200"
-                )}>
-                  <RadioInput
-                    isChecked={category.id === itemListModel.category?.id}
-                    onInput={() => setItemListModel(m => ({ ...m, category }))}
-                  />
-                </div>
+          <div className="flex flex-row flex-wrap justify-start items-start gap-2">
+            <MenuCategory
+              model={null}
+              isSelected={itemListModel.category?.id == null}
+              onSelected={() => setItemListModel(m => ({ ...m, category: null }))}
+            />
 
-                <div className={joinClassName(
-                  "form-control w-fit pe-4 in-[.menu-category:hover]:border-e-blue-600",
-                  "in-[.menu-category:hover]:border-t-blue-600 in-[.menu-category:hover]:border-b-blue-600"
-                )}>
-                  {category.name}
-                </div>
-              </div>
+            {categoryListModel.map((category) => (
+              <MenuCategory
+                model={category}
+                isSelected={itemListModel.category?.id === category.id}
+                onSelected={() => setItemListModel(m => ({ ...m, category }))}
+                key={category.id}
+              />
             ))}
           </div>
         </FormField>
@@ -116,11 +130,13 @@ export default function MenuItemListPanel(props: MenuItemListPanelProps): React.
 
       <div className={joinClassName(
         "grid 2xl:grid-cols-7 xl:grid-cols-5 lg:grid-cols-4",
-        "md:grid-cols-3 gap-3 justify-start items-start"
+        "md:grid-cols-3 gap-3 justify-start items-start",
+        loadingState === "reloading" && "opacity-50"
       )}>
         {itemListModel.items.map(menuItem => (
           <MenuItem
             model={menuItem}
+            pickedQuantity={props.pickedItems.find(pi => pi.item.id === menuItem.id)?.quantity ?? 0}
             onClick={() => props.onPicked?.(menuItem)}
             key={menuItem.id}
           />

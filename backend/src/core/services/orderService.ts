@@ -10,12 +10,16 @@ import type {
   OrderUpsertRequestDto,
   OrderItemUpsertRequestDto
 } from "@hc-management/shared/dtos";
-import { NotFoundError } from "@hc-management/shared/errors";
+import { errorMessages } from "@hc-management/shared/localization";
+import { calculateOrderAmount } from "@hc-management/shared/helpers";
 
 export interface IOrderService {
   getListAsync(requestDto: OrderListRequestDto): Promise<OrderListResponseDto>;
   getDetailAsync(id: number): Promise<OrderDetailResponseDto>;
-  createAsync(requestDto: OrderUpsertRequestDto): Promise<number>;
+  createAsync(requestDto: OrderUpsertRequestDto): Promise<OrderDetailResponseDto>;
+  updateAsync(id: number, requestDto: OrderUpsertRequestDto): Promise<OrderDetailResponseDto>;
+  finishAsync(id: number): Promise<void>;
+  // deleteAsync(id: number): Promise<void>;
 }
 
 export class OrderService implements IOrderService {
@@ -79,16 +83,37 @@ export class OrderService implements IOrderService {
     });
 
     if (!order) {
-      throw new NotFoundError();
+      throw this.errorFactory.createNotFoundError();
     }
 
     return this.dtoFactory.createOrderDetail(order);
   }
 
-  public async createAsync(requestDto: OrderUpsertRequestDto): Promise<number> {
-    const calculateItemAmount = (amountBeforeVatPerUnit: number, vatAmountPerUnit: number, quantity: number) => {
-      return Math.floor(amountBeforeVatPerUnit * (vatAmountPerUnit / 100)) * quantity;
-    };
+  public async createAsync(requestDto: OrderUpsertRequestDto): Promise<OrderDetailResponseDto> {
+    const activeOrderWithSeatName = await this.prisma.order.findFirst({
+      where: {
+        seatingId: requestDto.seatingId,
+        finishedDateTime: {
+          not: null
+        }
+      },
+      select: {
+        id: true,
+        seating: {
+          select: {
+            id: true,
+            name: true
+          },
+        }
+      }
+    });
+
+    if (activeOrderWithSeatName) {
+      throw this.errorFactory.createOperationError(
+        "",
+        errorMessages.seatingActiveOrderNotFinished(activeOrderWithSeatName.seating.name)
+      );
+    }
 
     const deduplicatedItemRequestDtos: OrderItemUpsertRequestDto[] = [];
     for (const itemRequestDto of requestDto.items) {
@@ -117,12 +142,18 @@ export class OrderService implements IOrderService {
 
     try {
       const order = await this.prisma.order.create({
+        include: {
+          items: {
+            include: { menuItem: true }
+          },
+          createdUser: true,
+          lastUpdatedUser: true,
+          finishedUser: true,
+          seating: true
+        },
         data: {
           seatingId: requestDto.seatingId,
-          cachedItemAmount: requestDto.items.reduce((total, item) => {
-            const itemAmount = calculateItemAmount(item.amountBeforeVatPerUnit, item.vatPercentagePerUnit, item.quantity);
-            return itemAmount + total;
-          }, 0),
+          cachedItemAmount: calculateOrderAmount(requestDto),
           items: {
             create: requestDto.items.map(dto => ({
               amountBeforeVatPerUnit: dto.amountBeforeVatPerUnit,
@@ -135,7 +166,7 @@ export class OrderService implements IOrderService {
         }
       });
 
-      return order.id;
+      return this.dtoFactory.createOrderDetail(order);
     } catch (error) {
       const handledResult = this.databaseErrorHandler.handle<Order & OrderItem>(error);
       if (handledResult == null) {
@@ -150,6 +181,140 @@ export class OrderService implements IOrderService {
         if (handledResult.violatedColumnNames.includes("menuItemId")) {
           throw this.errorFactory.createOperationErrorIndicatingNotFoundCase("menuItem");
         }
+      }
+
+      throw error;
+    }
+  }
+
+  public async updateAsync(id: number, requestDto: OrderUpsertRequestDto): Promise<OrderDetailResponseDto> {
+    const concurrencyVersion = crypto.randomUUID();
+    let evaluatingOrderItemIndex: number = NaN;
+    let evaluatingEntityType: string = "";
+    const itemsToCreate: OrderItemUpsertRequestDto[] = [];
+    const itemsToUpdate: OrderItemUpsertRequestDto[] = [];
+    for (const itemRequestDto of requestDto.items) {
+      if (itemRequestDto.id == null) {
+        itemsToCreate.push(itemRequestDto);
+        continue;
+      }
+
+      itemsToUpdate.push(itemRequestDto);
+    }
+
+    try {
+      await this.prisma.$transaction(async (transaction) => {
+        evaluatingEntityType = "OrderItem";
+        for (let index = 0; index < requestDto.items.length; index += 1) {
+          const itemRequestDto = requestDto.items[index];
+          evaluatingOrderItemIndex = index;
+          if (itemRequestDto.id === null) {
+            await transaction.orderItem.create({
+              data: {
+                amountBeforeVatPerUnit: itemRequestDto.amountBeforeVatPerUnit,
+                vatPercentagePerUnit: itemRequestDto.vatPercentagePerUnit,
+                quantity: itemRequestDto.quantity,
+                menuItemId: itemRequestDto.menuItemId,
+                orderId: id
+              }
+            });
+
+            continue;
+          }
+
+          await transaction.orderItem.update({
+            where: { id: itemRequestDto.id },
+            data: {
+              amountBeforeVatPerUnit: itemRequestDto.amountBeforeVatPerUnit,
+              vatPercentagePerUnit: itemRequestDto.vatPercentagePerUnit,
+              quantity: itemRequestDto.quantity,
+            }
+          });
+        }
+
+        await this.prisma.orderItem.deleteMany({
+          where: {
+            id: { notIn: requestDto.items.map(i => i.id).filter(id => id != null) },
+            orderId: id,
+          }
+        });
+        
+        evaluatingEntityType = "Order";
+        const order = await this.prisma.order.update({
+          where: { id, concurrencyVersion: requestDto.concurrencyVersion ?? undefined },
+          data: {
+            lastUpdatedDateTime: new Date(),
+            lastUpdatedUserId: this.callerDetailProvider.getCallerId(),
+            cachedItemAmount: calculateOrderAmount(requestDto),
+            concurrencyVersion
+          }
+        });
+
+        if (!order) {
+          throw this.errorFactory.createNotFoundError();
+        }
+      });
+    } catch (error) {
+      const handledResult = this.databaseErrorHandler.handle<Order & OrderItem>(error);
+      if (!handledResult) {
+        throw error;
+      }
+
+      if (evaluatingEntityType === "OrderItem") {
+        if (handledResult.type === "RecordNotFound") {
+          throw this.errorFactory.createOperationErrorIndicatingNotFoundCase(
+            "menuItem",
+            `items[${evaluatingOrderItemIndex}].id`,
+          );
+        }
+
+        if (handledResult.type === "UniqueConstraintViolation") {
+          throw this.errorFactory.createOperationErrorIndicatingDuplicatedCase(
+            `items[${evaluatingOrderItemIndex}].menuItemId`, "menuItem"
+          );
+        }
+      }
+
+      if (evaluatingEntityType === "Order" && handledResult.type === "RecordNotFound") {
+        throw this.errorFactory.createNotFoundError();
+      }
+
+      throw error;
+    }
+
+    const updatedOrder = await this.prisma.order.findUnique({
+      include: {
+          items: {
+            include: { menuItem: true }
+          },
+          createdUser: true,
+          lastUpdatedUser: true,
+          finishedUser: true,
+          seating: true
+      },
+      where: { id, concurrencyVersion }
+    });
+
+    if (!updatedOrder) {
+      throw this.errorFactory.createConcurrencyError();
+    }
+
+    return this.dtoFactory.createOrderDetail(updatedOrder);
+  }
+
+  public async finishAsync(id: number): Promise<void> {
+    try {
+      await this.prisma.order.update({
+        where: { id },
+        data: {
+          finishedDateTime: new Date(),
+          finishedUserId: this.callerDetailProvider.getCallerId()
+        }
+      });
+    } catch (error) {
+      const handledResult = this.databaseErrorHandler.handle(error);
+      if (handledResult?.type === "RecordNotFound") {
+        throw this.errorFactory.createNotFoundError();
       }
 
       throw error;

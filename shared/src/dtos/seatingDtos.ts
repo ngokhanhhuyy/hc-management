@@ -5,7 +5,7 @@ import { ValidationContracts } from "../constants/index.js";
 export type SeatingDetailResponseDto = v.InferOutput<typeof SeatingDetailResponseDto>;
 export const SeatingDetailResponseDto = v.object({
   id: v.number(),
-  name: v.nullable(v.string()),
+  name: v.string(),
   activeOrder: v.nullable(OrderBasicResponseDto)
 });
 

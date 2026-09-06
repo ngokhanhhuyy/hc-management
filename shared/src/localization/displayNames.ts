@@ -13,10 +13,6 @@ export const displayNames = {
   searchContent: "Nội dung tìm kiếm"
 };
 
-export function getDisplayNameByKey(key: string): string {
-  if (!Object.keys(displayNames).includes(key)) {
-    throw new Error(`The specified key "${key}" for display name doesn't exist.`);
-  }
-
-  return displayNames[key as keyof typeof displayNames];
+export function getDisplayNameByKey(key: string): string | null {
+  return displayNames[key as keyof typeof displayNames] ?? null;
 }

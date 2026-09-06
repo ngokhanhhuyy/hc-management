@@ -69,7 +69,7 @@
     }
 
     .form-input-group-text {
-        background-color: --alpha(var(--color-yellow-950) / 5%);
+        background-color: white;
         border: 1px solid --alpha(var(--color-black) / 15%);
         border-radius: var(--radius-lg);
         padding: --spacing(1) --spacing(3);

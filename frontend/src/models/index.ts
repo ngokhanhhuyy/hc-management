@@ -1,6 +1,6 @@
 export * from "./authenticationModels";
 export * from "./menuItemModels";
-export * from "./seatingModels";
+// export * from "./seatingModels";
 export * from "./orderModels";
 export * from "./orderItemModels";
 export * from "./sharedModels";

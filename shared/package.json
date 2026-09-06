@@ -23,6 +23,10 @@
       "types": "./src/errors/index.ts",
       "import": "./src/errors/index.ts"
     },
+    "./helpers": {
+      "types": "./src/helpers/index.ts",
+      "import": "./src/helpers/index.ts"
+    },
     "./localization": {
       "types": "./src/localization/index.ts",
       "import": "./src/localization/index.ts"

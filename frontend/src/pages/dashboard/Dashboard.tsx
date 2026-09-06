@@ -1,55 +1,61 @@
 import React, { useState } from "react";
 import type { SeatingBasicModel } from "#/models";
-import { compute } from "#/helpers";
+import { MapIcon, TableCellsIcon, ChevronLeftIcon } from "@heroicons/react/24/outline";
 
 // Child components.
-import { TabPanel, type TabPanelOption } from "#/components/ui";
 import SeatingMapTab from "./seatingMap/SeatingMapTab";
 import OrderUpsertTab from "./orderUpsert/OrderUpsertTab";
+import { joinClassName } from "#/helpers/index.js";
 
 // Components.
 export default function DashboardPage(): React.ReactNode {
   // States.
   const [selectedSeating, setSelectedSeating] = useState<SeatingBasicModel | null>(null); 
 
-  // Computed.
-  const currentTabKey = compute(() => selectedSeating ? "OrderUpsert" : "SeatingMap");
-
-  const primaryTabPanelOptions = compute<TabPanelOption[]>(() => {
-    return [
-      { key: "SeatingMap", displayName: "Sơ đồ bàn ăn" },
-      { key: "OrderUpsert", displayName: "Chọn món", isDisabled: selectedSeating === null },
-    ];
-  });
-
   // Callbacks.
   function onSeatingSelected(seating: SeatingBasicModel): void {
     setSelectedSeating(seating);
   }
 
-  function onTabSelected(selectedTabKey: string): void {
-    if (selectedTabKey === "SeatingMap") {
-      setSelectedSeating(null);
-    }
+  function onSwitchToSeatingMapButtonClicked(): void {
+    setSelectedSeating(null);
   }
 
   // Templates.
-  function renderTabContent(): React.ReactNode {
-    if (selectedSeating) {
-      return <OrderUpsertTab seating={selectedSeating} />;
-    }
-
-    return <SeatingMapTab onSeatingSelected={onSeatingSelected} />;
-  }
-
   return (
-    <div className="bg-black/0.5 w-full h-full p-2">
-      <TabPanel
-        options={primaryTabPanelOptions}
-        currentTabKey={currentTabKey}
-        onTabSelected={onTabSelected}
-        render={renderTabContent}
-      />
+    <div className="flex flex-col gap-3 p-3 size-full max-w-350">
+      <div className="flex flex-col justify-center items-start w-full">
+        <div className="flex justify-center items-center gap-2 my-3 text-xl self-center text-blue-700 uppercase">
+          {!selectedSeating ? (
+            <>
+              <MapIcon className="size-6" />
+              <span>Danh sách bàn ăn</span>
+            </>
+          ) : (
+            <>
+              <TableCellsIcon className="size-6" />
+              <span>Danh sách gọi món</span>
+            </>
+          )}
+        </div>
+
+        {selectedSeating && (
+          <button
+            type="button"
+            className="btn gap-1.5"
+            onClick={onSwitchToSeatingMapButtonClicked}
+          >
+            <ChevronLeftIcon className="size-4" />
+            <span>Quay lại danh sách bàn ăn</span>
+          </button>
+        )}
+      </div>
+      
+      {selectedSeating ? (
+        <OrderUpsertTab seating={selectedSeating} />
+      ) : (
+        <SeatingMapTab onSeatingSelected={onSeatingSelected} />
+      )}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "../database/client";
+import { PrismaClient, type Prisma } from "../database/client";
 import { BcryptPasswordHasher } from "../common/authentication/passwordHasher";
 
 const connectionString = `${process.env.DATABASE_URL}`;
@@ -82,10 +82,12 @@ async function seedMenuItemsAsync(userIdWithUserNames: UserIdWithUserName[], cat
   const adminUser = userIdWithUserNames.find(u => u.userName === "admin")!;
 
   const createdRecords = await prisma.menuItem.createManyAndReturn({
-    data: menuItemNames.map(name => ({
+    data: menuItemNames.map<Prisma.MenuItemCreateManyInput>(name => ({
       name,
+      defaultAmountBeforeVatPerUnit: Math.floor(Math.random() * 50 + 100) * 1000,
+      defaultVatPercentagePerUnit: 10,
       categoryId: getRandomCategoryId(),
-      createdUserId: adminUser.id
+      createdUserId: adminUser.id,
     })),
     select: { id: true }
   });

@@ -20,10 +20,21 @@ export const orderApi: IOrderApi = {
       method: "get",
     });
   },
-  async createAsync(requestDto: OrderUpsertRequestDto): Promise<number> {
+  async createAsync(requestDto: OrderUpsertRequestDto): Promise<OrderDetailResponseDto> {
     return await httpClient.sendAndParseAsync(orderApiPath, {
       method: "post",
       body: requestDto
+    });
+  },
+  async updateAsync(id: number, requestDto: OrderUpsertRequestDto): Promise<OrderDetailResponseDto> {
+    return await httpClient.sendAndParseAsync(`${orderApiPath}/${id}`, {
+      method: "put",
+      body: requestDto
+    });
+  },
+  async finishAsync(id: number): Promise<void> {
+    return await httpClient.sendAndIgnoreAsync(`${orderApiPath}/${id}/finish`, {
+      method: "put",
     });
   },
 };

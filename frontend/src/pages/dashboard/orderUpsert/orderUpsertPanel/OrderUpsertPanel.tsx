@@ -1,34 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { api } from "#/api";
-import { createOrderUpsertModel, type OrderUpsertModel, type SeatingBasicModel } from "#/models";
+import React from "react";
+import type { OrderUpsertModel } from "#/models";
 
+// Child components.
+import OrderItem from "./OrderItem";
+
+// Props.
+export type LoadingState = "initialLoading" | "syncing" | "finishing" | null;
 type OrderUpsertPanelProps = {
-  seating: SeatingBasicModel;
+  model: OrderUpsertModel;
+  onModelUpdated(updatedData: Partial<OrderUpsertModel>): any;
+  loadingState: LoadingState;
 };
 
 // Components.
 export default function OrderUpsertPanel(props: OrderUpsertPanelProps): React.ReactNode {
-  // States.
-  const [model, setModel] = useState<OrderUpsertModel | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  // Effect.
-  useEffect(() => {
-    const loadAsync = async () => {
-      if (props.seating.activeOrder) {
-        const orderDetailResponseDto = await api.order.getDetailAsync(props.seating.activeOrder.id);
-        setModel(createOrderUpsertModel(orderDetailResponseDto));
-        return;
-      }
-
-      setModel(createOrderUpsertModel(props.seating));
-    };
-
-    loadAsync().finally(() => setIsLoading(false));
-  }, []);
-
   // Templates.
-  if (isLoading || !model) {
+  if (props.loadingState === "initialLoading") {
     return (
       <div className="flex flex-col justify-center items-center">
         <span className="opacity-50">
@@ -39,10 +26,38 @@ export default function OrderUpsertPanel(props: OrderUpsertPanelProps): React.Re
   }
 
   return (
-    <div className="flex flex-col p-3">
-      <span className="text-lg text-center">
-        Danh sách gọi món của {model.seating.name.toLowerCase()}
-      </span>
+    <div className="bg-white border border-black/15 rounded-lg flex flex-col h-full">
+      <div className="text-xl text-center uppercase p-3 border-b border-black/15">
+        {props.model.seating.name.toLowerCase()}
+      </div>
+
+      {props.model.items.length ? (
+        <ul className="list-group list-group-flush">
+          {props.model.items.map((item, index) => (
+            <OrderItem
+              model={item}
+              onUpdated={updatedData => {
+                props.onModelUpdated?.({
+                  items: props.model.items.map(i => {
+                    if (i.guid === item.guid) {
+                      return { ...i, ...updatedData };
+                    }
+
+                    return i;
+                  })
+                });
+              }}
+              onDeleted={() => {
+                props.onModelUpdated?.({ items: props.model.items.filter(i => i.guid !== item.guid) });
+              }}
+              index={index}
+              key={index}
+            />
+          ))}
+        </ul>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }

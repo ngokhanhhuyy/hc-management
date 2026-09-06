@@ -5,6 +5,8 @@ import { ValidationContracts } from "../constants/index.js";
 export type OrderItemDetailResponseDto = v.InferOutput<typeof OrderItemDetailResponseDto>;
 export const OrderItemDetailResponseDto = v.object({
   id: v.number(),
+  amountBeforeVatPerUnit: v.number(),
+  vatPercentagePerUnit: v.number(),
   quantity: v.number(),
   menuItem: MenuItemBasicResponseDto,
   concurrencyVersion: v.string()

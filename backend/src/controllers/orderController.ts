@@ -6,7 +6,7 @@ import {
   httpGet,
   httpQuery,
   httpPost,
-  // httpPut,
+  httpPut,
   // httpDelete,
   fromBody,
   fromRoute,
@@ -53,29 +53,42 @@ export class OrderController extends BaseController implements IOrderApi {
 
   @httpPost("/")
   @fromBody(0, OrderUpsertRequestDto)
-  @producesResponseType<number>(201)
+  @producesResponseType<OrderDetailResponseDto>(201)
   @producesResponseType(400)
   @producesResponseType(401)
   @producesResponseType(403)
   @producesResponseType(422)
-  public async createAsync(requestDto: OrderUpsertRequestDto): Promise<number> {
-    const createdId = await this.orderService.createAsync(requestDto);
-    return this.created(`/api/menu-category/${createdId}`, createdId);
+  public async createAsync(requestDto: OrderUpsertRequestDto): Promise<OrderDetailResponseDto> {
+    const responseDto = await this.orderService.createAsync(requestDto);
+    return this.created(`/api/orders/${responseDto.id}`, responseDto);
   }
 
-  // @httpPut("/:id{[0-9]+}")
-  // @fromRoute(0, "id", "number")
-  // @fromBody(1, OrderUpsertRequestDto)
-  // @producesResponseType(200)
-  // @producesResponseType(400)
-  // @producesResponseType(401)
-  // @producesResponseType(403)
-  // @producesResponseType(404)
-  // @producesResponseType(422)
-  // public async updateAsync(id: number, requestDto: OrderUpsertRequestDto): Promise<void> {
-  //   await this.orderService.updateAsync(id, requestDto);
-  //   return this.ok();
-  // }
+  @httpPut("/:id{[0-9]+}")
+  @fromRoute(0, "id", "number")
+  @fromBody(1, OrderUpsertRequestDto)
+  @producesResponseType<OrderDetailResponseDto>(200)
+  @producesResponseType(400)
+  @producesResponseType(401)
+  @producesResponseType(403)
+  @producesResponseType(404)
+  @producesResponseType(422)
+  public async updateAsync(id: number, requestDto: OrderUpsertRequestDto): Promise<OrderDetailResponseDto> {
+    const responseDto = await this.orderService.updateAsync(id, requestDto);
+    return this.ok(responseDto);
+  }
+
+  @httpPut("/:id{[0-9]+}/finish")
+  @fromRoute(0, "id", "number")
+  @producesResponseType(200)
+  @producesResponseType(400)
+  @producesResponseType(401)
+  @producesResponseType(403)
+  @producesResponseType(404)
+  @producesResponseType(422)
+  public async finishAsync(id: number): Promise<void> {
+    await this.orderService.finishAsync(id);
+    return this.ok();
+  }
 
   // @httpDelete("/:id{[0-9]+}")
   // @fromRoute(0, "id", "number")

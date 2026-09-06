@@ -138,6 +138,8 @@ export class DtoFactory implements IDtoFactory {
   public createOrderItemDetail(orderItem: OrderItemDetailResponseDtoFactoryArgs): OrderItemDetailResponseDto {
     return {
       id: orderItem.id,
+      amountBeforeVatPerUnit: orderItem.amountBeforeVatPerUnit,
+      vatPercentagePerUnit: orderItem.vatPercentagePerUnit,
       quantity: orderItem.quantity,
       menuItem: this.createMenuItemBasic(orderItem.menuItem),
       concurrencyVersion: orderItem.concurrencyVersion

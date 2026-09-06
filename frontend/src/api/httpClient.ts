@@ -53,6 +53,8 @@ async function sendAsync(endpoint: string, options: RequestOptions): Promise<Res
     url += "?" + searchParams.toString();
   }
 
+  // await new Promise<void>(resolve => setTimeout(resolve, 100));
+
   return await fetch(`/api${url}`, {
     method: options.method,
     body: options.body !== undefined ? JSON.stringify(options.body) : undefined,

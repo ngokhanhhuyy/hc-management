@@ -71,9 +71,39 @@ Cookie: {{accessCookie}}
 }
 
 ###
+# @name MenuCategoryDelete
+DELETE {{basePath}}/menu-categories/6
+Content-Type: application/json
+Cookie: {{accessCookie}}
+
+###
 # @name MenuItemList
 GET {{basePath}}/menu-items?categoryId=1
 Content-Type: application/json
+Cookie: {{accessCookie}}
+
+###
+# @name SeatingList
+GET {{basePath}}/seatings
+Content-Type: application/json
+Cookie: {{accessCookie}}
+
+
+###
+# @name OrderList
+GET {{basePath}}/orders
+Content-Type: application/json
+Cookie: {{accessCookie}}
+
+###
+# @name OrderFinish
+PUT {{basePath}}/orders/1/finish
+Content-Type: application/json
+Cookie: {{accessCookie}}
+
+###
+# @name OrderDelete
+DELETE {{basePath}}/orders/1
 Cookie: {{accessCookie}}
 
 

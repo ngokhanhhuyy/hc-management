@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useMemo } from "react";
 import type { OrderUpsertModel } from "#/models";
+import { getDisplayAmountText } from "#/helpers";
+import { calculateOrderAmount } from "@hc-management/shared/helpers";
 
 // Child components.
+import { TrashIcon } from "@heroicons/react/24/outline";
 import OrderItem from "./OrderItem";
 
 // Props.
@@ -14,6 +17,21 @@ type OrderUpsertPanelProps = {
 
 // Components.
 export default function OrderUpsertPanel(props: OrderUpsertPanelProps): React.ReactNode {
+  // Computed.
+  const amountDisplayText = useMemo(() => {
+    const amount = calculateOrderAmount(props.model.toRequestDto());
+    return {
+      amountBeforeVat: getDisplayAmountText(amount.amountBeforeVat, { suffix: " vnđ" }),
+      vatAmount: getDisplayAmountText(amount.vatAmount, { suffix: " vnđ" }),
+      totalAmount: getDisplayAmountText(amount.totalAmount, { suffix: " vnđ" })
+    };
+  }, [props.model]);
+
+  // Callbacks.
+  function onClearAllItemsButtonClicked(): void {
+    props.onModelUpdated({ items: [] });
+  }
+
   // Templates.
   if (props.loadingState === "initialLoading") {
     return (
@@ -31,32 +49,61 @@ export default function OrderUpsertPanel(props: OrderUpsertPanelProps): React.Re
         {props.model.seating.name.toLowerCase()}
       </div>
 
-      {props.model.items.length ? (
-        <ul className="list-group list-group-flush">
-          {props.model.items.map((item, index) => (
-            <OrderItem
-              model={item}
-              onUpdated={updatedData => {
-                props.onModelUpdated?.({
-                  items: props.model.items.map(i => {
-                    if (i.guid === item.guid) {
-                      return { ...i, ...updatedData };
-                    }
+      <ul className="list-group list-group-flush flex-1">
+        {props.model.items.map((item, index) => (
+          <OrderItem
+            model={item}
+            onUpdated={updatedData => {
+              props.onModelUpdated?.({
+                items: props.model.items.map(i => {
+                  if (i.guid === item.guid) {
+                    return { ...i, ...updatedData };
+                  }
 
-                    return i;
-                  })
-                });
-              }}
-              onDeleted={() => {
-                props.onModelUpdated?.({ items: props.model.items.filter(i => i.guid !== item.guid) });
-              }}
-              index={index}
-              key={index}
-            />
-          ))}
-        </ul>
-      ) : (
-        <></>
+                  return i;
+                })
+              });
+            }}
+            onDeleted={() => {
+              props.onModelUpdated?.({ items: props.model.items.filter(i => i.guid !== item.guid) });
+            }}
+            index={index}
+            key={index}
+          />
+        ))}
+      </ul>
+
+      {props.model.items.length > 0 && (
+        <>
+          <div className="flex flex-col px-3 pt-1 pb-2 border-t border-black/15">
+            <div className="flex justify-between">
+              <span>Giá trước thuế</span>
+              <span className="text-blue-700">{amountDisplayText.amountBeforeVat}</span>
+            </div>
+            
+            <div className="flex justify-between">
+              <span>Thuế VAT</span>
+              <span className="text-blue-700">{amountDisplayText.vatAmount}</span>
+            </div>
+            
+            <div className="flex justify-between mt-3">
+              <span className="font-bold">Tổng tiền</span>
+              <span className="text-blue-700 font-bold">{amountDisplayText.totalAmount}</span>
+            </div>
+          </div>
+
+          <div className="flex border-t border-black/15 p-2">
+            <button
+              type="button"
+              className="btn btn-danger-outline gap-1"
+              onClick={onClearAllItemsButtonClicked}
+              disabled={!props.model.items.length}
+            >
+              <TrashIcon />
+              <span>Xóa hết</span>
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

@@ -27,7 +27,7 @@ export default function OrderItem(props: OrderItemProps): React.ReactNode {
 
   // Templates.
   return (
-    <li className="list-group-item grid grid-cols-1 gap-2 p-2 pt-1">
+    <li className="list-group-item grid grid-cols-1 gap-2 p-2 ps-3 pt-1">
       <div className="flex flex-col">
         <div className="flex gap-2 font-bold">
           <span className="text-blue-700">{props.index + 1}.</span>

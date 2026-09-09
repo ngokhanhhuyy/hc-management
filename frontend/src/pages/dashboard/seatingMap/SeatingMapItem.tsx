@@ -13,17 +13,22 @@ type SeatingMapItemProps = {
 export default function SeatingMapItem(props: SeatingMapItemProps): React.ReactNode {
   // Templates.
   return (
-    <div
+    <button
+      type="button"
       className={joinClassName(
-        "seating-map-item border border-black/15 hover:border-blue-600/50",
-        "text-black hover:text-blue-800 flex flex-col rounded-lg overflow-hidden",
-        "hover:shadow-md hover:cursor-pointer transition-colors duration-150",
+        "seating-map-item border flex flex-col rounded-lg overflow-hidden",
+        "hover:shadow-md hover:cursor-pointer transitions-all duration-150",
+        props.model.activeOrder
+          ? "border-emerald-700/50 text-emerald-700"
+          : "border-black/15 hover:border-blue-600/50 text-black hover:text-blue-800"
       )}
       onClick={props.onClick}
     >
       <div className={joinClassName(
-        "bg-white in-[.seating-map-item:hover]:bg-blue-600/10",
-        "flex flex-col p-2 transition-colors duration-150"
+        "flex flex-col p-2 transition-colors duration-150",
+        props.model.activeOrder
+          ? "bg-emerald-600/10"
+          : "bg-white in-[.seating-map-item:hover]:bg-blue-600/10",
       )}>
         <div className="flex justify-between items-center">
           <span className="text-bold">
@@ -31,8 +36,8 @@ export default function SeatingMapItem(props: SeatingMapItemProps): React.ReactN
           </span>
 
           {props.model.activeOrder != null ? (
-            <span className="text-success">
-              Đang có khách
+            <span className="text-emerald-700">
+              Có khách
             </span>
           ): (
             <span className="opacity-50">
@@ -46,8 +51,8 @@ export default function SeatingMapItem(props: SeatingMapItemProps): React.ReactN
           </span>
 
           {props.model.activeOrder != null ? (
-            <span className="text-success">
-              Đang có khách
+            <span className="text-emerald-700">
+              {props.model.activeOrder.itemAmount}
             </span>
           ): (
             <span className="opacity-50">
@@ -58,11 +63,13 @@ export default function SeatingMapItem(props: SeatingMapItemProps): React.ReactN
       </div>
 
       <div className={joinClassName(
-        "bg-black/7.5 in-[.seating-map-item:hover]:bg-blue-600/20 border-t border-t-black/10",
-        "in-[.seating-map-item:hover]:border-t-blue-600/20 px-3 text-center font-bold transition-colors duration-150"
+        "border-t px-3 text-center font-bold transition-colors duration-150",
+        props.model.activeOrder && "bg-emerald-600/25 border-t-emerald-600/25",
+        !props.model.activeOrder && "bg-black/7.5 in-[.seating-map-item:hover]:bg-blue-600/20",
+        !props.model.activeOrder && "border-t-black/10 in-[.seating-map-item:hover]:border-t-blue-600/20"
       )}>
         {props.model.name}
       </div>
-    </div>
+    </button>
   );
 }

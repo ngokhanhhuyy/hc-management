@@ -28,11 +28,11 @@ export abstract class BaseController {
   protected ok<TResponseDto extends JsonValue>(responseDto?: TResponseDto): TResponseDto | void {
     this.httpContext.status(200);
     if (responseDto === undefined) {
-      this.httpContext.res.headers.set("Content-Type", "application/json");
+      this.httpContext.res.headers.set("Content-Type", "application/text");
       return;
     }
 
-    this.httpContext.res.headers.set("Content-Type", "application/text");
+      this.httpContext.res.headers.set("Content-Type", "application/json");
     return responseDto;
   }
 
@@ -42,11 +42,11 @@ export abstract class BaseController {
     this.httpContext.header("Location", location);
     this.httpContext.status(201);
     if (responseDto === undefined) {
-      this.httpContext.res.headers.set("Content-Type", "application/json");
+      this.httpContext.res.headers.set("Content-Type", "application/text");
       return;
     }
 
-    this.httpContext.res.headers.set("Content-Type", "application/text");
+    this.httpContext.res.headers.set("Content-Type", "application/json");
     return responseDto;
   }
 }

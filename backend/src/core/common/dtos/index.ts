@@ -75,6 +75,13 @@ export class DtoFactory implements IDtoFactory {
       lastUpdatedUser: menuItem.lastUpdatedUser && this.createUserBasic(menuItem.lastUpdatedUser),
     };
   }
+  
+  public createMenuCategoryBasic(menuCategory: MenuCategory): MenuCategoryBasicResponseDto {
+    return {
+      id: menuCategory.id,
+      name: menuCategory.name
+    };
+  }
 
   public createSeatingBasic(seating: SeatingBasicResponseDtoFactoryArgs): SeatingBasicResponseDto {
     return {
@@ -90,14 +97,6 @@ export class DtoFactory implements IDtoFactory {
       ...this.createSeatingBasic(seating)
     };
   }
-  
-  public createMenuCategoryBasic(menuCategory: MenuCategory): MenuCategoryBasicResponseDto {
-    return {
-      id: menuCategory.id,
-      name: menuCategory.name
-    };
-  }
-
 
   public createOrderBasic(order: Order): OrderBasicResponseDto {
     return {
@@ -154,7 +153,7 @@ type MenuItemDetailResponseDtoFactoryArgs = MenuItem & {
 };
 
 type SeatingBasicResponseDtoFactoryArgs = Seating & {
-  activeOrder?: Order | null;
+  activeOrder: Order | null;
 };
 
 type SeatingDetailResponseDtoFactoryArgs = SeatingBasicResponseDtoFactoryArgs & {
@@ -166,7 +165,8 @@ type OrderBasicResponseDtoFactoryArgs = Order & {
   seating: Seating;
 };
 
-type OrderDetailResponseDtoFactoryArgs = OrderBasicResponseDtoFactoryArgs & {
+type OrderDetailResponseDtoFactoryArgs = Order & {
+  seating: SeatingBasicResponseDtoFactoryArgs;
   items: OrderItemDetailResponseDtoFactoryArgs[],
   createdUser: User;
   lastUpdatedUser: User | null;

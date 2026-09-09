@@ -12,12 +12,10 @@
         outline: 1px solid transparent;
         min-height: calc(var(--spacing) * var(--min-height-coeffecient));
         width: 100%;
-        box-shadow: var(--shadow-xs);
 
         &:focus {
             border-color: var(--color-blue-500);
             outline-color: var(--color-blue-500);
-            box-shadow: var(--shadow-md);
         }
 
         &:disabled {

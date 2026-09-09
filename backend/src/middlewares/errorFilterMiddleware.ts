@@ -1,5 +1,4 @@
 import type { Context } from "hono";
-import { HTTPException } from "hono/http-exception";
 import type { ProblemDetails } from "@hc-management/shared/dtos";
 import {
   ValidationError,
@@ -80,5 +79,6 @@ export const errorFilterMiddleware = async (error: Error, context: Context) => {
     }, 401);
   }
 
+  console.log(error, error.message, error.stack);
   throw error;
 };

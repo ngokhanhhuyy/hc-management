@@ -1,4 +1,4 @@
-import type { PrismaClient, Prisma, Order, OrderItem } from "../database/client";
+import type { PrismaClient, Order, OrderItem } from "../database/client";
 import type { ICallerDetailProvider } from "../common/authentication";
 import type { IDtoFactory } from "../common/dtos";
 import type { IDatabaseErrorHandler, IErrorFactory } from "../common/errors";
@@ -19,7 +19,7 @@ export interface IOrderService {
   createAsync(requestDto: OrderUpsertRequestDto): Promise<OrderDetailResponseDto>;
   updateAsync(id: number, requestDto: OrderUpsertRequestDto): Promise<OrderDetailResponseDto>;
   finishAsync(id: number): Promise<void>;
-  // deleteAsync(id: number): Promise<void>;
+  deleteAsync(id: number): Promise<void>;
 }
 
 export class OrderService implements IOrderService {
@@ -86,7 +86,13 @@ export class OrderService implements IOrderService {
       throw this.errorFactory.createNotFoundError();
     }
 
-    return this.dtoFactory.createOrderDetail(order);
+    return this.dtoFactory.createOrderDetail({
+      ...order,
+      seating: {
+        ...order.seating,
+        activeOrder: null
+      }
+    });
   }
 
   public async createAsync(requestDto: OrderUpsertRequestDto): Promise<OrderDetailResponseDto> {
@@ -153,7 +159,7 @@ export class OrderService implements IOrderService {
         },
         data: {
           seatingId: requestDto.seatingId,
-          cachedItemAmount: calculateOrderAmount(requestDto),
+          cachedItemAmount: calculateOrderAmount(requestDto).totalAmount,
           items: {
             create: requestDto.items.map(dto => ({
               amountBeforeVatPerUnit: dto.amountBeforeVatPerUnit,
@@ -166,7 +172,13 @@ export class OrderService implements IOrderService {
         }
       });
 
-      return this.dtoFactory.createOrderDetail(order);
+      return this.dtoFactory.createOrderDetail({
+        ...order,
+        seating: {
+          ...order.seating,
+          activeOrder: null
+        }
+      });
     } catch (error) {
       const handledResult = this.databaseErrorHandler.handle<Order & OrderItem>(error);
       if (handledResult == null) {
@@ -245,7 +257,7 @@ export class OrderService implements IOrderService {
           data: {
             lastUpdatedDateTime: new Date(),
             lastUpdatedUserId: this.callerDetailProvider.getCallerId(),
-            cachedItemAmount: calculateOrderAmount(requestDto),
+            cachedItemAmount: calculateOrderAmount(requestDto).totalAmount,
             concurrencyVersion
           }
         });
@@ -299,7 +311,13 @@ export class OrderService implements IOrderService {
       throw this.errorFactory.createConcurrencyError();
     }
 
-    return this.dtoFactory.createOrderDetail(updatedOrder);
+    return this.dtoFactory.createOrderDetail({
+      ...updatedOrder,
+      seating: {
+        ...updatedOrder.seating,
+        activeOrder: null
+      }
+    });
   }
 
   public async finishAsync(id: number): Promise<void> {
@@ -315,6 +333,43 @@ export class OrderService implements IOrderService {
       const handledResult = this.databaseErrorHandler.handle(error);
       if (handledResult?.type === "RecordNotFound") {
         throw this.errorFactory.createNotFoundError();
+      }
+
+      throw error;
+    }
+  }
+
+  public async deleteAsync(id: number): Promise<void> {
+    const order = await this.prisma.order.findUnique({
+      where: { id }
+    });
+
+    if (order == null) {
+      throw this.errorFactory.createNotFoundError();
+    }
+
+    try {
+      if (order.finishedDateTime != null) {
+        await this.prisma.order.update({
+          where: { id },
+          data: {
+            deletedDateTime: new Date(),
+            deletedUserId: this.callerDetailProvider.getCallerId()
+          }
+        });
+
+        return;
+      }
+
+      const result = await this.prisma.order.delete({
+        where: { id }
+      });
+
+      console.log(result);
+    } catch (error) {
+      const handledResult = this.databaseErrorHandler.handle(error);
+      if (handledResult?.type === "RecordNotFound") {
+        throw this.errorFactory.createConcurrencyError();
       }
 
       throw error;

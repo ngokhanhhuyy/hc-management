@@ -22,18 +22,23 @@ export class SeatingService implements ISeatingService {
   private readonly databaseErrorHandler: IDatabaseErrorHandler;
   private readonly dtoFactory: IDtoFactory;
   private readonly errorFactory: IErrorFactory;
-  private readonly callerDetailProvider: ICallerDetailProvider;
 
   public constructor(dependencies: IServiceContainer) {
     this.database = dependencies.prisma;
     this.databaseErrorHandler = dependencies.databaseErrorHandler;
     this.dtoFactory = dependencies.dtoFactory;
     this.errorFactory = dependencies.errorFactory;
-    this.callerDetailProvider = dependencies.callerDetailProvider;
   }
 
   public async getAllAsync(): Promise<SeatingBasicResponseDto[]> {
     const seatings = await this.database.seating.findMany({
+      include: {
+        orders: {
+          where: {
+            finishedDateTime: null
+          }
+        }
+      },
       where: {
         isDeleted: {
           equals: false
@@ -41,7 +46,7 @@ export class SeatingService implements ISeatingService {
       }
     });
 
-    return seatings.map(s => this.dtoFactory.createSeatingBasic(s));
+    return seatings.map(seating => this.dtoFactory.createSeatingBasic({ ...seating, activeOrder: seating.orders[0] }));
   }
 
   public async getDetailAsync(id: number): Promise<SeatingDetailResponseDto> {

@@ -37,4 +37,9 @@ export const orderApi: IOrderApi = {
       method: "put",
     });
   },
+  async deleteAsync(id: number): Promise<void> {
+    return await httpClient.sendAndIgnoreAsync(`${orderApiPath}/${id}`, {
+      method: "delete",
+    });
+  },
 };

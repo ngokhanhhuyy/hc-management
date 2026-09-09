@@ -8,7 +8,7 @@ const app = buildApp(app => app
   .use(requestLogglerMiddleware)
   .use("/static/*", serveStatic({ root: "./" }))
   .onError(errorFilterMiddleware))
-  .all("/health-check", (context) => context.body(null, 200));
+  .get("/health-check", (context) => context.body(null, 200));
 
 export default {
   fetch: app.fetch,

@@ -97,7 +97,6 @@ export function httpDelete<
     _: ControllerAction<TController, TArgs, TResponseDto>,
     context: ClassMethodDecoratorContext<TController>): void
   {
-    
     setControllerActionRoutePathAndMethod(path, "delete", context);
   };
 }

@@ -4,10 +4,9 @@ import {
   controller,
   route,
   httpGet,
-  httpQuery,
   httpPost,
   httpPut,
-  // httpDelete,
+  httpDelete,
   fromBody,
   fromRoute,
   fromQuery,
@@ -34,7 +33,7 @@ export class OrderController extends BaseController implements IOrderApi {
     this.orderService = this.serviceProvider.getRequiredService("orderService");
   }
 
-  @httpQuery("/")
+  @httpGet("/")
   @fromQuery(0, OrderListRequestDto)
   @producesResponseType<OrderListResponseDto>(200)
   public async getListAsync(requestDto: OrderListRequestDto): Promise<OrderListResponseDto> {
@@ -90,15 +89,15 @@ export class OrderController extends BaseController implements IOrderApi {
     return this.ok();
   }
 
-  // @httpDelete("/:id{[0-9]+}")
-  // @fromRoute(0, "id", "number")
-  // @producesResponseType(200)
-  // @producesResponseType(401)
-  // @producesResponseType(403)
-  // @producesResponseType(404)
-  // @producesResponseType(422)
-  // public async deleteAsync(id: number): Promise<void> {
-  //   await this.orderService.deleteAsync(id);
-  //   return this.ok();
-  // }
+  @httpDelete("/:id{[0-9]+}")
+  @fromRoute(0, "id", "number")
+  @producesResponseType(200)
+  @producesResponseType(401)
+  @producesResponseType(403)
+  @producesResponseType(404)
+  @producesResponseType(422)
+  public async deleteAsync(id: number): Promise<void> {
+    await this.orderService.deleteAsync(id);
+    return this.ok();
+  }
 }

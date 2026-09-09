@@ -4,7 +4,6 @@ import type { OrderDetailResponseDto, OrderUpsertRequestDto } from "@hc-manageme
 import * as v from "valibot";
 
 export type OrderUpsertModel = {
-  id: number | null;
   seating: SeatingBasicModel;
   items: OrderItemUpsertModel[];
   concurrencyVersion: string;
@@ -14,14 +13,12 @@ export type OrderUpsertModel = {
 
 export function createOrderUpsertModel(seating: SeatingBasicModel): OrderUpsertModel {
   return {
-    id: null,
     seating,
     items: [],
     concurrencyVersion: "",
     mapFromResponseDto(responseDto: OrderDetailResponseDto): OrderUpsertModel {
       return {
         ...this,
-        id: responseDto.id,
         items: responseDto.items.map(createOrderItemUpsertModel),
         concurrencyVersion: responseDto.concurrencyVersion
       };

@@ -129,7 +129,7 @@ export default function MenuItemListPanel(props: MenuItemListPanelProps): React.
       </Form>
 
       <div className={joinClassName(
-        "grid 2xl:grid-cols-7 xl:grid-cols-5 lg:grid-cols-4",
+        "grid xl:grid-cols-5 lg:grid-cols-4",
         "md:grid-cols-3 gap-3 justify-start items-start",
         loadingState === "reloading" && "opacity-50"
       )}>

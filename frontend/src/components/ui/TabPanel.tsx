@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { joinClassName } from "#/helpers";
 
 // Props.
@@ -54,7 +54,6 @@ export function TabButton(props: TabButtonProps): React.ReactNode {
       className={joinClassName(
         "bg-white border border-b-0 border-black/25 rounded-t-lg px-3",
         "flex justify-center items-center disabled:text-black/25 not-disabled:cursor-pointer",
-        //styles.tabButton,
         props.isActive && "text-blue-600 font-bold border-blue-600 shadow-lg",
         props.isActive && "rounded-none relative is-active py-1.5",
         props.isActive && "outline-3 outline-blue-600/25",

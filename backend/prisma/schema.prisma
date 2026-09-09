@@ -19,11 +19,12 @@ model User {
   isDeleted          Boolean @default(false)
   concurrencyVersion String  @default(uuid())
 
-  createdMenuItem     MenuItem[] @relation("menuItemCreatedUser")
-  lastUpdatedMenuItem MenuItem[] @relation("menuItemLastUpdatedUser")
-  createdOrders       Order[]    @relation("orderCreatedUser")
-  lastUpdatedOrders   Order[]    @relation("orderLastUpdatedUser")
-  finishedOrders      Order[]    @relation("orderFinishedUser")
+  createdMenuItem       MenuItem[] @relation("menuItemCreatedUser")
+  lastUpdatedMenuItem   MenuItem[] @relation("menuItemLastUpdatedUser")
+  createdOrders         Order[]    @relation("orderCreatedUser")
+  lastUpdatedOrders     Order[]    @relation("orderLastUpdatedUser")
+  finishedOrders        Order[]    @relation("orderFinishedUser")
+  finishedDeletedOrders Order[]    @relation("orderDeletedUser")
 
   @@unique([userName], map: "UNIQUE_userName")
   @@map("users")
@@ -79,18 +80,20 @@ model Order {
   id                  Int       @id(map: "PK_orders_id") @default(autoincrement())
   createdDateTime     DateTime  @default(now()) @db.Timestamptz(0)
   lastUpdatedDateTime DateTime? @db.Timestamptz(0)
-  deletedDateTime     DateTime? @db.Timestamptz(0)
   finishedDateTime    DateTime? @db.Timestamptz(0)
+  deletedDateTime     DateTime? @db.Timestamptz(0)
   cachedItemAmount    Int
   createdUserId       Int
   lastUpdatedUserId   Int?
   finishedUserId      Int?
+  deletedUserId       Int?
   seatingId           Int
   concurrencyVersion  String    @default(uuid())
 
   createdUser     User        @relation("orderCreatedUser", fields: [createdUserId], references: [id], map: "FK_orders_users_createdUserId", onUpdate: Cascade, onDelete: Restrict)
   lastUpdatedUser User?       @relation("orderLastUpdatedUser", fields: [lastUpdatedUserId], references: [id], map: "FK_orders_users_lastUpdatedUserId", onUpdate: Cascade, onDelete: Restrict)
   finishedUser    User?       @relation("orderFinishedUser", fields: [finishedUserId], references: [id], map: "FK_orders_users_finishedUserId", onUpdate: Cascade, onDelete: Restrict)
+  deletedUser     User?       @relation("orderDeletedUser", fields: [deletedUserId], references: [id], map: "FK_orders_users_deletedUserId", onUpdate: Cascade, onDelete: Restrict)
   seating         Seating     @relation(fields: [seatingId], references: [id], map: "FK_orders_seatings_seatingId", onUpdate: Cascade, onDelete: Restrict)
   items           OrderItem[]
 

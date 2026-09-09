@@ -1,4 +1,5 @@
 import { Hono, type Context, type MiddlewareHandler } from "hono";
+import { every } from "hono/combine";
 import type { BaseController } from "./baseController";
 
 export type ControllerConstructor = new (context: Context) => BaseController;
@@ -43,12 +44,6 @@ export function buildApp(builderOptions?: (app: Hono) => void): Hono {
     } as const;
 
     for (const [actionName, actionMetadata] of Object.entries(controllerMetadata.actions)) {
-      if (actionMetadata.middlewares.length) {
-        for (const middleware of actionMetadata.middlewares) {
-          controllerApp.use(actionMetadata.path, middleware);
-        }
-      }
-
       const mapper = mappers[actionMetadata.method].bind(controllerApp);
       const handler = async (context: Context): Promise<Response> => {
         const controller = new controllerConstructor(context);
@@ -62,9 +57,9 @@ export function buildApp(builderOptions?: (app: Hono) => void): Hono {
         }
 
         return context.json(response);
-      } ;
+      };
 
-      mapper(actionMetadata.path, handler);
+      mapper(actionMetadata.path, every(...actionMetadata.middlewares), handler);
     }
 
     rootApp.route(controllerMetadata.path, controllerApp);

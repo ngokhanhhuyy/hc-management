@@ -11,5 +11,5 @@ export interface IOrderApi {
   createAsync(requestDto: OrderUpsertRequestDto): Promise<OrderDetailResponseDto>;
   updateAsync(id: number, args: OrderUpsertRequestDto): Promise<OrderDetailResponseDto>;
   finishAsync(id: number): Promise<void>;
-  // deleteAsync(id: number): Promise<void>;
+  deleteAsync(id: number): Promise<void>;
 }

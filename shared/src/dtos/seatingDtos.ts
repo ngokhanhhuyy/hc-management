@@ -11,5 +11,5 @@ export const SeatingDetailResponseDto = v.object({
 
 export type SeatingUpsertRequestDto = v.InferOutput<typeof SeatingUpsertRequestDto>;
 export const SeatingUpsertRequestDto = v.object({
-  name: v.nullable(v.pipe(v.string(), v.maxLength(ValidationContracts.Seating.NameMaxLength)))
+  name: v.pipe(v.string(), v.maxLength(ValidationContracts.Seating.NameMaxLength))
 });

@@ -20,7 +20,7 @@ export default function MenuItem(props: MenuItemProps): React.ReactNode {
       className={joinClassName(
         "menu-item flex flex-col overflow-hidden h-full flex-1 cursor-pointer transition-shadow duration-150",
         "border border-black/10 hover:border-blue-600/50 hover:text-blue-600",
-        "rounded-lg hover:shadow-lg transition-colors duration-150 relative"
+        "rounded-lg hover:shadow-lg transition-all duration-150 relative"
       )}
       onClick={props.onClick}
     >

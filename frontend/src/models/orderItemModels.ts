@@ -36,8 +36,9 @@ export function createOrderItemUpsertModel(arg: OrderItemDetailResponseDto | Men
 
   if (v.is(OrderItemDetailResponseDto, arg)) {
     model.id = arg.id;
-    model.amountBeforeVatPerUnit = arg.menuItem.defaultAmountBeforeVatPerUnit;
-    model.vatPercentagePerUnit = arg.menuItem.defaultVatPercentagePerUnit;
+    model.amountBeforeVatPerUnit = arg.amountBeforeVatPerUnit;
+    model.vatPercentagePerUnit = arg.vatPercentagePerUnit;
+    model.quantity = arg.quantity;
     model.menuItem = createMenuItemBasicModel(arg.menuItem);
     model.concurrencyVersion = arg.concurrencyVersion;
 

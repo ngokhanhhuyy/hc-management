@@ -21,7 +21,7 @@ export default function MenuCategory(props: MenuCategoryProps): React.ReactNode 
       onClick={props.onSelected}
     >
       <div className={joinClassName(
-        "form-input-group-text border-e-0 transition-colors duration-200",
+        "form-input-group-text border-e-0 transitions-all duration-200",
         props.isSelected ? "bg-blue-600/10 border-blue-600" : "in-[.menu-category:hover]:border-blue-600/50"
       )}>
         <RadioInput isChecked={props.isSelected} onInput={props.onSelected} />

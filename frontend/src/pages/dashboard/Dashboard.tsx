@@ -5,7 +5,6 @@ import { MapIcon, TableCellsIcon, ChevronLeftIcon } from "@heroicons/react/24/ou
 // Child components.
 import SeatingMapTab from "./seatingMap/SeatingMapTab";
 import OrderUpsertTab from "./orderUpsert/OrderUpsertTab";
-import { joinClassName } from "#/helpers/index.js";
 
 // Components.
 export default function DashboardPage(): React.ReactNode {
@@ -15,10 +14,6 @@ export default function DashboardPage(): React.ReactNode {
   // Callbacks.
   function onSeatingSelected(seating: SeatingBasicModel): void {
     setSelectedSeating(seating);
-  }
-
-  function onSwitchToSeatingMapButtonClicked(): void {
-    setSelectedSeating(null);
   }
 
   // Templates.
@@ -43,7 +38,7 @@ export default function DashboardPage(): React.ReactNode {
           <button
             type="button"
             className="btn gap-1.5"
-            onClick={onSwitchToSeatingMapButtonClicked}
+            onClick={() => setSelectedSeating(null)}
           >
             <ChevronLeftIcon className="size-4" />
             <span>Quay lại danh sách bàn ăn</span>

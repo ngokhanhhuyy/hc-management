@@ -49,5 +49,8 @@ export const errorMessages = {
   },
   seatingActiveOrderNotFinished(seatingName: string): string {
     return `${seatingName} có order chưa thanh toán.`;
+  },
+  finishedOrderDeleteRestricted(orderId: number): string {
+    return `Không thể xoá order #${orderId} do đã thanh toán.`;
   }
 };

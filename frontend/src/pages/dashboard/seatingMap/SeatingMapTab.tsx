@@ -4,7 +4,6 @@ import { createSeatingBasicModel, type SeatingBasicModel } from "#/models";
 
 // Child components.
 import SeatingMapItem from "./SeatingMapItem";
-import { joinClassName } from "#/helpers/index.js";
 
 // Props.
 type SeatingMapTabProps = {
@@ -35,11 +34,8 @@ export default function SeatingMapTab(props: SeatingMapTabProps): React.ReactNod
   }
   
   return (
-    <div className="grid grid-cols-[1fr_320px] items-start h-full gap-3">
-      <div className={joinClassName(
-        "grid 2xl:grid-cols-7 xl:grid-cols-5 lg:grid-cols-4",
-        "md:grid-cols-3 sm:grid-cols-2 items-start gap-3"
-      )}>
+    <div className="grid grid-cols-[1fr_320px] items-start gap-3">
+      <div className="grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 items-start gap-3">
         {model.map((seating) => (
           <SeatingMapItem
             model={seating}

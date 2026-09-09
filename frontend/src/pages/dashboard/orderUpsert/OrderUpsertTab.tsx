@@ -25,8 +25,10 @@ export default function OrderUpsertTab(props: OrderUpsertTabProps): React.ReactN
   // States.
   const [model, setModel] = useState<OrderUpsertModel>(() => createOrderUpsertModel(props.seating));
   const [loadingState, setLoadingState] = useState<LoadingState>("initialLoading");
+  const [renderingKey, setRenderingKey] = useState<number>(0);
   const id = useRef<number | null>(null);
-  const syncingTimeout = useRef<number | null>(null);
+  const currentTimeoutId = useRef<number | null>(null);
+  const currentRequestId = useRef<string | number>(null);
   
   // Computed.
   const pickedMenuItems = useMemo<MenuItemWithPickedQuantity[]>(() => {
@@ -57,21 +59,41 @@ export default function OrderUpsertTab(props: OrderUpsertTabProps): React.ReactN
 
       return { ...m, items: newItems };
     });
+
+    setRenderingKey(key => key + 1);
   }
 
   async function syncDataAsync(): Promise<void> {
-    const timeout = setTimeout(() => { }, 0);
+    const requestId = crypto.randomUUID();
+    currentRequestId.current = requestId;
+
     let responseDto: OrderDetailResponseDto;
     setLoadingState("syncing");
-    if (!id.current) {
-      responseDto = await api.order.createAsync(model.toRequestDto());
-      id.current = responseDto.id;
-    } else {
-      responseDto = await api.order.updateAsync(id.current, model.toRequestDto());
+    if (model.items.length) {
+      if (!id.current) {
+        responseDto = await api.order.createAsync(model.toRequestDto());
+        id.current = responseDto.id;
+      } else {
+        responseDto = await api.order.updateAsync(id.current, model.toRequestDto());
+      }
+
+      setModel(m => m.mapFromResponseDto(responseDto));
+    } else if (id.current) {
+      await api.order.deleteAsync(id.current);
+      id.current = null;
+    }
+  };
+
+  function syncDataWithDelayAndDebounce(): void {
+    if (currentTimeoutId.current) {
+      window.clearTimeout(currentTimeoutId.current);
     }
 
-    setModel(m => m.mapFromResponseDto(responseDto));
-  };
+    currentTimeoutId.current = window.setTimeout(async () => {
+      await syncDataAsync();
+      currentTimeoutId.current = null;
+    }, 500);
+  }
 
   // Effect.
   useEffect(() => {
@@ -86,13 +108,22 @@ export default function OrderUpsertTab(props: OrderUpsertTabProps): React.ReactN
     loadAsync().finally(() => setLoadingState(null));
   }, []);
 
+  useEffect(() => {
+    if (renderingKey > 0) {
+      syncDataWithDelayAndDebounce();
+    }
+  }, [renderingKey]);
+
   // Templates.
   return (
-    <div className="grid grid-cols-[1fr_320px] gap-3 h-full">
+    <div className="grid grid-cols-[1fr_320px] gap-3">
       <MenuItemListPanel pickedItems={pickedMenuItems} onPicked={onMenuItemPicked} />
       <OrderUpsertPanel
         model={model}
-        onModelUpdated={updatedData => setModel(m => ({ ...m, ...updatedData }))}
+        onModelUpdated={updatedData => {
+          setModel(m => ({ ...m, ...updatedData }));
+          setRenderingKey(key => key + 1);
+        }}
         loadingState={loadingState}
       />
     </div>

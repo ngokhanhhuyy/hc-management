@@ -4,7 +4,7 @@ import { getDisplayAmountText } from "#/helpers";
 import { calculateOrderAmount } from "@hc-management/shared/helpers";
 
 // Child components.
-import { TrashIcon } from "@heroicons/react/24/outline";
+import { TrashIcon, CurrencyDollarIcon } from "@heroicons/react/24/outline";
 import OrderItem from "./OrderItem";
 
 // Props.
@@ -92,7 +92,7 @@ export default function OrderUpsertPanel(props: OrderUpsertPanelProps): React.Re
             </div>
           </div>
 
-          <div className="flex border-t border-black/15 p-2">
+          <div className="flex border-t border-black/15 p-2 gap-2">
             <button
               type="button"
               className="btn btn-danger-outline gap-1"
@@ -102,8 +102,27 @@ export default function OrderUpsertPanel(props: OrderUpsertPanelProps): React.Re
               <TrashIcon />
               <span>Xóa hết</span>
             </button>
+            
+            <button
+              type="button"
+              className="btn gap-1"
+              onClick={onClearAllItemsButtonClicked}
+              disabled={!props.model.items.length}
+            >
+              <CurrencyDollarIcon />
+              <span>Thanh toán</span>
+            </button>
           </div>
         </>
+      )}
+
+      {props.loadingState === "syncing" && (
+        <div className="flex justify-end items-center gap-3 p-1 border-t border-black/10">
+          <span className="opacity-50">Đang đồng bộ</span>
+          <div className="h-4 aspect-1/2 overflow-hidden animate-spin origin-[center_right] -translate-x-full">
+            <div className="h-full aspect-square border-2 border-blue-700 rounded-full" />
+          </div>
+        </div>
       )}
     </div>
   );

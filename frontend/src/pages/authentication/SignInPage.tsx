@@ -1,17 +1,18 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router";
 import { api } from "#/api";
 import { createSignInModel, type SignInModel } from "#/models";
+import { getSeatingListRoutePath } from "#/helpers";
+import logoUrl from "#/assets/images/logo.png";
 
 // Child components.
 import { Form, FormField, TextInput } from "#/components/form";
 
-// Props.
-type SignInPageProps = {
-  onSignedIn(): any;
-};
-
 // Components.
-export default function SignInPage(props: SignInPageProps): React.ReactNode {
+export default function SignInPage(): React.ReactNode {
+  // Dependencies.
+  const navigate = useNavigate();
+
   // States.
   const [model, setModel] = useState<SignInModel>(createSignInModel);
 
@@ -22,7 +23,7 @@ export default function SignInPage(props: SignInPageProps): React.ReactNode {
   }
 
   function onSubmissionSucceeded(): void {
-    props.onSignedIn();
+    navigate(getSeatingListRoutePath());
   }
 
   // Templates.
@@ -35,13 +36,8 @@ export default function SignInPage(props: SignInPageProps): React.ReactNode {
         onSubmissionSucceeded={onSubmissionSucceeded}
         submitOnEnterKeyPressed
       >
-        <div className="panel-header">
-          <span className="panel-header-title text-center w-full">
-            Quán nhậu sân vườn
-          </span>
-        </div>
-
-        <div className="panel-body flex flex-col p-3 pt-2 gap-3 min-w-75">
+        <div className="panel-body flex flex-col p-3 gap-3 min-w-75">
+          <img src={logoUrl} className="img-thumbnail aspect-square shadow-xs" /> 
           <FormField path="userName">
             <TextInput
               value={model.userName}
@@ -57,7 +53,7 @@ export default function SignInPage(props: SignInPageProps): React.ReactNode {
             />
           </FormField>
 
-          <button type="submit" className="btn btn-primary mt-3">
+          <button type="submit" className="btn bg-black text-white mt-3">
             Đăng nhập
           </button>
         </div>

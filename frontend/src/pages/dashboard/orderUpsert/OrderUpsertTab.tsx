@@ -90,7 +90,15 @@ export default function OrderUpsertTab(props: OrderUpsertTabProps): React.ReactN
     }
 
     currentTimeoutId.current = window.setTimeout(async () => {
-      await syncDataAsync();
+      try {
+        await Promise.all([
+          syncDataAsync(),
+          new Promise<void>(resolve => setTimeout(resolve, 300))
+        ]);
+      } finally {
+        setLoadingState(null);
+      }
+
       currentTimeoutId.current = null;
     }, 500);
   }

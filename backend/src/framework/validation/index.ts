@@ -7,11 +7,11 @@ v.setSpecificMessage(v.gtValue, issue => errorMessages.greaterThan(issue.require
 v.setSpecificMessage(v.ltValue, issue => errorMessages.lessThan(issue.requirement as number));
 
 v.setSpecificMessage(v.minLength, issue => {
-  const type = typeof issue.path![0].input === "string" ? "string" : "array";
+  const type = typeof issue.input === "string" ? "string" : "array";
   return errorMessages.minLength(issue.requirement as number, type);
 });
 
 v.setSpecificMessage(v.maxLength, issue => {
-  const type = typeof issue.path![0].input === "string" ? "string" : "array";
+  const type = typeof issue.input === "string" ? "string" : "array";
   return errorMessages.maxLength(issue.requirement as number, type);
 });

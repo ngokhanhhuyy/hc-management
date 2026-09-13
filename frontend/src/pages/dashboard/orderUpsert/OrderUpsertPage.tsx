@@ -1,10 +1,9 @@
 import React, { useState, useRef, useMemo, useEffect } from "react";
+import { useLoaderData } from "react-router";
 import { api } from "#/api";
 import {
-  createOrderUpsertModel,
   createOrderItemUpsertModel,
   type MenuItemBasicModel,
-  type SeatingBasicModel,
   type OrderUpsertModel,
   type OrderItemUpsertModel
 } from "#/models";
@@ -12,21 +11,19 @@ import type { OrderDetailResponseDto } from "@hc-management/shared/dtos";
 // import { joinClassName } from "#/helpers";
 
 // Child components.
+import type { DataLoadedResult } from "./dataLoader";
 import MenuItemListPanel, { type MenuItemWithPickedQuantity } from "./menuItemPanel/MenuItemListPanel";
 import OrderUpsertPanel, { type LoadingState } from "./orderUpsertPanel/OrderUpsertPanel";
 
-// Props.
-type OrderUpsertTabProps = {
-  seating: SeatingBasicModel;
-};
-
 // Components.
-export default function OrderUpsertTab(props: OrderUpsertTabProps): React.ReactNode {
+export default function OrderUpsertPage(): React.ReactNode {
+  // Dependencies.
+  const initialLoadedModels = useLoaderData<DataLoadedResult>();
+
   // States.
-  const [model, setModel] = useState<OrderUpsertModel>(() => createOrderUpsertModel(props.seating));
-  const [loadingState, setLoadingState] = useState<LoadingState>("initialLoading");
+  const [model, setModel] = useState<OrderUpsertModel>(initialLoadedModels.orderUpsertModel);
+  const [loadingState, setLoadingState] = useState<LoadingState>(null);
   const [renderingKey, setRenderingKey] = useState<number>(0);
-  const id = useRef<number | null>(null);
   const currentTimeoutId = useRef<number | null>(null);
   const currentRequestId = useRef<string | number>(null);
   
@@ -70,17 +67,16 @@ export default function OrderUpsertTab(props: OrderUpsertTabProps): React.ReactN
     let responseDto: OrderDetailResponseDto;
     setLoadingState("syncing");
     if (model.items.length) {
-      if (!id.current) {
+      if (!model.id) {
         responseDto = await api.order.createAsync(model.toRequestDto());
-        id.current = responseDto.id;
       } else {
-        responseDto = await api.order.updateAsync(id.current, model.toRequestDto());
+        responseDto = await api.order.updateAsync(model.id, model.toRequestDto());
       }
 
       setModel(m => m.mapFromResponseDto(responseDto));
-    } else if (id.current) {
-      await api.order.deleteAsync(id.current);
-      id.current = null;
+    } else if (model.id) {
+      await api.order.deleteAsync(model.id);
+      setModel(m => ({ ...m, id: null }));
     }
   };
 
@@ -105,18 +101,6 @@ export default function OrderUpsertTab(props: OrderUpsertTabProps): React.ReactN
 
   // Effect.
   useEffect(() => {
-    const loadAsync = async () => {
-      if (props.seating.activeOrder) {
-        const responseDto = await api.order.getDetailAsync(props.seating.activeOrder.id);
-        setModel(m => m.mapFromResponseDto(responseDto));
-        id.current = responseDto.id;
-      }
-    };
-
-    loadAsync().finally(() => setLoadingState(null));
-  }, []);
-
-  useEffect(() => {
     if (renderingKey > 0) {
       syncDataWithDelayAndDebounce();
     }
@@ -132,7 +116,6 @@ export default function OrderUpsertTab(props: OrderUpsertTabProps): React.ReactN
           setModel(m => ({ ...m, ...updatedData }));
           setRenderingKey(key => key + 1);
         }}
-        loadingState={loadingState}
       />
     </div>
   );

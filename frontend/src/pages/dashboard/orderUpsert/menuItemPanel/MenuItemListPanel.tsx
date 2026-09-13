@@ -1,17 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useLoaderData } from "react-router";
 import { api } from "#/api";
-import {
-  createMenuItemListModel,
-  createMenuCategoryBasicModel,
-  type MenuItemListModel,
-  type MenuItemBasicModel,
-  type MenuCategoryBasicModel
-} from "#/models";
+import type { MenuItemListModel, MenuItemBasicModel, MenuCategoryBasicModel } from "#/models";
 import type { MenuItemListResponseDto } from "@hc-management/shared/dtos";
 import { displayNames } from "@hc-management/shared/localization";
-import { joinClassName } from "#/helpers";
+import { joinClassName, compute } from "#/helpers";
 
 // Child components.
+import type { DataLoadedResult } from "../dataLoader";
 import { Form, FormField, TextInput } from "#/components/form";
 import MenuItem from "./MenuItem";
 import MenuCategory from "./MenuCategory";
@@ -29,11 +25,16 @@ type MenuItemListPanelProps = {
 
 // Component.
 export default function MenuItemListPanel(props: MenuItemListPanelProps): React.ReactNode {
+  // Dependencies.
+  const initialLoadedModels = useLoaderData<DataLoadedResult>();
+
   // States.
-  const [itemListModel, setItemListModel] = useState<MenuItemListModel>(createMenuItemListModel);
-  const [categoryListModel, setCategoryListModel] = useState<MenuCategoryBasicModel[]>([]);
+  const [itemListModel, setItemListModel] = useState<MenuItemListModel>(initialLoadedModels.menuItemListModel);
   const [loadingState, setLoadingState] = useState<"initialLoading" | "reloading" | null>("initialLoading");
   const latestLoadingRequestId = useRef<number>(-1);
+
+  // Computed.
+  const categoryListModel = compute<MenuCategoryBasicModel[]>(() => initialLoadedModels.menuCategoryListModel);
 
   // Callbacks.
   async function submitAsync(): Promise<MenuItemListResponseDto> {
@@ -46,31 +47,17 @@ export default function MenuItemListPanel(props: MenuItemListPanelProps): React.
 
   // Effect.
   useEffect(() => {
+    if (loadingState === "initialLoading") {
+      setLoadingState(null);
+      return;
+    }
+    
     const loadItemListModelAsync = async () => {
       const responseDto = await api.menuItem.getListAsync(itemListModel.toRequestDto());
       setItemListModel(m => m.mapFromResponseDto(responseDto));
     };
 
-    const loadCategoryListModelAsync = async () => {
-      const loadingRequestId = latestLoadingRequestId.current + 1;
-      latestLoadingRequestId.current = loadingRequestId;
-      
-      const responseDtos = await api.menuCategory.getAllAsync();
-      if (latestLoadingRequestId.current === loadingRequestId) {
-        setCategoryListModel(responseDtos.map(createMenuCategoryBasicModel));
-      }
-    };
-
     const loadAsync = async () => {
-      if (loadingState === "initialLoading") {
-        await Promise.all([
-          loadItemListModelAsync(),
-          loadCategoryListModelAsync()
-        ]);
-
-        return;
-      }
-      
       setLoadingState("reloading");
       await loadItemListModelAsync();
     };

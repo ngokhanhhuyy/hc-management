@@ -9,13 +9,13 @@
         padding-inline: var(--padding-inline);
         padding-block: var(--padding-block);
         transition: .2s linear, outline .1s linear;
-        outline: 1px solid transparent;
+        outline: 3px solid transparent;
         min-height: calc(var(--spacing) * var(--min-height-coeffecient));
         width: 100%;
 
         &:focus {
             border-color: var(--color-blue-500);
-            outline-color: var(--color-blue-500);
+            outline-color: --alpha(var(--color-blue-500) / 30%);
         }
 
         &:disabled {
@@ -47,14 +47,14 @@
             }
         }
 
-        .form-field:has(.field-validation-error) &:not(:disabled),
+        .form-field.field-validation-error &:not(:disabled),
         &.is-invalid:not(:disabled) {
             background-color: --alpha(var(--color-red-500) / 5%);
             color: var(--color-red-500);
             border-color: --alpha(var(--color-red-500) / 100%);
 
             &:focus {
-                outline-color: --alpha(var(--color-red-500) / 100%);
+                outline-color: --alpha(var(--color-red-500) / 30%);
             }
         }
 

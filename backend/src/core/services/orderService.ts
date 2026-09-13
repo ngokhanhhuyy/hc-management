@@ -244,7 +244,7 @@ export class OrderService implements IOrderService {
           });
         }
 
-        await this.prisma.orderItem.deleteMany({
+        await transaction.orderItem.deleteMany({
           where: {
             id: { notIn: requestDto.items.map(i => i.id).filter(id => id != null) },
             orderId: id,
@@ -252,7 +252,7 @@ export class OrderService implements IOrderService {
         });
         
         evaluatingEntityType = "Order";
-        const order = await this.prisma.order.update({
+        const order = await transaction.order.update({
           where: { id, concurrencyVersion: requestDto.concurrencyVersion ?? undefined },
           data: {
             lastUpdatedDateTime: new Date(),
@@ -364,8 +364,6 @@ export class OrderService implements IOrderService {
       const result = await this.prisma.order.delete({
         where: { id }
       });
-
-      console.log(result);
     } catch (error) {
       const handledResult = this.databaseErrorHandler.handle(error);
       if (handledResult?.type === "RecordNotFound") {

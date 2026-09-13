@@ -58,9 +58,7 @@ export class SeatingService implements ISeatingService {
               equals: null
             }
           }
-        },
-        createdUser: true,
-        lastUpdatedUser: true
+        }
       },
       where: { id }
     });
@@ -69,7 +67,10 @@ export class SeatingService implements ISeatingService {
       throw this.errorFactory.createNotFoundError();
     }
 
-    return this.dtoFactory.createSeatingDetail(seating);
+    return this.dtoFactory.createSeatingDetail({
+      ...seating,
+      activeOrder: seating.orders[0] ?? null
+    });
   }
 
   public async createAsync(requestDto: SeatingUpsertRequestDto): Promise<number> {

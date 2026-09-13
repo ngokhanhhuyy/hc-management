@@ -21,22 +21,6 @@ export default function FormField(props: FormFieldProps) {
   const formContext = useContext(FormContext);
 
   // Computed.
-  const errorMessage = useMemo(() => {
-    if (!formContext || !formContext.errorCollection.isValidated || !props.path) {
-      return;
-    }
-
-    const messages = formContext.errorCollection.details
-      .filter(d => d.propertyPath === props.path)
-      .map(d => d.message);
-
-    if (messages.length === 0) {
-      return;
-    }
-
-    return messages[0];
-  }, [formContext?.errorCollection.details]);
-
   const displayName = useMemo(() => {
     if (props.displayName) {
       return props.displayName;
@@ -55,13 +39,29 @@ export default function FormField(props: FormFieldProps) {
     return getDisplayNameByKey(lastIndexerOmittedPathElement);
   }, []);
 
+  const errorMessage = useMemo(() => {
+    if (!formContext || !formContext.errorCollection.isValidated || !props.path) {
+      return;
+    }
+
+    const messages = formContext.errorCollection.details
+      .filter(d => d.propertyPath === props.path)
+      .map(d => d.message);
+
+    if (messages.length === 0) {
+      return;
+    }
+
+    return messages[0].replaceAll("{propertyDisplayName}", displayName ?? "{propertyDisplayName}");
+  }, [formContext?.errorCollection.details]);
+
   const validationMessageClassName = compute<string | undefined>(() => {
     if (formContext?.errorCollection.isValidated) {
       if (errorMessage) {
-        return "field-validation-error";
+        return "text-red-600";
       }
 
-      return "field-validation-valid";
+      return "text-emerald-600";
     }
   });
 
@@ -79,10 +79,11 @@ export default function FormField(props: FormFieldProps) {
     <div className={joinClassName(
       props.className,
       "form-field flex flex-col justify-stretched",
+      errorMessage && "field-validation-error"
     )}>
       {/* Label */}
       {(!props.hideLabel && displayName) && (
-        <label htmlFor={props.path}>
+        <label className={joinClassName((!props.hideValidationMessage && errorMessage) && "text-red-900")} htmlFor={props.path}>
           {displayName}
         </label>
       )}

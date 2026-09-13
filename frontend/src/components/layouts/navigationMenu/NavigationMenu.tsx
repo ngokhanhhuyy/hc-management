@@ -32,6 +32,16 @@ export default function NavigationMenu(): React.ReactNode {
   // Effect.
   useEffect(() => {
     for (const item of navigationBarItems) {
+      if (location.pathname.startsWith(getSeatingListRoutePath())) {
+        if (location.pathname.endsWith(getSeatingListRoutePath()) && item.name === "seatingList") {
+          setActiveItemName("seatingList");
+          return;
+        }
+
+        setActiveItemName("orderUpsert");
+        return;
+      }
+
       if (location.pathname.startsWith(item.routePath)) {
         setActiveItemName(item.name);
       }
@@ -40,15 +50,16 @@ export default function NavigationMenu(): React.ReactNode {
 
   // Templates.
   return (
-    <nav className="bg-white border border-black/10 rounded-lg">
+    <nav>
       <ul className="list-group list-group-flush">
         {navigationBarItems.map((item, index) => (
           <NavigationMenuItem
             name={item.name}
-            fallbackDisplayName={item.fallbackDisplayName}
+            displayName={item.displayName}
             routePath={item.routePath}
             Icon={item.Icon}
             isActive={activeItemName === item.name}
+            isDisabled={item.isDisabled}
             key={index}
           />
         ))}
@@ -57,10 +68,10 @@ export default function NavigationMenu(): React.ReactNode {
   );
 }
 
-const navigationBarItems: (NavigationBarItemData & { disabled?: boolean })[] = [
+const navigationBarItems: NavigationBarItemData[] = [
   {
-    name: "seating",
-    fallbackDisplayName: "Danh sách bàn ăn",
+    name: "seatingList",
+    displayName: "Danh sách bàn ăn",
     routePath: getSeatingListRoutePath(),
     Icon: ({ isActive, className, title }) => {
       const Component = isActive ? SeatingListSolidIcon : SeatingListOutlineIcon;
@@ -68,9 +79,10 @@ const navigationBarItems: (NavigationBarItemData & { disabled?: boolean })[] = [
     }
   },
   {
-    name: "order",
-    routePath: "",
-    disabled: true,
+    name: "orderUpsert",
+    displayName: "Gọi món",
+    routePath: getSeatingListRoutePath(),
+    isDisabled: true,
     Icon: ({ isActive, className, title }) => {
       const Component = isActive ? OrderUpsertSolidIcon : OrderUpsertOutlineIcon;
       return <Component className={className} title={title} />;

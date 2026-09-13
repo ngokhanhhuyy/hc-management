@@ -6,6 +6,7 @@ import {
 } from "./appBuilder";
 import type { BaseController } from "./baseController";
 import { ValidationError, type ErrorDetails } from "@hc-management/shared/errors";
+import "#/framework/validation";
 import * as v from "valibot";
 
 export function fromBody<

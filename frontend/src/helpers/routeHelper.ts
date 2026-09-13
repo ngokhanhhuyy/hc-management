@@ -2,12 +2,16 @@ export function getSignInRoutePath(): string {
   return "/sign-in";
 }
 
+export function getHomeRoutePath(): string {
+  return getDashboardRoutePath();
+}
+
 export function getSeatingListRoutePath(): string {
-  return "/seatings";
+  return "/dashboard/seatings";
 }
 
 export function getSeatingOrderUpsertRoutePath(seatingId: number): string {
-  return `/seatings/${seatingId}`;
+  return `/dashboard/seatings/${seatingId}`;
 }
 
 export function getDashboardRoutePath(): string {

@@ -107,7 +107,7 @@ async function seedSeatingAsync(): Promise<number[]> {
   }
 
   const createdRecords = await prisma.seating.createManyAndReturn({
-    data: Array.from({ length: 30 }).map((_, index) => ({
+    data: Array.from({ length: 20 }).map((_, index) => ({
       name: `Bàn ${index + 1}`
     })),
     select: {

@@ -33,8 +33,8 @@ export class AuthenticationController extends BaseController implements IAuthent
   public async getAccessCookieAsync(requestDto: GetAccessCookieRequestDto): Promise<void> {
     await this.authenticationService.verifyUserNameAndPasswordAsync(requestDto);
     const secretKey = new TextEncoder().encode(process.env.SECRET_KEY!);
-    const userDetailResonseDto = await this.userService.getDetailByUserNameAsync(requestDto.userName);
-    const token = await new SignJWT(userDetailResonseDto)
+    const userDetailResponseDto = await this.userService.getDetailByUserNameAsync(requestDto.userName);
+    const token = await new SignJWT(userDetailResponseDto)
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
       .setExpirationTime("1h")
@@ -44,7 +44,7 @@ export class AuthenticationController extends BaseController implements IAuthent
       path: "/",
       secure: true,
       httpOnly: true,
-    });
+    })
 
     return this.ok();
   }

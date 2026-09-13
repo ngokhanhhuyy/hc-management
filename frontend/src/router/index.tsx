@@ -8,6 +8,7 @@ import { RootLayout, MainPageLayout } from "#/components/layouts";
 
 // Routes.
 import { authenticationRoutes } from "./authenticationRoutes";
+import { dashboardRoutes } from "./dashboardRoutes";
 
 // Pages.
 
@@ -40,6 +41,7 @@ const router = createBrowserRouter([
             index: true,
             element: <Navigate to={getDashboardRoutePath()} replace />
           },
+          dashboardRoutes,
         ],
         handle: {
           breadcrumbTitle: "Trang chủ"

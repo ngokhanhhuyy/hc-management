@@ -22,7 +22,7 @@ export interface IDtoFactory {
   createMenuItemDetail(menuItem: MenuItemDetailResponseDtoFactoryArgs): MenuItemDetailResponseDto;
   createMenuCategoryBasic(menuCategory: MenuCategory): MenuCategoryBasicResponseDto;
   createSeatingBasic(seating: SeatingBasicResponseDtoFactoryArgs): SeatingBasicResponseDto;
-  createSeatingDetail(seating: Seating): SeatingDetailResponseDto;
+  createSeatingDetail(seating: SeatingDetailResponseDtoFactoryArgs): SeatingDetailResponseDto;
   createOrderBasic(order: OrderBasicResponseDtoFactoryArgs): OrderBasicResponseDto;
   createOrderList(
     pageCount: number,
@@ -156,10 +156,7 @@ type SeatingBasicResponseDtoFactoryArgs = Seating & {
   activeOrder: Order | null;
 };
 
-type SeatingDetailResponseDtoFactoryArgs = SeatingBasicResponseDtoFactoryArgs & {
-  createdUser: User;
-  lastUpdatedUser: User | null;
-};
+type SeatingDetailResponseDtoFactoryArgs = SeatingBasicResponseDtoFactoryArgs;
 
 type OrderBasicResponseDtoFactoryArgs = Order & {
   seating: Seating;

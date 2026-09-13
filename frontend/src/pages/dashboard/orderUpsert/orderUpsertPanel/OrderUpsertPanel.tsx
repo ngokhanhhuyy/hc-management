@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import type { OrderUpsertModel } from "#/models";
 import { getDisplayAmountText } from "#/helpers";
 import { calculateOrderAmount } from "@hc-management/shared/helpers";
@@ -8,15 +8,17 @@ import { TrashIcon, CurrencyDollarIcon } from "@heroicons/react/24/outline";
 import OrderItem from "./OrderItem";
 
 // Props.
-export type LoadingState = "initialLoading" | "syncing" | "finishing" | null;
+export type LoadingState = "syncing" | "finishing" | null;
 type OrderUpsertPanelProps = {
   model: OrderUpsertModel;
   onModelUpdated(updatedData: Partial<OrderUpsertModel>): any;
-  loadingState: LoadingState;
 };
 
 // Components.
 export default function OrderUpsertPanel(props: OrderUpsertPanelProps): React.ReactNode {
+  // States.
+  const [loadingState, setLoadingState] = useState<LoadingState>(null);
+
   // Computed.
   const amountDisplayText = useMemo(() => {
     const amount = calculateOrderAmount(props.model.toRequestDto());
@@ -33,16 +35,6 @@ export default function OrderUpsertPanel(props: OrderUpsertPanelProps): React.Re
   }
 
   // Templates.
-  if (props.loadingState === "initialLoading") {
-    return (
-      <div className="flex flex-col justify-center items-center">
-        <span className="opacity-50">
-          Đang tải
-        </span>
-      </div>
-    );
-  }
-
   return (
     <div className="bg-white border border-black/15 rounded-lg flex flex-col h-full">
       <div className="text-xl text-center uppercase p-3 border-b border-black/15">
@@ -116,7 +108,7 @@ export default function OrderUpsertPanel(props: OrderUpsertPanelProps): React.Re
         </>
       )}
 
-      {props.loadingState === "syncing" && (
+      {loadingState === "syncing" && (
         <div className="flex justify-end items-center gap-3 p-1 border-t border-black/10">
           <span className="opacity-50">Đang đồng bộ</span>
           <div className="h-4 aspect-1/2 overflow-hidden animate-spin origin-[center_right] -translate-x-full">

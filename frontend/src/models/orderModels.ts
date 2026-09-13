@@ -1,9 +1,13 @@
 import { createOrderItemUpsertModel, type OrderItemUpsertModel } from "./orderItemModels";
-import type { SeatingBasicModel } from "./sharedModels";
-import type { OrderDetailResponseDto, OrderUpsertRequestDto } from "@hc-management/shared/dtos";
+import { createSeatingBasicModel, type SeatingBasicModel } from "./sharedModels";
+import {
+  SeatingDetailResponseDto,
+  type OrderDetailResponseDto,
+  type OrderUpsertRequestDto } from "@hc-management/shared/dtos";
 import * as v from "valibot";
 
 export type OrderUpsertModel = {
+  id: number | null;
   seating: SeatingBasicModel;
   items: OrderItemUpsertModel[];
   concurrencyVersion: string;
@@ -11,14 +15,23 @@ export type OrderUpsertModel = {
   toRequestDto(): OrderUpsertRequestDto;
 };
 
-export function createOrderUpsertModel(seating: SeatingBasicModel): OrderUpsertModel {
+export function createOrderUpsertModel(seating: SeatingBasicModel | SeatingDetailResponseDto): OrderUpsertModel {
+  let seatingModel;
+  if (v.is(SeatingDetailResponseDto, seating)) {
+    seatingModel = createSeatingBasicModel({ ...seating, isDeleted: false });
+  } else {
+    seatingModel = seating;
+  }
+
   return {
-    seating,
+    id: seatingModel.activeOrder?.id ?? null,
+    seating: seatingModel,
     items: [],
     concurrencyVersion: "",
     mapFromResponseDto(responseDto: OrderDetailResponseDto): OrderUpsertModel {
       return {
         ...this,
+        id: responseDto.id,
         items: responseDto.items.map(createOrderItemUpsertModel),
         concurrencyVersion: responseDto.concurrencyVersion
       };

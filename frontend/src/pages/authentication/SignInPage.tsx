@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { api } from "#/api";
 import { createSignInModel, type SignInModel } from "#/models";
-import { getSeatingListRoutePath } from "#/helpers";
+import { useAuthenticationStore } from "#/stores";
+import { getHomeRoutePath } from "#/helpers";
 import logoUrl from "#/assets/images/logo.png";
 
 // Child components.
@@ -12,6 +13,7 @@ import { Form, FormField, TextInput } from "#/components/form";
 export default function SignInPage(): React.ReactNode {
   // Dependencies.
   const navigate = useNavigate();
+  const authenticationStore = useAuthenticationStore();
 
   // States.
   const [model, setModel] = useState<SignInModel>(createSignInModel);
@@ -23,8 +25,15 @@ export default function SignInPage(): React.ReactNode {
   }
 
   function onSubmissionSucceeded(): void {
-    navigate(getSeatingListRoutePath());
+    navigate(getHomeRoutePath());
   }
+
+  // Effects.
+  useEffect(() => {
+    if (authenticationStore.isAuthenticated) {
+      navigate(getHomeRoutePath());
+    }
+  }, []);
 
   // Templates.
   return (

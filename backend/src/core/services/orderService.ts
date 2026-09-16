@@ -217,6 +217,13 @@ export class OrderService implements IOrderService {
     try {
       await this.prisma.$transaction(async (transaction) => {
         evaluatingEntityType = "OrderItem";
+        await transaction.orderItem.deleteMany({
+          where: {
+            id: { notIn: requestDto.items.map(i => i.id).filter(id => id != null) },
+            orderId: id,
+          }
+        });
+
         for (let index = 0; index < requestDto.items.length; index += 1) {
           const itemRequestDto = requestDto.items[index];
           evaluatingOrderItemIndex = index;
@@ -243,13 +250,6 @@ export class OrderService implements IOrderService {
             }
           });
         }
-
-        await transaction.orderItem.deleteMany({
-          where: {
-            id: { notIn: requestDto.items.map(i => i.id).filter(id => id != null) },
-            orderId: id,
-          }
-        });
         
         evaluatingEntityType = "Order";
         const order = await transaction.order.update({

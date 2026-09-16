@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo, useEffect } from "react";
-import { useLoaderData } from "react-router";
+import { useLoaderData, useNavigate } from "react-router";
 import { api } from "#/api";
 import {
   createOrderItemUpsertModel,
@@ -8,7 +8,7 @@ import {
   type OrderItemUpsertModel
 } from "#/models";
 import type { OrderDetailResponseDto } from "@hc-management/shared/dtos";
-// import { joinClassName } from "#/helpers";
+import { getDashboardRoutePath } from "#/helpers";
 
 // Child components.
 import type { DataLoadedResult } from "./dataLoader";
@@ -18,6 +18,7 @@ import OrderUpsertPanel, { type LoadingState } from "./orderUpsertPanel/OrderUps
 // Components.
 export default function OrderUpsertPage(): React.ReactNode {
   // Dependencies.
+  const navigate = useNavigate();
   const initialLoadedModels = useLoaderData<DataLoadedResult>();
 
   // States.
@@ -99,6 +100,14 @@ export default function OrderUpsertPage(): React.ReactNode {
     }, 500);
   }
 
+  async function handleFinishedAsync(): Promise<void> {
+    if (model.id != null) {
+      await api.order.finishAsync(model.id);
+    }
+
+    navigate(getDashboardRoutePath());
+  }
+
   // Effect.
   useEffect(() => {
     if (renderingKey > 0) {
@@ -116,6 +125,7 @@ export default function OrderUpsertPage(): React.ReactNode {
           setModel(m => ({ ...m, ...updatedData }));
           setRenderingKey(key => key + 1);
         }}
+        onFinished={handleFinishedAsync}
       />
     </div>
   );

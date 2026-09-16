@@ -5,7 +5,8 @@ import {
   getSignInRoutePath,
   getSeatingListRoutePath,
   getSeatingOrderUpsertRoutePath,
-  getDashboardRoutePath
+  getDashboardRoutePath,
+  getHomeRoutePath
 } from "#/helpers";
 
 // Child components.
@@ -13,7 +14,7 @@ import NavigationMenuItem, { type NavigationBarItemData } from "./NavigationMenu
 import {
   SquaresPlusIcon as SeatingListOutlineIcon,
   ClipboardDocumentIcon as OrderUpsertOutlineIcon,
-  PencilSquareIcon as PencilSquareOutlineIcon
+  PencilSquareIcon as PencilSquareOutlineIcon,
 } from "@heroicons/react/24/outline";
 import {
   SquaresPlusIcon as SeatingListSolidIcon,
@@ -31,7 +32,7 @@ export default function NavigationMenu(): React.ReactNode {
 
   // Effect.
   useEffect(() => {
-    for (const item of navigationBarItems) {
+    for (const item of navigationBarOperationItems) {
       if (location.pathname.startsWith(getSeatingListRoutePath())) {
         if (location.pathname.endsWith(getSeatingListRoutePath()) && item.name === "seatingList") {
           setActiveItemName("seatingList");
@@ -50,25 +51,45 @@ export default function NavigationMenu(): React.ReactNode {
 
   // Templates.
   return (
-    <nav>
-      <ul className="list-group list-group-flush">
-        {navigationBarItems.map((item, index) => (
-          <NavigationMenuItem
-            name={item.name}
-            displayName={item.displayName}
-            routePath={item.routePath}
-            Icon={item.Icon}
-            isActive={activeItemName === item.name}
-            isDisabled={item.isDisabled}
-            key={index}
-          />
-        ))}
-      </ul>
+    <nav className="flex flex-col gap-10">
+      <div className="flex flex-col">
+        <span className="text-sm font-bold opacity-50">Vận hành</span>
+        <ul className="list-group list-group-flush">
+          {navigationBarOperationItems.map((item, index) => (
+            <NavigationMenuItem
+              name={item.name}
+              displayName={item.displayName}
+              routePath={item.routePath}
+              Icon={item.Icon}
+              isActive={activeItemName === item.name}
+              isDisabled={item.isDisabled}
+              key={index}
+            />
+          ))}
+        </ul>
+      </div>
+
+      <div className="flex flex-col">
+        <span className="text-sm font-bold opacity-50">Chỉnh sửa</span>
+        <ul className="list-group list-group-flush">
+          {navigationBarUpsertItems.map((item, index) => (
+            <NavigationMenuItem
+              name={item.name}
+              displayName={item.displayName}
+              routePath={item.routePath}
+              Icon={item.Icon}
+              isActive={activeItemName === item.name}
+              isDisabled={item.isDisabled}
+              key={index}
+            />
+          ))}
+        </ul>
+      </div>
     </nav>
   );
 }
 
-const navigationBarItems: NavigationBarItemData[] = [
+const navigationBarOperationItems: NavigationBarItemData[] = [
   {
     name: "seatingList",
     displayName: "Danh sách bàn ăn",
@@ -85,6 +106,36 @@ const navigationBarItems: NavigationBarItemData[] = [
     isDisabled: true,
     Icon: ({ isActive, className, title }) => {
       const Component = isActive ? OrderUpsertSolidIcon : OrderUpsertOutlineIcon;
+      return <Component className={className} title={title} />;
+    }
+  },
+];
+
+const navigationBarUpsertItems: NavigationBarItemData[] = [
+  {
+    name: "seatingUpsert",
+    displayName: "Chỉnh sửa bàn ăn",
+    routePath: getHomeRoutePath(),
+    Icon: ({ isActive, className, title }) => {
+      const Component = isActive ? PencilSquareSolidIcon : PencilSquareOutlineIcon;
+      return <Component className={className} title={title} />;
+    }
+  },
+  {
+    name: "menuItemUpsert",
+    displayName: "Chỉnh sửa món ăn",
+    routePath: getHomeRoutePath(),
+    Icon: ({ isActive, className, title }) => {
+      const Component = isActive ? PencilSquareSolidIcon : PencilSquareOutlineIcon;
+      return <Component className={className} title={title} />;
+    }
+  },
+  {
+    name: "menuItemUpsert",
+    displayName: "Chỉnh sửa phân loại",
+    routePath: getHomeRoutePath(),
+    Icon: ({ isActive, className, title }) => {
+      const Component = isActive ? PencilSquareSolidIcon : PencilSquareOutlineIcon;
       return <Component className={className} title={title} />;
     }
   },

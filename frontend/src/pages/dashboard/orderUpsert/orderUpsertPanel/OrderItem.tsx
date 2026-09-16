@@ -78,7 +78,11 @@ export default function OrderItem(props: OrderItemProps): React.ReactNode {
             </div>
           </FormField>
 
-          <button type="button" className="btn btn-danger-outline btn-sm aspect-square" onClick={props.onDeleted}>
+          <button
+            type="button"
+            className="btn btn-danger-outline btn-sm aspect-square h-full"
+            onClick={props.onDeleted}
+          >
             <XMarkIcon />
           </button>
         </div>

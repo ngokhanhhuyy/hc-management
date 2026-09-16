@@ -36,7 +36,7 @@ export default function SeatingListPage(): React.ReactNode {
   }
   
   return (
-    <div className="grid 2xl:grid-cols-8 xl:grid-cols-6 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 items-start gap-3">
+    <div className="grid xl:grid-cols-6 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 items-start gap-3">
       {model.map((seating) => (
         <SeatingListItem
           model={seating}

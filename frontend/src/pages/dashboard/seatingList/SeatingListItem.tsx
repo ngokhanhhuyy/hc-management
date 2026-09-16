@@ -24,20 +24,24 @@ export default function SeatingMapItem(props: SeatingMapItemProps): React.ReactN
       onClick={props.onClick}
     >
       <div className={joinClassName(
-        "bg-black/10 in-[.seating-list-item:hover]:text-blue-600 in-[.seating-list-item:hover]:bg-blue-600/25",
+        "bg-black/5 in-[.seating-list-item:hover]:text-blue-600 in-[.seating-list-item:hover]:bg-blue-600/25",
+        "in-[.seating-list-item:hover]:border-blue-600/25",
         "border-b border-black/15 aspect-2/1 flex justify-center items-center transition-colors"
       )}>
-        <Squares2X2Icon className="size-6 opacity-25 in-[.seating-list-item:hover]:opacity-50 transition-colors" />
+        <Squares2X2Icon className="size-6 opacity-25 in-[.seating-list-item:hover]:opacity-50 transition-all" />
       </div>
 
       <div className={joinClassName(
-        "bg-white flex justify-between items-start p-2 transition-colors",
-        "in-[.seating-list-item:hover]:bg-blue-600/10 in-[.seating-list-item:hover]:text-blue-600 flex-1"
+        "bg-white flex justify-between items-start p-2 transition-colors flex-1",
+        "in-[.seating-list-item:hover]:bg-blue-600/10 in-[.seating-list-item:hover]:text-blue-600"
       )}>
         <span>{props.model.name}</span>
 
         {props.model.activeOrder && (
-          <div className="alert alert-emerald-outline in-[.seating-list-item:hover]:alert-emerald top-2 right-2">
+          <div className={joinClassName(
+            "alert alert-emerald-outline in-[.seating-list-item:hover]:alert-emerald",
+            "top-2 right-2 transition-colors"
+          )}>
             Có khách
           </div>
         )}

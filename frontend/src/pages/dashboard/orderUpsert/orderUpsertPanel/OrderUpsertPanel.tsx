@@ -12,6 +12,7 @@ export type LoadingState = "syncing" | "finishing" | null;
 type OrderUpsertPanelProps = {
   model: OrderUpsertModel;
   onModelUpdated(updatedData: Partial<OrderUpsertModel>): any;
+  onFinished(): any;
 };
 
 // Components.
@@ -98,7 +99,7 @@ export default function OrderUpsertPanel(props: OrderUpsertPanelProps): React.Re
             <button
               type="button"
               className="btn gap-1"
-              onClick={onClearAllItemsButtonClicked}
+              onClick={props.onFinished}
               disabled={!props.model.items.length}
             >
               <CurrencyDollarIcon />

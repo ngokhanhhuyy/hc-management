@@ -29,8 +29,9 @@ export default function NavigationBarItem({ Icon, ...props }: NavigationBarItemP
     <Link
       className={joinClassName(
         "flex items-center gap-2 hover:no-underline px-2 py-1.5 border rounded-lg",
-        props.isActive && "bg-white border-black/15 shadow-xs font-bold",
+        props.isActive && "bg-white border-black/20 font-bold text-blue-700",
         !props.isActive && "border-transparent text-black/75",
+        !props.isDisabled && "hover:text-blue-700",
         (!props.isActive && !props.isDisabled) && "hover:bg-black/5",
         (!props.isActive && props.isDisabled) && "pointer-events-none opacity-50"
       )}

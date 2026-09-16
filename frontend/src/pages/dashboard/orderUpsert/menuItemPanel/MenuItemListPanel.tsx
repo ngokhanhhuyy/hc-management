@@ -83,11 +83,11 @@ export default function MenuItemListPanel(props: MenuItemListPanelProps): React.
   return (
     <div className="flex flex-col gap-3 h-full">
       <Form
-        className="flex flex-col gap-3"
+        className="bg-white border border-black/15 flex flex-col gap-3 p-3 pt-2 rounded-lg"
         submitAction={submitAsync}
         onSubmissionSucceeded={onSubmissionSucceeded}
       >
-        <FormField path="searchContent" displayName={displayNames["searchContent"]} hideLabel>
+        <FormField path="searchContent" displayName={displayNames["searchContent"]}>
           <TextInput
             placeholder="Tìm kiếm tên món ăn ..."
             value={itemListModel.searchContent}
@@ -95,7 +95,7 @@ export default function MenuItemListPanel(props: MenuItemListPanelProps): React.
           />
         </FormField>
 
-        <FormField path="categoryId" displayName={displayNames["menuCategory"]} hideLabel>
+        <FormField path="categoryId" displayName={displayNames["menuCategory"]}>
           <div className="flex flex-row flex-wrap justify-start items-start gap-2">
             <MenuCategory
               model={null}
@@ -116,8 +116,8 @@ export default function MenuItemListPanel(props: MenuItemListPanelProps): React.
       </Form>
 
       <div className={joinClassName(
-        "grid xl:grid-cols-5 lg:grid-cols-4",
-        "md:grid-cols-3 gap-3 justify-start items-start",
+        "grid xl:grid-cols-4 lg:grid-cols-3",
+        "md:grid-cols-2 gap-3 justify-start items-start",
         loadingState === "reloading" && "opacity-50"
       )}>
         {itemListModel.items.map(menuItem => (

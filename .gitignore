@@ -7,3 +7,7 @@
 **/dist
 
 backend/src/core/database/*
+backend/appsettings.json
+backend/appsettings.Development.json
+backend/bin/*
+backend/obj/*

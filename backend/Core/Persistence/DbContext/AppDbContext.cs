@@ -1,4 +1,3 @@
-
 using Humanizer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -80,6 +79,7 @@ internal partial class AppDbContext : Microsoft.EntityFrameworkCore.DbContext
 
                         return p.Name;
                     }));
+                    
                 foreignKey.SetConstraintName(
                     $"FK{separator}{referencingTable}{separator}{referencedTable}{separator}{referencingColumns}");
             }

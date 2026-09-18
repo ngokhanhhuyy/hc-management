@@ -1,21 +1,19 @@
-using HCManagement.Core.Common.Dtos;
-
 namespace HCManagement.Core.Features.Users;
 
-public class UserBasicResponseDto : IResponseDto
+public class UserDetailResponseDto
 {
     #region Constructors
-    public UserBasicResponseDto(User user)
+    public UserDetailResponseDto(User user)
     {
         Id = user.Id;
         UserName = user.UserName;
-        IsDeleted = user.DeletedDateTime is not null;
+        DeletedDateTime = user.DeletedDateTime;
     }
     #endregion
 
     #region Properties
     public int Id { get; set; }
     public string UserName { get; set; }
-    public bool IsDeleted { get; set; }
+    public DateTime? DeletedDateTime { get; set; }
     #endregion
 }

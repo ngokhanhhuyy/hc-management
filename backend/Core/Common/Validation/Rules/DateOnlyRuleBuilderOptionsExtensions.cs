@@ -1,0 +1,85 @@
+using FluentValidation;
+using HCManagement.Core.Common.Extensions;
+using HCManagement.Core.Common.Localization;
+
+namespace HCManagement.Core.Common.Validation;
+
+internal static class DateOnlyRuleBuilderOptionsExtensions
+{
+    #region ExtensionMethods
+    extension<T>(IRuleBuilder<T, DateOnly?> ruleBuilder)
+    {
+        public IRuleBuilderOptions<T, DateOnly?> EarlierThanDate(DateOnly comparisonDate)
+        {
+            string comparisonDateAsString = comparisonDate.ToVietnameseString();
+            string errorMessage = ErrorMessages.EarlierThan.ReplaceComparisonValue(comparisonDateAsString);
+            
+            return ruleBuilder.LessThan(comparisonDate).WithMessage(errorMessage);
+        }
+
+        public IRuleBuilderOptions<T, DateOnly?> EarlierOrEqualToDate(DateOnly comparisonDate)
+        {
+            string comparisonDateAsString = comparisonDate.ToVietnameseString();
+            string errorMessage = ErrorMessages.EarlierThanOrEqual.ReplaceComparisonValue(comparisonDateAsString);
+
+            return ruleBuilder.LessThanOrEqualTo(comparisonDate).WithMessage(errorMessage);
+        }
+
+        public IRuleBuilderOptions<T, DateOnly?> LaterThanDate(DateOnly comparisonDate)
+        {
+            string comparisonDateAsString = comparisonDate.ToVietnameseString();
+            string errorMessage = ErrorMessages.LaterThan.ReplaceComparisonValue(comparisonDateAsString);
+
+            return ruleBuilder.GreaterThan(comparisonDate).WithMessage(errorMessage);
+        }
+
+        public IRuleBuilderOptions<T, DateOnly?> LaterThanOrEqualToDate(DateOnly comparisonDate)
+        {
+            string comparisonDateAsString = comparisonDate.ToVietnameseString();
+            string errorMessage = ErrorMessages.LaterThanOrEqual.ReplaceComparisonValue(comparisonDateAsString);
+
+            return ruleBuilder.GreaterThanOrEqualTo(comparisonDate).WithMessage(errorMessage);
+        }
+        
+        public IRuleBuilderOptions<T, DateOnly?> IsValidStatsDate(DateOnly today)
+        {
+            DateOnly minimumStatsDate = GetMinimumStatsDate(today);
+            return ruleBuilder.Must(date =>
+                {
+                    if (date is null)
+                    {
+                        if (date > today)
+                        {
+                            return false;
+                        }
+                    }
+                    return true;
+                })
+                .WithMessage(_ =>
+                {
+                    return ErrorMessages.EarlierThanOrEqualToNow.ReplaceComparisonValue(today.ToVietnameseString());
+                })
+                .Must(dateTime =>
+                {
+                    if (dateTime is null)
+                    {
+                        if (dateTime < minimumStatsDate)
+                        {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }).WithMessage(ErrorMessages.LaterThanOrEqual.ReplaceComparisonValue(
+                    minimumStatsDate.ToVietnameseString()));
+        }
+    }
+    #endregion
+
+    #region PrivateMethods
+    private static DateOnly GetMinimumStatsDate(DateOnly today)
+    {
+        return new(today.AddMonths(-1).Year, today.AddMonths(-1).Month, 1);
+    }
+    #endregion
+}

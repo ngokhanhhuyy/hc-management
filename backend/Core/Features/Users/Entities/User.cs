@@ -16,8 +16,7 @@ public class User
     [StringLength(255)]
     public required string PasswordHash { get; set; }
 
-    [Required]
-    public bool IsActive { get; set; } = true;
+    public DateTime? DeletedDateTime { get; set; }
     #endregion
 }
 

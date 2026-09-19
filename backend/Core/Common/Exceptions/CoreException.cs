@@ -1,13 +1,13 @@
 namespace HCManagement.Core.Common.Exceptions;
 
-public abstract class ApplicationException : Exception
+public abstract class CoreException : Exception
 {
     #region Constructors
-    protected ApplicationException() { }
+    protected CoreException() { }
 
-    protected ApplicationException(string message) : this(Array.Empty<object>(), message) { }
+    protected CoreException(string message) : this(Array.Empty<object>(), message) { }
     
-    protected ApplicationException(object[] propertyPathElements, string message)
+    protected CoreException(object[] propertyPathElements, string message)
     {
         Errors.Add(propertyPathElements, message);
     }

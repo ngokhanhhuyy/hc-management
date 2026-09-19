@@ -1,6 +1,8 @@
 using Humanizer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using HCManagement.Core.Features.MenuCategories;
+using HCManagement.Core.Features.MenuItems;
 using HCManagement.Core.Features.Users;
 using System.Text.RegularExpressions;
 
@@ -13,6 +15,8 @@ internal partial class AppDbContext : Microsoft.EntityFrameworkCore.DbContext
     #endregion
     
     #region Properties
+    public DbSet<MenuCategory> MenuCategories { get; set; }
+    public DbSet<MenuItem> MenuItems { get; set; }
     public DbSet<User> Users { get; set; }
     #endregion
     
@@ -23,6 +27,8 @@ internal partial class AppDbContext : Microsoft.EntityFrameworkCore.DbContext
 
         // User-cluster entities.
         modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new MenuCategoryConfiguration());
+        modelBuilder.ApplyConfiguration(new MenuItemConfiguration());
 
         // Configure identifiers' names.
         ConfigureIdentifierNames(modelBuilder);

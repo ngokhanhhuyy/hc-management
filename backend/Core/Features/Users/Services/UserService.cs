@@ -70,7 +70,7 @@ internal class UserService : IUserService
         }
         catch (DbUpdateException exception)
         {
-            Common.Exceptions.ApplicationException? convertedException = ConvertDbUpdateException(exception);
+            Common.Exceptions.CoreException? convertedException = ConvertDbUpdateException(exception);
             if (convertedException is null)
             {
                 throw;
@@ -90,7 +90,7 @@ internal class UserService : IUserService
         }
         catch (DbException exception)
         {
-            Common.Exceptions.ApplicationException? convertedException = ConvertDbException(exception);
+            Common.Exceptions.CoreException? convertedException = ConvertDbException(exception);
             if (convertedException is null)
             {
                 throw;
@@ -102,13 +102,13 @@ internal class UserService : IUserService
     #endregion
 
     #region PrivateMethods
-    private Common.Exceptions.ApplicationException? ConvertDbUpdateException(DbUpdateException exception)
+    private Common.Exceptions.CoreException? ConvertDbUpdateException(DbUpdateException exception)
     {
         DbExceptionHandledResult? handledResult = _dbExceptionHandler.Handle(exception);
         return ConvertHandledResult(handledResult);
     }
 
-    private Common.Exceptions.ApplicationException? ConvertDbException(DbException exception)
+    private Common.Exceptions.CoreException? ConvertDbException(DbException exception)
     {
         DbExceptionHandledResult? handledResult = _dbExceptionHandler.Handle(exception);
         return ConvertHandledResult(handledResult);
@@ -116,7 +116,7 @@ internal class UserService : IUserService
     #endregion
 
     #region PrivateStaticMethods
-    private static Common.Exceptions.ApplicationException? ConvertHandledResult(DbExceptionHandledResult? handledResult)
+    private static Common.Exceptions.CoreException? ConvertHandledResult(DbExceptionHandledResult? handledResult)
     {
         if (handledResult is null)
         {

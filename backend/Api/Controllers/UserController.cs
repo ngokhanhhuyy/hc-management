@@ -31,16 +31,6 @@ public class UserController : ControllerBase
         return Ok(await _service.GetDetailByIdAsync(id));
     }
 
-    // [HttpGet("{userName}")]
-    // [ProducesResponseType<UserDetailResponseDto>(StatusCodes.Status200OK)]
-    // [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    // [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    // [ProducesResponseType(StatusCodes.Status404NotFound)]
-    // public async Task<IActionResult> GetDetailByUserName([FromRoute] string userName)
-    // {
-    //     return Ok(await _service.GetDetailByUserNameAsync(userName));
-    // }
-
     [HttpPost]
     [ProducesResponseType<int>(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -51,19 +41,6 @@ public class UserController : ControllerBase
     {
         int id = await _service.CreateAsync(requestDto);
         return CreatedAtAction(nameof(GetDetailById), new { id }, id);
-    }
-
-    [HttpPut("{id:int}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UserUpdateRequestDto requestDto)
-    {
-        await _service.UpdateAsync(id, requestDto);
-        return Ok();
     }
 
     [HttpDelete("{id:int}")]

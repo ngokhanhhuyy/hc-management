@@ -97,6 +97,21 @@ internal partial class PostgreSqlDbExceptionHandler : IDbExceptionHandler
 
         return convertedException;
     }
+
+    public DbExceptionHandledResult? Handle(Exception exception)
+    {
+        if (exception is DbUpdateException dbUpdateException)
+        {
+            return Handle(dbUpdateException);
+        }
+
+        if (exception is DbException dbException)
+        {
+            return Handle(dbException);
+        }
+
+        return null;
+    }
     #endregion
 
     #region PrivateMethods

@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HCManagement.Core.Features.Users;
 
-public class User
+internal class User
 {
     #region Properties
     [Key]

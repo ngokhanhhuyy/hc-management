@@ -9,6 +9,9 @@ guidelines = 120 dashed
 indent_size = 2
 attribute_continuation_indent_size = 2
 
+[*.cs]
+dotnet_sort_system_directives_first = true
+
 #### Core EditorConfig Options ####
 
 # Indentation and spacing

@@ -3,7 +3,7 @@ namespace HCManagement.Core.Features.Users;
 public class UserDetailResponseDto
 {
     #region Constructors
-    public UserDetailResponseDto(User user)
+    internal UserDetailResponseDto(User user)
     {
         Id = user.Id;
         UserName = user.UserName;

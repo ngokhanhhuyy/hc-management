@@ -3,7 +3,7 @@ using HCManagement.Core.Common.Localization;
 
 namespace HCManagement.Core.Common.Exceptions;
 
-public class OperationException : ApplicationException
+public class OperationException : CoreException
 {
     #region Constructors
     public OperationException(string message) : base(message) { }

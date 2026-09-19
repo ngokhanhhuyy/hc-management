@@ -42,6 +42,7 @@ internal class AuthenticationService : IAuthenticationService
     #region Methods
     public async Task VerifyCredentialsAsync(VerifyCredentialsRequestDto requestDto)
     {
+        requestDto.TransformValues();
         _verifyCredentialsValidator.ValidateAndThrow(requestDto);
         
         string passwordHash = await _context.Users
@@ -65,6 +66,7 @@ internal class AuthenticationService : IAuthenticationService
 
     public async Task ChangePasswordAsync(ChangePasswordRequestDto requestDto)
     {
+        requestDto.TransformValues();
         _changePasswordValidator.ValidateAndThrow(requestDto);
 
         int callerId = _callerDetailProvider.GetId();

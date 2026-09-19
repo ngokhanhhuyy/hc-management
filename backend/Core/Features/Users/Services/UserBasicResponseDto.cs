@@ -5,7 +5,7 @@ namespace HCManagement.Core.Features.Users;
 public class UserBasicResponseDto : IResponseDto
 {
     #region Constructors
-    public UserBasicResponseDto(User user)
+    internal UserBasicResponseDto(User user)
     {
         Id = user.Id;
         UserName = user.UserName;

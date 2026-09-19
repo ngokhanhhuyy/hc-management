@@ -5,6 +5,7 @@ export type MenuCategoryUpsertRequestDto = v.InferOutput<typeof MenuCategoryUpse
 export const MenuCategoryUpsertRequestDto = v.object({
   name: v.pipe(
     v.string(),
+    v.transform(name => name.trim()),
     v.minLength(ValidationContracts.MenuCategory.NameMinLength),
     v.maxLength(ValidationContracts.MenuCategory.NameMaxLength))
 });

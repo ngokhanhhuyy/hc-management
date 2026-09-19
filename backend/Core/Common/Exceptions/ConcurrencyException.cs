@@ -1,3 +1,3 @@
 namespace HCManagement.Core.Common.Exceptions;
 
-public class ConcurrencyException : ApplicationException;
+public class ConcurrencyException : CoreException;

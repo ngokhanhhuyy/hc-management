@@ -1,6 +1,6 @@
 namespace HCManagement.Core.Common.Dtos;
 
-public interface IListResponseDto<TBasic> where TBasic : IResponseDto
+public interface IPaginatedListResponseDto<TBasic> where TBasic : IResponseDto
 {
     #region Properties
     List<TBasic> Items { get; }

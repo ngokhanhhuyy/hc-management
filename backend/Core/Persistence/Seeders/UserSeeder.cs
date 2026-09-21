@@ -23,14 +23,14 @@ internal class UserSeeder
     #endregion
 
     #region Methods
-    public async Task<List<User>> SeedAsync(bool isDevelopment)
+    public async Task<List<User>> SeedAsync()
     {
-        return await SeedUsersAsync(isDevelopment);
+        return await SeedUsersAsync();
     }
     #endregion
     
     #region PrivateMethods
-    private async Task<List<User>> SeedUsersAsync(bool isDevelopment)
+    private async Task<List<User>> SeedUsersAsync()
     {
         List<User> users = await _context.Users.ToListAsync();
             
@@ -50,10 +50,11 @@ internal class UserSeeder
 
         users.Add(new ()
         {
-            UserName = "ngokhanhhuyy",
-            PasswordHash = _passwordHasher.HashPassword("huy123")
+            UserName = "admin",
+            PasswordHash = _passwordHasher.HashPassword("admin123")
         });
 
+        _context.Users.AddRange(users);
         await _context.SaveChangesAsync();
         return users;
     }

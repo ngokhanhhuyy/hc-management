@@ -1,20 +1,20 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using HCManagement.Core.Features.MenuCategories;
+using HCManagement.Core.Features.MenuItems;
 
 namespace HCManagement.Api.Controllers;
 
 [ApiController]
-[Route("api/menu-categories")]
+[Route("api/menu-items")]
 [Authorize]
-public class MenuCategoryController : ControllerBase
+public class MenuItemController : ControllerBase
 {
     #region Fields
-    private readonly IMenuCategoryService _service;
+    private readonly IMenuItemService _service;
     #endregion
 
     #region Constructors
-    public MenuCategoryController(IMenuCategoryService service)
+    public MenuItemController(IMenuItemService service)
     {
         _service = service;
     }
@@ -22,21 +22,22 @@ public class MenuCategoryController : ControllerBase
 
     #region Methods
     [HttpGet]
-    [ProducesResponseType<List<MenuCategoryBasicResponseDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<List<MenuItemBasicResponseDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> GetAllAsync()
+    public async Task<IActionResult> GetListAsync([FromQuery] MenuItemListRequestDto requestDto)
     {
-        return Ok(await _service.GetAllAsync());
+        return Ok(await _service.GetListAsync(requestDto));
     }
 
     [HttpGet("{id:int}")]
-    [ProducesResponseType<MenuCategoryBasicResponseDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MenuItemDetailResponseDto>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetSingleAsync([FromRoute] int id)
+    public async Task<IActionResult> GetDetailAsync([FromRoute] int id)
     {
-        return Ok(await _service.GetSingleAsync(id));
+        return Ok(await _service.GetDetailAsync(id));
     }
 
     [HttpPost]
@@ -45,10 +46,10 @@ public class MenuCategoryController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    public async Task<IActionResult> CreateAsync([FromBody] MenuCategoryUpsertRequestDto requestDto)
+    public async Task<IActionResult> CreateAsync([FromBody] MenuItemUpsertRequestDto requestDto)
     {
         int id = await _service.CreateAsync(requestDto);
-        return CreatedAtAction(nameof(GetSingleAsync), new { id }, id);
+        return CreatedAtAction(nameof(GetDetailAsync), new { id }, id);
     }
 
     [HttpPut("{id:int}")]
@@ -57,7 +58,7 @@ public class MenuCategoryController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    public async Task<IActionResult> UpdateAsync([FromRoute] int id, [FromBody] MenuCategoryUpsertRequestDto requestDto)
+    public async Task<IActionResult> UpdateAsync([FromRoute] int id, [FromBody] MenuItemUpsertRequestDto requestDto)
     {
         await _service.UpdateAsync(id, requestDto);
         return Ok();

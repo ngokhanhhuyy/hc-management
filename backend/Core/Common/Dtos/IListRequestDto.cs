@@ -1,11 +1,9 @@
 namespace HCManagement.Core.Common.Dtos;
 
-public interface IListRequestDto : IRequestDto
+public interface IListRequestDto<TSortingCriterion> : IRequestDto where TSortingCriterion : struct, Enum
 {
     #region Properties
     bool SortByAscending { get; set; }
-    string SortByFieldName { get; set; }
-    int Page { get; set; }
-    int ResultsPerPage { get; set; }
+    TSortingCriterion SortByCriterion { get; set; }
     #endregion
 }

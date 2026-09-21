@@ -12,6 +12,7 @@ using HCManagement.Core.Persistence.Handlers;
 using HCManagement.Core.Persistence.Seeders;
 using HCManagement.Core.Features.Authentication;
 using HCManagement.Core.Features.MenuCategories;
+using HCManagement.Core.Features.MenuItems;
 using HCManagement.Core.Features.Users;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -49,6 +50,7 @@ public static class Program
         builder.Services.AddScoped<IListFetchingService, ListFetchingService>();
         builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
         builder.Services.AddScoped<IMenuCategoryService, MenuCategoryService>();
+        builder.Services.AddScoped<IMenuItemService, MenuItemService>();
         builder.Services.AddScoped<IUserService, UserService>();
 
         // Seeders.

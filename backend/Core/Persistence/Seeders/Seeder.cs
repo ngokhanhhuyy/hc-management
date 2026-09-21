@@ -27,7 +27,7 @@ internal class Seeder
         _logger.LogInformation("Seeding started.");
 
         await using IDbContextTransaction transaction = await _context.Database.BeginTransactionAsync();
-        List<User> users = await _userSeeder.SeedAsync(isDevelopment);
+        List<User> users = await _userSeeder.SeedAsync();
         _logger.LogInformation("Seeding ended.");
 
         await transaction.CommitAsync();

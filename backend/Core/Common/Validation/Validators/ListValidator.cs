@@ -4,26 +4,16 @@ using HCManagement.Core.Common.Localization;
 
 namespace HCManagement.Core.Common.Validation;
 
-internal class ListValidator<TListRequestDto, TFieldToSort> : Validator<TListRequestDto>
-    where TListRequestDto : IListRequestDto
-    where TFieldToSort : struct, Enum
+internal class ListValidator<TListRequestDto, TSortingCriterion> : Validator<TListRequestDto>
+    where TListRequestDto : IListRequestDto<TSortingCriterion>
+    where TSortingCriterion : struct, Enum
 {
     #region Constructors
-    public ListValidator(
-        int pageMinValue = 1,
-        int resultsPerPageMinValue = 5,
-        int resultsPerPageMaxValue = 50)
+    public ListValidator()
     {
-        RuleFor(dto => dto.SortByFieldName)
-            .IsOneOfFieldsToSort<TListRequestDto, TFieldToSort>()
+        RuleFor(dto => dto.SortByCriterion)
+            .IsInEnum()
             .WithName(DisplayNames.SortByFieldName);
-        RuleFor(dto => dto.Page)
-            .GreaterThanOrEqualTo(pageMinValue)
-            .WithName(DisplayNames.Page);
-        RuleFor(dto => dto.ResultsPerPage)
-            .GreaterThanOrEqualTo(resultsPerPageMinValue)
-            .LessThanOrEqualTo(resultsPerPageMaxValue)
-            .WithName(DisplayNames.ResultsPerPage);
     }
     #endregion
 }

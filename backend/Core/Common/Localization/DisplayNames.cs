@@ -36,7 +36,8 @@ public static class DisplayNames
     public const string AmountBeforeVatPerUnit = "Số tiền trước thuế";
     public const string VatAmount = "Thuế VAT";
     public const string VatPercentagePerUnit = "Hệ số thuế";
-    public const string Quatity = "Số lượng";
+    public const string Seating = "Bàn ăn";
+    public const string MenuItem = "Món ăn";
     public const string ServiceAmount = "Tiền công";
     public const string TotalAmount = "Tổng giá tiền";
     public const string PaidAmount = "Số tiền đã thanh toán";
@@ -44,7 +45,8 @@ public static class DisplayNames
     public const string EndingDateTime = "Ngày giờ kết thúc";
     public const string Category = "Phân loại";
     public const string IsPinned = "Được đánh dấu";
-    public const string OrderedDateTime = "Ngày giờ đặt hàng";
+    public const string Order = "Gọi món";
+    public const string OrderItem = "Mục gọi món";
     public const string SortByFieldName = "Trường sắp xếp";
     public const string SortByAscending = "Thứ tự sắp xếp";
     public const string SearchByField = "Trường tìm kiếm";

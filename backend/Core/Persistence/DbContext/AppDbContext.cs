@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using HCManagement.Core.Features.MenuCategories;
 using HCManagement.Core.Features.MenuItems;
+using HCManagement.Core.Features.Seatings;
+using HCManagement.Core.Features.Orders;
 using HCManagement.Core.Features.Users;
 using System.Text.RegularExpressions;
 
@@ -17,6 +19,9 @@ internal partial class AppDbContext : Microsoft.EntityFrameworkCore.DbContext
     #region Properties
     public DbSet<MenuCategory> MenuCategories { get; set; }
     public DbSet<MenuItem> MenuItems { get; set; }
+    public DbSet<Seating> Seatings { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<User> Users { get; set; }
     #endregion
     
@@ -29,13 +34,16 @@ internal partial class AppDbContext : Microsoft.EntityFrameworkCore.DbContext
         modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
         modelBuilder.ApplyConfiguration(new MenuCategoryConfiguration());
         modelBuilder.ApplyConfiguration(new MenuItemConfiguration());
+        modelBuilder.ApplyConfiguration(new SeatingConfiguration());
+        modelBuilder.ApplyConfiguration(new OrderConfiguration());
+        modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
 
         // Configure identifiers' names.
         ConfigureIdentifierNames(modelBuilder);
     }
     #endregion
     
-    #region PrivateMethods#region PrivateMethods
+    #region PrivateMethods
     private static void ConfigureIdentifierNames(ModelBuilder modelBuilder, bool useSnakeCase = false)
     {
         string separator = useSnakeCase ? "__" : "_";

@@ -1,4 +1,6 @@
 using HCManagement.Core.Features.MenuCategories;
+using HCManagement.Core.Features.MenuItems;
+using HCManagement.Core.Features.Orders;
 using HCManagement.Core.Features.Users;
 using System.ComponentModel.DataAnnotations;
 
@@ -22,7 +24,7 @@ internal class MenuItem
     public required long DefaultAmountBeforeVatPerUnit { get; set; }
 
     [Required]
-    public required long DefaultVatPercentagePerUnit { get; set; }
+    public required int DefaultVatPercentagePerUnit { get; set; }
 
     [Required]
     public required DateTime CreatedDateTime { get; set; }
@@ -44,5 +46,6 @@ internal class MenuItem
     public User? LastUpdatedUser { get; set; }
     public User? DeletedUser { get; set; }
     public MenuCategory? Category { get; set; }
+    public List<OrderItem> OrderItems { get; set; } = new();
     #endregion
 }

@@ -10,21 +10,6 @@ internal static partial class StringRuleBuilderOptionsExtensions
     #region ExtensionMethods
     extension<T>(IRuleBuilder<T, string?> ruleBuilder)
     {
-        public IRuleBuilderOptions<T, string?> IsOneOfFieldsToSort<TFieldToSort>() where TFieldToSort : struct, Enum
-        {
-            return ruleBuilder
-                .Must(sortByFieldName =>
-                {
-                    if (sortByFieldName is null)
-                    {
-                        return true;
-                    }
-
-                    List<string> fieldNames = Enum.GetNames<TFieldToSort>().ToList();
-                    return fieldNames.Any(name => name.Equals(sortByFieldName, StringComparison.OrdinalIgnoreCase));
-                }).WithMessage(ErrorMessages.Invalid);
-        }
-        
         public IRuleBuilderOptions<T, string?> IsValidName()
         {
             const string regexPattern = 

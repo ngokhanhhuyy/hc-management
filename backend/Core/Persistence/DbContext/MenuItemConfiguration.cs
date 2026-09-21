@@ -19,6 +19,30 @@ internal class MenuItemConfiguration : IEntityTypeConfiguration<MenuItem>
             .HasForeignKey(mi => mi.CategoryId)
             .OnDelete(DeleteBehavior.SetNull);
 
+        entityBuilder
+            .HasOne(mi => mi.CreatedUser)
+            .WithMany()
+            .HasForeignKey(mi => mi.CreatedUserId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
+
+        entityBuilder
+            .HasOne(mi => mi.LastUpdatedUser)
+            .WithMany()
+            .HasForeignKey(mi => mi.LastUpdatedUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        entityBuilder
+            .HasOne(mi => mi.LastUpdatedUser)
+            .WithMany()
+            .HasForeignKey(mi => mi.LastUpdatedUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Indexes.
+        entityBuilder
+            .HasIndex(mi => mi.DeletedDateTime)
+            .HasFilter($"\"{nameof(MenuItem.DeletedDateTime)}\" IS NULL");
+
         // RowVersion.
         entityBuilder.Property<byte[]?>("RowVersion").IsRowVersion();
     }

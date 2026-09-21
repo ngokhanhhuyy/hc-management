@@ -1,4 +1,4 @@
-namespace HCManagement.Core.Features.MenuItems;
+namespace HCManagement.Core.Features.Seatings;
 
 public static class SeatingContracts
 {

@@ -16,13 +16,8 @@ internal class Order
     [Required]
     public required DateTime CreatedDateTime { get; set; }
 
-    [Required]
     public DateTime? LastUpdatedDateTime { get; set; }
-
-    [Required]
     public DateTime? FinishedDateTime { get; set; }
-
-    [Required]
     public DateTime? DeletedDateTime { get; set; }
     #endregion
 
@@ -31,9 +26,7 @@ internal class Order
     public int CreatedUserId { get; set; }
 
     public int? LastUpdatedUserId { get; set; }
-
     public int? FinishedUserId { get; set; }
-
     public int? DeletedUserId { get; set; }
 
     [Required]
@@ -46,6 +39,13 @@ internal class Order
     public User? FinishedUser { get; set; }
     public User? DeletedUser { get; set; }
     public Seating Seating { get; set; } = null!;
-    public List<OrderItem> Items { get; set; } = new();
+    public List<OrderItem> Items { get; private set; } = new();
+    #endregion
+
+    #region Methods
+    public void ComputeCachedProperties()
+    {
+        CachedItemAmount = Items.Sum(oi => oi.AmountAfterVat);
+    }
     #endregion
 }

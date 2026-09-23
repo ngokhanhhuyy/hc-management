@@ -31,6 +31,7 @@ internal class SeatingService : ISeatingService
     public async Task<List<SeatingBasicResponseDto>> GetAllAsync()
     {
         return await _context.Seatings
+            .Include(Seating.ActiveOrderFilterExpression)
             .Where(s => !s.IsDeleted)
             .Select(s => new SeatingBasicResponseDto(s))
             .ToListAsync();
@@ -39,7 +40,7 @@ internal class SeatingService : ISeatingService
     public async Task<SeatingDetailResponseDto> GetDetailAsync(int id)
     {
         return await _context.Seatings
-            .Include(s => s.Orders.Where(o => o.FinishedDateTime != null))
+            .Include(Seating.ActiveOrderFilterExpression)
             .Where(s => s.Id == id && !s.IsDeleted)
             .Select(s => new SeatingDetailResponseDto(s))
             .SingleOrDefaultAsync()
@@ -48,7 +49,6 @@ internal class SeatingService : ISeatingService
 
     public async Task<int> CreateAsync(SeatingUpsertRequestDto requestDto)
     {
-        requestDto.TransformValues();
         _validator.ValidateAndThrow(requestDto);
 
         Seating seating = new()
@@ -77,7 +77,6 @@ internal class SeatingService : ISeatingService
 
     public async Task UpdateAsync(int id, SeatingUpsertRequestDto requestDto)
     {
-        requestDto.TransformValues();
         _validator.ValidateAndThrow(requestDto);
 
         try

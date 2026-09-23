@@ -42,6 +42,6 @@ internal class OrderItem
     public long AmountAfterVatPerUnit => AmountBeforeVatPerUnit + VatAmountPerUnit;
 
     [NotMapped]
-    public long AmountAfterVat => AmountAfterVat * Quantity;
+    public long AmountAfterVat => AmountAfterVatPerUnit * Quantity;
     #endregion
 }

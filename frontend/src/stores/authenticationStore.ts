@@ -1,6 +1,5 @@
 import { create } from "zustand";
-import { api } from "#/api";
-import { AuthenticationError } from "@hc-management/shared/errors";
+import { api, AuthenticationError } from "#/api";
 
 export type AuthenticationStore = {
   isAuthenticated: boolean;
@@ -18,7 +17,7 @@ export const useAuthenticationStore = create<AuthenticationStore>((set) => ({
 
 async function isAuthenticatedAsync(): Promise<boolean> {
   try {
-    await api.authentication.checkStatusAsync();
+    await api.authentication.checkAuthenticationStatusAsync();
     return true;
   } catch (error) {
     if (error instanceof AuthenticationError) {

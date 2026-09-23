@@ -42,26 +42,25 @@ internal class MenuItemService : IMenuItemService
     #region Methods
     public async Task<List<MenuItemBasicResponseDto>> GetListAsync(MenuItemListRequestDto requestDto)
     {
-        requestDto.TransformValues();
         _listValidator.ValidateAndThrow(requestDto);
 
         IQueryable<MenuItem> query = _context.MenuItems;
 
         switch (requestDto.SortByCriterion)
         {
-            case MenuItemListRequestDto.SortingCriterion.Name:
+            case MenuItemListSortingCriterion.Name:
                 query = query
                     .Include(mi => mi.Category)
                     .ApplySorting(mi => mi.Name, requestDto.SortByAscending)
                     .ThenApplySorting(mi => mi.Category == null ? null : mi.Category.Name, requestDto.SortByAscending);
                 break;
-            case MenuItemListRequestDto.SortingCriterion.Category:
+            case MenuItemListSortingCriterion.Category:
                 query = query
                     .Include(mi => mi.Category)
                     .ApplySorting(mi => mi.Category == null ? null : mi.Category.Name, requestDto.SortByAscending)
                     .ThenApplySorting(mi => mi.Name, requestDto.SortByAscending);
                 break;
-            case MenuItemListRequestDto.SortingCriterion.DefaultAmountBeforeVatPerUnit:
+            case MenuItemListSortingCriterion.DefaultAmountBeforeVatPerUnit:
                 query = query
                     .ApplySorting(mi => mi.DefaultAmountBeforeVatPerUnit, requestDto.SortByAscending)
                     .ThenApplySorting(mi => mi.Name, requestDto.SortByAscending);
@@ -70,9 +69,10 @@ internal class MenuItemService : IMenuItemService
                 throw new NotImplementedException();
         }
 
-        if (requestDto.SearchContent is not null)
+        if (requestDto.SearchContent is not null && requestDto.SearchContent.Length > 0)
         {
-            query = query.Where(mi => mi.Name.Equals(requestDto.SearchContent, StringComparison.OrdinalIgnoreCase));
+            string searchContent = requestDto.SearchContent.ToLower().ToNonDiacritics();
+            query = query.Where(mi => mi.NormalizedName.Contains(searchContent));
         }
 
         if (requestDto.CategoryId.HasValue)
@@ -103,7 +103,6 @@ internal class MenuItemService : IMenuItemService
 
     public async Task<int> CreateAsync(MenuItemUpsertRequestDto requestDto)
     {
-        requestDto.TransformValues();
         _upsertValidator.ValidateAndThrow(requestDto);
 
         MenuItem menuItem = new()
@@ -138,7 +137,6 @@ internal class MenuItemService : IMenuItemService
 
     public async Task UpdateAsync(int id, MenuItemUpsertRequestDto requestDto)
     {
-        requestDto.TransformValues();
         _upsertValidator.ValidateAndThrow(requestDto);
 
         try

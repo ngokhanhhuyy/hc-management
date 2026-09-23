@@ -10,7 +10,7 @@ internal class SeatingConfiguration : IEntityTypeConfiguration<Seating>
     public void Configure(EntityTypeBuilder<Seating> entityBuilder)
     {
         // Index.
-        entityBuilder.HasIndex(mi => mi.Name).IsUnique();
+        entityBuilder.HasIndex(s => s.Name).IsUnique();
 
         // RowVersion.
         entityBuilder.Property<byte[]?>("RowVersion").IsRowVersion();

@@ -7,7 +7,7 @@ namespace HCManagement.Core.Features.Orders;
 internal class OrderUpsertValidator : Validator<OrderUpsertRequestDto>
 {
     #region Constructors
-    public OrderUpsertValidator()
+    public OrderUpsertValidator(IValidator<OrderItemUpsertRequestDto> itemValidator)
     {
         RuleFor(dto => dto.SeatingId)
             .NotEmpty()
@@ -18,6 +18,9 @@ internal class OrderUpsertValidator : Validator<OrderUpsertRequestDto>
             .WithMessage(ErrorMessages.MinimumLength)
             .Must((dto, _) => dto.Items.Count == dto.Items.DistinctBy(i => i.MenuItemId).Count())
             .WithName(DisplayNames.OrderItem);
+
+        RuleForEach(dto => dto.Items)
+            .SetValidator(itemValidator);
     }
     #endregion
 }

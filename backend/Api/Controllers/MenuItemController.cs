@@ -21,11 +21,11 @@ public class MenuItemController : ControllerBase
     #endregion
 
     #region Methods
-    [HttpGet]
+    [HttpPost("list")]
     [ProducesResponseType<List<MenuItemBasicResponseDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> GetListAsync([FromQuery] MenuItemListRequestDto requestDto)
+    public async Task<IActionResult> GetListAsync([FromBody] MenuItemListRequestDto requestDto)
     {
         return Ok(await _service.GetListAsync(requestDto));
     }
@@ -74,6 +74,14 @@ public class MenuItemController : ControllerBase
     {
         await _service.DeleteAsync(id);
         return Ok();
+    }
+
+    [HttpGet("default-list-parameters")]
+    [ProducesResponseType<MenuItemListRequestDto>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetDefaultListParamtersAsync()
+    {
+        await Task.CompletedTask;
+        return Ok(new MenuItemListRequestDto());
     }
     #endregion
 }

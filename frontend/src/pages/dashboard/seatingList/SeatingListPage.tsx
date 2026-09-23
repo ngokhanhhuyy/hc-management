@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useTransition } from "react";
 import { useNavigate, useLoaderData } from "react-router";
-import { api } from "#/api";
+import { api, type SeatingBasicResponseDto } from "#/api";
 import { createSeatingBasicModel, type SeatingBasicModel } from "#/models";
 import { getSeatingOrderUpsertRoutePath } from "#/helpers";
-import type { SeatingBasicResponseDto } from "@hc-management/shared/dtos";
 
 // Child components.
 import SeatingListItem from "./SeatingListItem";

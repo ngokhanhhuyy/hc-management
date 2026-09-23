@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics;
+using System.Globalization;
 
 namespace HCManagement.Api.Middlewares;
 
@@ -18,7 +19,10 @@ public class RequestLoggingMiddleware
     #region Methods
     public async Task InvokeAsync(HttpContext context)
     {
+        Stopwatch stopwatch = Stopwatch.StartNew();
         await _next(context);
+        stopwatch.Stop();
+
         string method = context.Request.Method;
         string path = context.Request.Path;
         QueryString queryString = context.Request.QueryString;
@@ -36,7 +40,8 @@ public class RequestLoggingMiddleware
         string logEntry =
             $"{statusColor}{statusCode}\e[0m     " +
             $"\e[47m\e[30m{currentDateTimeAsString}\e[0m " +
-            $"{method} {path}{queryString}";
+            $"{method} {path}{queryString} " +
+            $"\e[90m({stopwatch.Elapsed.TotalMilliseconds:F0}s)\e[0m";
 
         Console.WriteLine(logEntry);
     }

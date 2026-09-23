@@ -1,3 +1,6 @@
+using System.Globalization;
+using System.Text;
+
 namespace HCManagement.Core.Common.Extensions;
 
 public static class StringExtensions
@@ -31,6 +34,28 @@ public static class StringExtensions
         public string ReplaceComparisonValue(string comparisonValue)
         {
             return value.Replace("{ComparisonValue}", comparisonValue);
+        }
+
+        public string ToNonDiacritics()
+        {
+            string normalizedString = value.Normalize(NormalizationForm.FormD);
+            StringBuilder stringBuilder = new();
+        
+            foreach (Rune rune in normalizedString.EnumerateRunes())
+            {
+                var unicodeCategory = Rune.GetUnicodeCategory(rune);
+                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                {
+                    stringBuilder.Append(rune);
+                }
+            }
+        
+            return stringBuilder
+                .ToString()
+                .Normalize(NormalizationForm.FormC)
+                .Replace('đ', 'd')
+                .Replace('Đ', 'D')
+                .Replace('Ð', 'D');
         }
     }
     #endregion

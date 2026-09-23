@@ -37,7 +37,7 @@ export default function MenuItem(props: MenuItemProps): React.ReactNode {
 
       <div className={joinClassName(
         "bg-white in-[.menu-item:hover]:bg-blue-600/10 px-2 pt-1 pb-2",
-        "flex flex-col justify-center items-start transition-colors duration-150 text-start",
+        "flex flex-col flex-1 justify-between items-start transition-colors duration-150 text-start",
       )}>
         <span className="fw-bold">
           {props.model.name}

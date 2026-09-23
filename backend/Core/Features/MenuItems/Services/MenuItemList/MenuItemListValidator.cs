@@ -4,7 +4,7 @@ using HCManagement.Core.Common.Validation;
 
 namespace HCManagement.Core.Features.MenuItems;
 
-internal class MenuItemListValidator : ListValidator<MenuItemListRequestDto, MenuItemListRequestDto.SortingCriterion>
+internal class MenuItemListValidator : ListValidator<MenuItemListRequestDto, MenuItemListSortingCriterion>
 {
     #region Properties
     public MenuItemListValidator()

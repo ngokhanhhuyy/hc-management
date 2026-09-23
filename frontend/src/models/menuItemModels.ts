@@ -1,12 +1,11 @@
 import { createMenuItemBasicModel, type MenuCategoryBasicModel, type MenuItemBasicModel } from "#/models";
-import type { MenuItemListRequestDto, MenuItemListResponseDto } from "@hc-management/shared/dtos";
+import type { MenuItemListRequestDto, MenuItemBasicResponseDto } from "#/api";
 
 export type MenuItemListModel = {
   category: MenuCategoryBasicModel | null;
   searchContent: string;
   items: MenuItemBasicModel[];
-  totalItemCount: number;
-  mapFromResponseDto(responseDto: MenuItemListResponseDto): MenuItemListModel;
+  mapFromResponseDto(responseDtos: MenuItemBasicResponseDto[]): MenuItemListModel;
   toRequestDto(): MenuItemListRequestDto;
 };
 
@@ -15,12 +14,10 @@ export function createMenuItemListModel(): MenuItemListModel {
     category: null,
     searchContent: "",
     items: [],
-    totalItemCount: 0,
-    mapFromResponseDto(responseDto: MenuItemListResponseDto): MenuItemListModel {
+    mapFromResponseDto(responseDtos: MenuItemBasicResponseDto[]): MenuItemListModel {
       return {
         ...this,
-        items: responseDto.items.map(dto => createMenuItemBasicModel(dto)),
-        totalItemCount: responseDto.totalItemCount
+        items: responseDtos.map(dto => createMenuItemBasicModel(dto)),
       };
     },
     toRequestDto(): MenuItemListRequestDto {

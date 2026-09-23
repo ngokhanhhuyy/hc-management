@@ -1,5 +1,5 @@
+using HCManagement.Core.Common.Extensions;
 using HCManagement.Core.Features.MenuCategories;
-using HCManagement.Core.Features.MenuItems;
 using HCManagement.Core.Features.Orders;
 using HCManagement.Core.Features.Users;
 using System.ComponentModel.DataAnnotations;
@@ -14,7 +14,19 @@ internal class MenuItem
 
     [Required]
     [StringLength(MenuItemContracts.NameMaxLength)]
-    public required string Name { get; set; }
+    public required string Name
+    {
+        get;
+        set
+        {
+            field = value;
+            NormalizedName = value.ToLower().ToNonDiacritics();
+        }
+    }
+
+    [Required]
+    [StringLength(MenuItemContracts.NameMaxLength)]
+    public string NormalizedName { get; private set; } = string.Empty;
 
     [Required]
     [StringLength(MenuItemContracts.UnitMaxLength)]

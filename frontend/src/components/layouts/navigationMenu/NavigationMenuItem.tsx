@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import { Link } from "react-router";
-import { joinClassName } from "#/helpers";
-import { getDisplayNameByKey } from "@hc-management/shared/localization";
+import { joinClassName, getDisplayNameByKey } from "#/helpers";
 
 // Types
 export type NavigationBarItemData = {

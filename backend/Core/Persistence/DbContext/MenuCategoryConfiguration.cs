@@ -10,7 +10,8 @@ internal class MenuCategoryConfiguration : IEntityTypeConfiguration<MenuCategory
     public void Configure(EntityTypeBuilder<MenuCategory> entityBuilder)
     {
         // Index.
-        entityBuilder.HasIndex(p => p.Name).IsUnique();
+        entityBuilder.HasIndex(mc => mc.Name).IsUnique();
+        entityBuilder.HasIndex(mc => mc.Index);
 
         // RowVersion.
         entityBuilder.Property<byte[]?>("RowVersion").IsRowVersion();

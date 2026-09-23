@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useLoaderData } from "react-router";
-import { api } from "#/api";
+import { api, type MenuItemBasicResponseDto } from "#/api";
 import type { MenuItemListModel, MenuItemBasicModel, MenuCategoryBasicModel } from "#/models";
-import type { MenuItemListResponseDto } from "@hc-management/shared/dtos";
-import { displayNames } from "@hc-management/shared/localization";
+import { displayNames } from "#/localization";
 import { joinClassName, compute } from "#/helpers";
 
 // Child components.
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import type { DataLoadedResult } from "../dataLoader";
 import { Form, FormField, TextInput } from "#/components/form";
 import MenuItem from "./MenuItem";
@@ -37,11 +37,11 @@ export default function MenuItemListPanel(props: MenuItemListPanelProps): React.
   const categoryListModel = compute<MenuCategoryBasicModel[]>(() => initialLoadedModels.menuCategoryListModel);
 
   // Callbacks.
-  async function submitAsync(): Promise<MenuItemListResponseDto> {
+  async function submitAsync(): Promise<MenuItemBasicResponseDto[]> {
     return await api.menuItem.getListAsync(itemListModel.toRequestDto());
   }
 
-  function onSubmissionSucceeded(responseDto: MenuItemListResponseDto): void {
+  function onSubmissionSucceeded(responseDto: MenuItemBasicResponseDto[]): void {
     setItemListModel(m => m.mapFromResponseDto(responseDto));
   }
 
@@ -88,14 +88,27 @@ export default function MenuItemListPanel(props: MenuItemListPanelProps): React.
         onSubmissionSucceeded={onSubmissionSucceeded}
       >
         <FormField path="searchContent" displayName={displayNames["searchContent"]}>
-          <TextInput
-            placeholder="Tìm kiếm tên món ăn ..."
-            value={itemListModel.searchContent}
-            onInput={(searchContent) => setItemListModel(m => ({ ...m, searchContent }))}
-          />
+          <div className="form-input-group">
+            <TextInput
+              className={joinClassName("z-0", itemListModel.searchContent && "rounded-e-none")}
+              placeholder="Tìm kiếm tên món ăn ..."
+              value={itemListModel.searchContent}
+              onInput={(searchContent) => setItemListModel(m => ({ ...m, searchContent }))}
+            />
+
+            {itemListModel.searchContent && (
+              <button
+                type="button"
+                className="btn border-s-0"
+                onClick={() => setItemListModel(m => ({ ...m, searchContent: "" }))}
+              >
+                <XMarkIcon />
+              </button>
+            )}
+          </div>
         </FormField>
 
-        <FormField path="categoryId" displayName={displayNames["menuCategory"]}>
+        <FormField path="categoryId" displayName={displayNames.category}>
           <div className="flex flex-row flex-wrap justify-start items-start gap-2">
             <MenuCategory
               model={null}

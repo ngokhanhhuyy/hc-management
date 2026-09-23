@@ -39,6 +39,7 @@ internal class OrderConfiguration : IEntityTypeConfiguration<Order>
             .HasOne(o => o.Seating)
             .WithMany(s => s.Orders)
             .HasForeignKey(o => o.SeatingId)
+            .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
 
         // RowVersion.

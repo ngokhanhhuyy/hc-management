@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import type { OrderUpsertModel } from "#/models";
 import { getDisplayAmountText } from "#/helpers";
-import { calculateOrderAmount } from "@hc-management/shared/helpers";
+import { calculateOrderAmount } from "#/helpers";
 
 // Child components.
 import { TrashIcon, CurrencyDollarIcon } from "@heroicons/react/24/outline";

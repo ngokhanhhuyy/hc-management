@@ -38,7 +38,7 @@ public static class DisplayNames
     public const string VatPercentagePerUnit = "Hệ số thuế";
     public const string Seating = "Bàn ăn";
     public const string MenuItem = "Món ăn";
-    public const string ServiceAmount = "Tiền công";
+    public const string Index = "Chỉ mục";
     public const string TotalAmount = "Tổng giá tiền";
     public const string PaidAmount = "Số tiền đã thanh toán";
     public const string StartingDateTime = "Ngày giờ bắt đầu";

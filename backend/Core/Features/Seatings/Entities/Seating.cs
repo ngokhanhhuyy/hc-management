@@ -25,10 +25,13 @@ internal class Seating
 
     #region ComputedProperties
     [NotMapped]
-    public Order? ActiveOrder => Orders.SingleOrDefault(o => o.FinishedDateTime is null);
+    public Order? ActiveOrder => Orders
+        .Where(o => o.FinishedDateTime is null)
+        .SingleOrDefault(o => o is { DeletedDateTime: null, FinishedDateTime: null });
     #endregion
 
     #region StaticProperties
-    public static Expression<Func<Order, bool>> ActiveOrderFilterExpression => (o) => o.FinishedDateTime == null;
+    public static Expression<Func<Seating, IEnumerable<Order>>> ActiveOrderFilterExpression => (seating) =>
+        seating.Orders.Where(order => order.FinishedDateTime == null && order.DeletedDateTime == null);
     #endregion
 }

@@ -12,6 +12,8 @@ internal class MenuCategory
     [Required]
     [StringLength(MenuCategoryContracts.NameMaxLength)]
     public required string Name { get; set; }
+
+    public int? Index { get; set; }
     #endregion
 
     #region NavigationProperties

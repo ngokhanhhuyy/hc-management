@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useRef } from "react";
 import { FormContext, type FormContextPayload, type SubmissionState } from "./FormContext";
 import { createErrorCollectionModel, type ErrorCollectionModel } from "#/models";
-import { ValidationError, OperationError } from "@hc-management/shared/errors";
+import { ValidationError, OperationError } from "#/api";
 import { compute, joinClassName } from "#/helpers";
 
 // Props.

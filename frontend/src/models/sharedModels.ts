@@ -3,7 +3,7 @@ import type {
   MenuItemBasicResponseDto,
   SeatingBasicResponseDto,
   OrderBasicResponseDto
-} from "@hc-management/shared/dtos";
+} from "#/api/generated";
 
 export type MenuCategoryBasicModel = {
   id: number;

@@ -1,6 +1,6 @@
 import { createMenuItemBasicModel, type MenuItemBasicModel } from "./sharedModels";
-import { OrderItemDetailResponseDto, type OrderItemUpsertRequestDto } from "@hc-management/shared/dtos";
-import * as v from "valibot";
+import type { OrderItemDetailResponseDto, OrderItemUpsertRequestDto } from "#/api";
+import { isOrderItemDetailResponseDto } from "#/helpers";
 
 export type OrderItemUpsertModel = {
   id: number | null,
@@ -8,7 +8,6 @@ export type OrderItemUpsertModel = {
   vatPercentagePerUnit: number;
   quantity: number;
   menuItem: MenuItemBasicModel;
-  concurrencyVersion: string | null;
   guid: string;
   toRequestDto(): OrderItemUpsertRequestDto;
 };
@@ -20,7 +19,6 @@ export function createOrderItemUpsertModel(arg: OrderItemDetailResponseDto | Men
     vatPercentagePerUnit: 0,
     quantity: 1,
     menuItem: null!,
-    concurrencyVersion: null,
     guid: crypto.randomUUID(),
     toRequestDto(): OrderItemUpsertRequestDto {
       return {
@@ -29,18 +27,16 @@ export function createOrderItemUpsertModel(arg: OrderItemDetailResponseDto | Men
         vatPercentagePerUnit: this.vatPercentagePerUnit,
         quantity: this.quantity,
         menuItemId: this.menuItem.id,
-        concurrencyVersion: this.concurrencyVersion
       };
     }
   };
 
-  if (v.is(OrderItemDetailResponseDto, arg)) {
+  if (isOrderItemDetailResponseDto(arg)) {
     model.id = arg.id;
     model.amountBeforeVatPerUnit = arg.amountBeforeVatPerUnit;
     model.vatPercentagePerUnit = arg.vatPercentagePerUnit;
     model.quantity = arg.quantity;
     model.menuItem = createMenuItemBasicModel(arg.menuItem);
-    model.concurrencyVersion = arg.concurrencyVersion;
 
     return model;
   }

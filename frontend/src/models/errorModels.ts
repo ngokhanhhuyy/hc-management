@@ -1,4 +1,4 @@
-import type { ValidationError, OperationError } from "@hc-management/shared/errors";
+import type { ValidationError, OperationError } from "#/api";
 
 export type ErrorDetailModel = { propertyPath: string; message: string; };
 export type ErrorCollectionModel = {

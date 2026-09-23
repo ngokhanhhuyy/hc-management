@@ -14,6 +14,10 @@ internal class MenuCategoryUpsertValidator : Validator<MenuCategoryUpsertRequest
             .MinimumLength(MenuCategoryContracts.NameMinLength)
             .MaximumLength(MenuCategoryContracts.NameMaxLength)
             .WithName(DisplayNames.Category);
+
+        RuleFor(dto => dto.Index)
+            .GreaterThan(0)
+            .WithName(DisplayNames.Index);
     }
     #endregion
 }

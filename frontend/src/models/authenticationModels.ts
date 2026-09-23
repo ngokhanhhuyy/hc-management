@@ -1,16 +1,16 @@
-import type { AuthenticationVerifyUserNameAndPasswordRequestDto } from "@hc-management/shared/dtos";
+import type { VerifyCredentialsRequestDto } from "#/api";
 
 export type SignInModel = {
   userName: string;
   password: string;
-  toRequestDto(): AuthenticationVerifyUserNameAndPasswordRequestDto;
+  toRequestDto(): VerifyCredentialsRequestDto;
 };
 
 export function createSignInModel(): SignInModel {
   return {
     userName: "",
     password: "",
-    toRequestDto(): AuthenticationVerifyUserNameAndPasswordRequestDto {
+    toRequestDto(): VerifyCredentialsRequestDto {
       return {
         ...this
       };

@@ -1,7 +1,7 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider, useRouteError, Navigate } from "react-router";
+import { AuthenticationError } from "#/api";
 import { getSignInRoutePath, getDashboardRoutePath } from "#/helpers";
-import { AuthenticationError } from "@hc-management/shared/errors";
 
 // Layouts.
 import { RootLayout, MainPageLayout } from "#/components/layouts";

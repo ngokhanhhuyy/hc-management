@@ -5,7 +5,7 @@ using HCManagement.Core.Features.Seatings;
 namespace HCManagement.Api.Controllers;
 
 [ApiController]
-[Route("api/menu-items")]
+[Route("api/seatings")]
 [Authorize]
 public class SeatingController : ControllerBase
 {

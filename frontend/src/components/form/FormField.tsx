@@ -1,6 +1,5 @@
 import React, { useMemo, useContext } from "react";
-import { compute, joinClassName } from "#/helpers";
-import { getDisplayNameByKey } from "@hc-management/shared/localization";
+import { compute, joinClassName, getDisplayNameByKey } from "#/helpers";
 
 // Parent components.
 import { FormContext } from "./FormContext";

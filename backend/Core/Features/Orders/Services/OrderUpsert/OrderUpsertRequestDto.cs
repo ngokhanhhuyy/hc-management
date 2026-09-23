@@ -5,8 +5,8 @@ namespace HCManagement.Core.Features.Orders;
 public class OrderUpsertRequestDto : IRequestDto
 {
     #region Properties
-    public int SeatingId { get; set; }
-    public List<OrderItemUpsertRequestDto> Items { get; set; } = new();
+    public required int SeatingId { get; set; }
+    public required List<OrderItemUpsertRequestDto> Items { get; set; } = new();
     #endregion
 
     #region Methods

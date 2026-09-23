@@ -5,6 +5,8 @@
 **/.idea
 **/.vscode
 **/dist
+**/*.log
+**/generated
 
 backend/src/core/database/*
 backend/appsettings.json

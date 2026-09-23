@@ -1,7 +1,5 @@
 packages:
-  - backend
   - frontend
-  - shared
   - tools/client-generators/orval
 allowBuilds:
   '@prisma/engines': true

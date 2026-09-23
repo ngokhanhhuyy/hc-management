@@ -172,9 +172,3 @@ export type VerifyCredentialsRequestDto = {
   userName: string;
   password: string;
 };
-
-export type GetDisplayNamesAsync200One = { [key: string]: string };
-
-export type GetDisplayNamesAsync200Two = { [key: string]: string };
-
-export type GetDisplayNamesAsync200Three = { [key: string]: string };

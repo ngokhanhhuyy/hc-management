@@ -25,7 +25,7 @@ public class SeatingController : ControllerBase
     [ProducesResponseType<List<SeatingBasicResponseDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> GetAllAsync()
+    public async Task<IActionResult> GetAll()
     {
         return Ok(await _service.GetAllAsync());
     }
@@ -35,7 +35,7 @@ public class SeatingController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetDetailAsync([FromRoute] int id)
+    public async Task<IActionResult> GetDetail([FromRoute] int id)
     {
         return Ok(await _service.GetDetailAsync(id));
     }
@@ -49,7 +49,7 @@ public class SeatingController : ControllerBase
     public async Task<IActionResult> CreateAsync([FromBody] SeatingUpsertRequestDto requestDto)
     {
         int id = await _service.CreateAsync(requestDto);
-        return CreatedAtAction(nameof(GetDetailAsync), new { id }, id);
+        return CreatedAtAction(nameof(GetDetail), new { id }, id);
     }
 
     [HttpPut("{id:int}")]
@@ -58,7 +58,7 @@ public class SeatingController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    public async Task<IActionResult> UpdateAsync([FromRoute] int id, [FromBody] SeatingUpsertRequestDto requestDto)
+    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] SeatingUpsertRequestDto requestDto)
     {
         await _service.UpdateAsync(id, requestDto);
         return Ok();
@@ -70,7 +70,7 @@ public class SeatingController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    public async Task<IActionResult> DeleteAsync([FromRoute] int id)
+    public async Task<IActionResult> Delete([FromRoute] int id)
     {
         await _service.DeleteAsync(id);
         return Ok();

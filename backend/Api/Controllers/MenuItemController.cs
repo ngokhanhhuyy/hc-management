@@ -25,7 +25,7 @@ public class MenuItemController : ControllerBase
     [ProducesResponseType<List<MenuItemBasicResponseDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> GetListAsync([FromBody] MenuItemListRequestDto requestDto)
+    public async Task<IActionResult> GetList([FromBody] MenuItemListRequestDto requestDto)
     {
         return Ok(await _service.GetListAsync(requestDto));
     }
@@ -35,7 +35,7 @@ public class MenuItemController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetDetailAsync([FromRoute] int id)
+    public async Task<IActionResult> GetDetail([FromRoute] int id)
     {
         return Ok(await _service.GetDetailAsync(id));
     }
@@ -46,10 +46,10 @@ public class MenuItemController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    public async Task<IActionResult> CreateAsync([FromBody] MenuItemUpsertRequestDto requestDto)
+    public async Task<IActionResult> Create([FromBody] MenuItemUpsertRequestDto requestDto)
     {
         int id = await _service.CreateAsync(requestDto);
-        return CreatedAtAction(nameof(GetDetailAsync), new { id }, id);
+        return CreatedAtAction(nameof(GetDetail), new { id }, id);
     }
 
     [HttpPut("{id:int}")]
@@ -58,7 +58,7 @@ public class MenuItemController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    public async Task<IActionResult> UpdateAsync([FromRoute] int id, [FromBody] MenuItemUpsertRequestDto requestDto)
+    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] MenuItemUpsertRequestDto requestDto)
     {
         await _service.UpdateAsync(id, requestDto);
         return Ok();
@@ -70,7 +70,7 @@ public class MenuItemController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    public async Task<IActionResult> DeleteAsync([FromRoute] int id)
+    public async Task<IActionResult> Delete([FromRoute] int id)
     {
         await _service.DeleteAsync(id);
         return Ok();
@@ -78,7 +78,7 @@ public class MenuItemController : ControllerBase
 
     [HttpGet("default-list-parameters")]
     [ProducesResponseType<MenuItemListRequestDto>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetDefaultListParamtersAsync()
+    public async Task<IActionResult> GetDefaultListParameters()
     {
         await Task.CompletedTask;
         return Ok(new MenuItemListRequestDto());

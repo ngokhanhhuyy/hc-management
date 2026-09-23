@@ -37,37 +37,37 @@ export default function OrderUpsertPanel(props: OrderUpsertPanelProps): React.Re
 
   // Templates.
   return (
-    <div className="bg-white border border-black/15 rounded-lg flex flex-col h-full">
+    <div className="bg-white border border-black/15 rounded-lg flex flex-col h-fit min-h-150 sticky top-3">
       <div className="text-xl text-center uppercase p-3 border-b border-black/15">
         {props.model.seating.name.toLowerCase()}
       </div>
 
-      <ul className="list-group list-group-flush flex-1">
-        {props.model.items.map((item, index) => (
-          <OrderItem
-            model={item}
-            onUpdated={updatedData => {
-              props.onModelUpdated?.({
-                items: props.model.items.map(i => {
-                  if (i.guid === item.guid) {
-                    return { ...i, ...updatedData };
-                  }
-
-                  return i;
-                })
-              });
-            }}
-            onDeleted={() => {
-              props.onModelUpdated?.({ items: props.model.items.filter(i => i.guid !== item.guid) });
-            }}
-            index={index}
-            key={index}
-          />
-        ))}
-      </ul>
-
-      {props.model.items.length > 0 && (
+      {props.model.items.length > 0 ? (
         <>
+          <ul className="list-group list-group-flush flex-1">
+            {props.model.items.map((item, index) => (
+              <OrderItem
+                model={item}
+                onUpdated={updatedData => {
+                  props.onModelUpdated?.({
+                    items: props.model.items.map(i => {
+                      if (i.guid === item.guid) {
+                        return { ...i, ...updatedData };
+                      }
+
+                      return i;
+                    })
+                  });
+                }}
+                onDeleted={() => {
+                  props.onModelUpdated?.({ items: props.model.items.filter(i => i.guid !== item.guid) });
+                }}
+                index={index}
+                key={index}
+              />
+            ))}
+          </ul>
+
           <div className="flex flex-col px-3 pt-1 pb-2 border-t border-black/15">
             <div className="flex justify-between">
               <span>Giá trước thuế</span>
@@ -107,6 +107,12 @@ export default function OrderUpsertPanel(props: OrderUpsertPanelProps): React.Re
             </button>
           </div>
         </>
+      ) : (
+        <div className="flex flex-1 justify-center items-center w-full">
+          <span className="text-3xl opacity-30 text-center">
+            Chưa chọn<br/>món ăn/nước uống
+          </span>
+        </div>
       )}
 
       {loadingState === "syncing" && (

@@ -1,13 +1,12 @@
 import React, { useState, useRef, useMemo, useEffect } from "react";
 import { useLoaderData, useNavigate } from "react-router";
-import { api } from "#/api";
+import { api, type OrderDetailResponseDto } from "#/api";
 import {
   createOrderItemUpsertModel,
   type MenuItemBasicModel,
   type OrderUpsertModel,
   type OrderItemUpsertModel
 } from "#/models";
-import type { OrderDetailResponseDto } from "@hc-management/shared/dtos";
 import { getDashboardRoutePath } from "#/helpers";
 
 // Child components.
@@ -117,7 +116,7 @@ export default function OrderUpsertPage(): React.ReactNode {
 
   // Templates.
   return (
-    <div className="grid grid-cols-[1fr_320px] gap-3">
+    <div className="grid grid-cols-[1fr_320px] gap-3 h-full">
       <MenuItemListPanel pickedItems={pickedMenuItems} onPicked={onMenuItemPicked} />
       <OrderUpsertPanel
         model={model}

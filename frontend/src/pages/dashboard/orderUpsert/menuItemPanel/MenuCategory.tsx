@@ -19,7 +19,7 @@ export default function MenuCategory(props: MenuCategoryProps): React.ReactNode 
     <button
       type="button"
       className={joinClassName(
-        "menu-category btn flex-none w-fit rounded-lg cursor-pointer",
+        "menu-category btn flex-none w-fit rounded-lg px-3 cursor-pointer",
         "transition-all duration-200 whitespace-nowrap",
         props.isSelected ? "btn-primary" : undefined
       )}

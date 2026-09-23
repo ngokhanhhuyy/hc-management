@@ -23,10 +23,10 @@ export const fetchAndThrowAsync = async <TResponse>(url: string, options: Reques
 };
 
 async function convertToErrorAsync(response: Response): Promise<Error> {
-  type ProblemDetails = { detail: ErrorDetails };
+  type ProblemDetails = { errors: ErrorDetails };
   const getDetails = async () => {
     const problemDetails = await response.json() as ProblemDetails;
-    return problemDetails as unknown as ErrorDetails;
+    return problemDetails.errors;
   };
   
   switch (response.status) {

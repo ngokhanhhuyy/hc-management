@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useTransition } from "react";
+import React, { useState } from "react";
 import { useNavigate, useLoaderData } from "react-router";
 import { api, type SeatingBasicResponseDto } from "#/api";
 import { createSeatingBasicModel, type SeatingBasicModel } from "#/models";
@@ -14,26 +14,9 @@ export default function SeatingListPage(): React.ReactNode {
   const initialResponseDtos = useLoaderData<SeatingBasicResponseDto[]>();
 
   // States.
-  const [model, setModel] = useState<SeatingBasicModel[]>(() => initialResponseDtos.map(createSeatingBasicModel));
-  const [isLoading, startTransition] = useTransition();
-
-  // Effect.
-  useEffect(() => {
-    startTransition(async () => {
-      const responseDtos = await api.seating.getAllAsync();
-      setModel(responseDtos.map(createSeatingBasicModel));
-    });
-  }, []);
+  const [model] = useState<SeatingBasicModel[]>(() => initialResponseDtos.map(createSeatingBasicModel));
 
   // Templates.
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center opacity-50">
-        Đang tải
-      </div>
-    );
-  }
-  
   return (
     <div className="grid xl:grid-cols-6 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 items-start gap-3">
       {model.map((seating) => (

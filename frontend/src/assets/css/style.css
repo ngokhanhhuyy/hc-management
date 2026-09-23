@@ -34,6 +34,7 @@
     --color-danger: var(--color-red-600);
     --color-success: var(--color-emerald-500);
     --color-hinting: var(--color-blue-600);
+    --topbar-height: --spacing(15);
 }
 
 html {

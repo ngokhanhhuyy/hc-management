@@ -70,7 +70,7 @@ public class AuthenticationController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> ClearAccessCookieAsync()
+    public async Task<IActionResult> ClearAccessCookie()
     {
         await HttpContext.SignOutAsync();
         return Ok();
@@ -78,9 +78,9 @@ public class AuthenticationController : ControllerBase
 
     [Authorize]
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<UserDetailResponseDto>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> CallerDetail()
+    public async Task<IActionResult> GetCallerDetail()
     {
         return Ok(await _userService.GetDetailByIdAsync(_callerDetailProvider.GetId()));
     }

@@ -51,7 +51,7 @@ export default function NavigationMenu(): React.ReactNode {
 
   // Templates.
   return (
-    <nav className="flex flex-col gap-10">
+    <nav className="flex flex-col gap-10 sticky top-3 h-fit">
       <div className="flex flex-col">
         <span className="text-sm font-bold opacity-50">Vận hành</span>
         <ul className="list-group list-group-flush">

@@ -41,7 +41,7 @@ public class RequestLoggingMiddleware
             $"{statusColor}{statusCode}\e[0m     " +
             $"\e[47m\e[30m{currentDateTimeAsString}\e[0m " +
             $"{method} {path}{queryString} " +
-            $"\e[90m({stopwatch.Elapsed.TotalMilliseconds:F0}s)\e[0m";
+            $"\e[90m({stopwatch.Elapsed.TotalMilliseconds:F0}ms)\e[0m";
 
         Console.WriteLine(logEntry);
     }

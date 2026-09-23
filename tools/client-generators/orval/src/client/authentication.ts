@@ -4,7 +4,7 @@
  * HCManagement | v1
  * OpenAPI spec version: 1.0.0
  */
-import type { ChangePasswordRequestDto, VerifyCredentialsRequestDto } from "./schema.schemas";
+import type { ChangePasswordRequestDto, UserDetailResponseDto, VerifyCredentialsRequestDto } from "./schema.schemas";
 
 import { fetchAndThrowAsync } from "../mutators/fetch";
 
@@ -49,12 +49,14 @@ export const clearAccessCookieAsync = async (options?: Parameters<typeof fetchAn
   });
 };
 
-export const getCallerDetailAsyncUrl = () => {
-  return `/api/Authentication/CallerDetail`;
+export const getGetCallerDetailAsyncUrl = () => {
+  return `/api/Authentication/GetCallerDetail`;
 };
 
-export const callerDetailAsync = async (options?: Parameters<typeof fetchAndThrowAsync>[1]): Promise<void> => {
-  return fetchAndThrowAsync<void>(getCallerDetailAsyncUrl(), {
+export const getCallerDetailAsync = async (
+  options?: Parameters<typeof fetchAndThrowAsync>[1],
+): Promise<UserDetailResponseDto> => {
+  return fetchAndThrowAsync<UserDetailResponseDto>(getGetCallerDetailAsyncUrl(), {
     ...options,
     method: "GET",
   });

@@ -129,14 +129,14 @@ export const createAsync = async (
   });
 };
 
-export const getGetDefaultListParamtersAsyncUrl = () => {
+export const getGetDefaultListParametersAsyncUrl = () => {
   return `/api/menu-items/default-list-parameters`;
 };
 
-export const getDefaultListParamtersAsync = async (
+export const getDefaultListParametersAsync = async (
   options?: Parameters<typeof fetchAndThrowAsync>[1],
 ): Promise<MenuItemListRequestDto> => {
-  return fetchAndThrowAsync<MenuItemListRequestDto>(getGetDefaultListParamtersAsyncUrl(), {
+  return fetchAndThrowAsync<MenuItemListRequestDto>(getGetDefaultListParametersAsyncUrl(), {
     ...options,
     method: "GET",
   });

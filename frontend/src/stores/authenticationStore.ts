@@ -1,27 +1,33 @@
 import { create } from "zustand";
-import { api, AuthenticationError } from "#/api";
+import { api, AuthenticationError, type UserDetailResponseDto } from "#/api";
+import { createUserDetailModel, type UserDetailModel } from "#/models";
 
 export type AuthenticationStore = {
-  isAuthenticated: boolean;
-  readonly setIsAuthenticated: (authenticated: boolean) => void;
+  authenticatedUser: UserDetailModel | null;
+  readonly isAuthenticated: boolean;
+  readonly setAuthenticationUser: (user: UserDetailModel | UserDetailResponseDto | null) => void;
 };
 
-const initialIsAuthenticated = await isAuthenticatedAsync();
+const initialAuthenticatedUser = await getAuthenticatedUserAsync();
 
 export const useAuthenticationStore = create<AuthenticationStore>((set) => ({
-  isAuthenticated: initialIsAuthenticated,
-  setIsAuthenticated: (authenticated: boolean): void => {
-    set({ isAuthenticated: authenticated });
+  authenticatedUser: initialAuthenticatedUser,
+  isAuthenticated: initialAuthenticatedUser != null,
+  setAuthenticationUser: (user: UserDetailModel | UserDetailResponseDto | null): void => {
+    set({
+      authenticatedUser: user,
+      isAuthenticated: user != null
+    });
   },
 }));
 
-async function isAuthenticatedAsync(): Promise<boolean> {
+async function getAuthenticatedUserAsync(): Promise<UserDetailModel | null> {
   try {
-    await api.authentication.checkAuthenticationStatusAsync();
-    return true;
+    const responseDto = await api.authentication.getCallerDetailAsync();
+    return createUserDetailModel(responseDto);
   } catch (error) {
     if (error instanceof AuthenticationError) {
-      return false;
+      return null;
     }
 
     throw error;

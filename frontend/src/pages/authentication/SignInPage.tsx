@@ -24,7 +24,9 @@ export default function SignInPage(): React.ReactNode {
     setModel(m => ({ ...m, password: "" }));
   }
 
-  function onSubmissionSucceeded(): void {
+  async function onSubmissionSucceeded(): Promise<void> {
+    const detailResponseDto = await api.authentication.getCallerDetailAsync();
+    authenticationStore.setAuthenticationUser(detailResponseDto);
     navigate(getHomeRoutePath());
   }
 

@@ -2,8 +2,9 @@ import type {
   MenuCategoryBasicResponseDto,
   MenuItemBasicResponseDto,
   SeatingBasicResponseDto,
-  OrderBasicResponseDto
-} from "#/api/generated";
+  OrderBasicResponseDto,
+  UserBasicResponseDto,
+} from "#/api";
 
 export type MenuCategoryBasicModel = {
   id: number;
@@ -30,6 +31,12 @@ export type OrderBasicModel = {
   id: number;
   itemAmount: number;
   isFinished: boolean;
+};
+
+export type UserBasicModel = {
+  id: number;
+  userName: string;
+  isDeleted: boolean;
 };
 
 export function createMenuCategoryBasicModel(responseDto: MenuCategoryBasicResponseDto): MenuCategoryBasicModel {
@@ -64,5 +71,13 @@ export function createOrderBasicModel(responseDto: OrderBasicResponseDto): Order
     id: responseDto.id,
     itemAmount: responseDto.itemAmount,
     isFinished: responseDto.isFinished
+  };
+}
+
+export function createUserBasicModel(responseDto: UserBasicResponseDto): UserBasicModel {
+  return {
+    id: responseDto.id,
+    userName: responseDto.userName,
+    isDeleted: responseDto.isDeleted
   };
 }

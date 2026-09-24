@@ -1,10 +1,11 @@
 import React, { useState, useMemo } from "react";
 import type { OrderUpsertModel } from "#/models";
-import { getDisplayAmountText } from "#/helpers";
-import { calculateOrderAmount } from "#/helpers";
+import { joinClassName, getDisplayAmountText, calculateOrderAmount } from "#/helpers";
 
 // Child components.
 import { TrashIcon, CurrencyDollarIcon } from "@heroicons/react/24/outline";
+import BillModal from "./BillModal";
+import Bill from "./Bill";
 import OrderItem from "./OrderItem";
 
 // Props.
@@ -19,6 +20,7 @@ type OrderUpsertPanelProps = {
 export default function OrderUpsertPanel(props: OrderUpsertPanelProps): React.ReactNode {
   // States.
   const [loadingState, setLoadingState] = useState<LoadingState>(null);
+  const [isBillModalVisible, setIsBillModalVisible] = useState<boolean>(false);
 
   // Computed.
   const amountDisplayText = useMemo(() => {
@@ -37,7 +39,10 @@ export default function OrderUpsertPanel(props: OrderUpsertPanelProps): React.Re
 
   // Templates.
   return (
-    <div className="bg-white border border-black/15 rounded-lg flex flex-col h-fit min-h-150 sticky top-3">
+    <div className={joinClassName(
+      "bg-white border border-black/15 rounded-lg flex flex-col",
+      "h-fit min-h-150 sticky top-[calc(var(--topbar-height)+(--spacing(3)))]"
+    )}>
       <div className="text-xl text-center uppercase p-3 border-b border-black/15">
         {props.model.seating.name.toLowerCase()}
       </div>
@@ -99,7 +104,7 @@ export default function OrderUpsertPanel(props: OrderUpsertPanelProps): React.Re
             <button
               type="button"
               className="btn gap-1"
-              onClick={props.onFinished}
+              onClick={() => setIsBillModalVisible(true)}
               disabled={!props.model.items.length}
             >
               <CurrencyDollarIcon />
@@ -123,6 +128,13 @@ export default function OrderUpsertPanel(props: OrderUpsertPanelProps): React.Re
           </div>
         </div>
       )}
+
+      <BillModal
+        model={props.model}
+        isOpen={isBillModalVisible}
+        onClosed={() => setIsBillModalVisible(false)}
+        onFinished={props.onFinished}
+      />
     </div>
   );
 }

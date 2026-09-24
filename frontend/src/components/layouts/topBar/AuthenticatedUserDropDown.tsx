@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import { useAuthenticationStore } from "#/stores";
 import { joinClassName } from "#/helpers";
 
 // Child components.
 import { UserIcon } from "@heroicons/react/24/solid";
-import ChangePasswordForm from "./ChangePasswordForm";
+import ChangePasswordFormModal from "./ChangePasswordFormModal";
 
 // Components.
 export default function AuthenticatedUserDropDown(): React.ReactNode {
@@ -13,15 +13,19 @@ export default function AuthenticatedUserDropDown(): React.ReactNode {
 
   // States.
   const [isUserMenuVisible, setIsUserMenuVisible] = useState<boolean>(false);
-  const [isChangePasswordFormVisible, setIsChangePasswordFormVisible] = useState<boolean>(false);
+  const [isChangePasswordFormModalOpened, setIsChangePasswordFormModalOpened] = useState<boolean>(false);
   const userMenuContainerElementRef = useRef<HTMLDivElement | null>(null);
+
+  // Callbacks.
+  const handleChangePasswordButtonClicked = useCallback(() => {
+    setIsUserMenuVisible(false);
+    setIsChangePasswordFormModalOpened(true);
+  }, []);
 
   // Effect.
   useEffect(() => {
     const handleUserMenuVisibility = (event: MouseEvent) => {
       const userMenuContainsClickedElement = userMenuContainerElementRef.current?.contains(event.target as Node);
-      console.log(event.target);
-      console.log(userMenuContainsClickedElement);
       if (!userMenuContainsClickedElement) {
         setIsUserMenuVisible(false);
       }
@@ -33,12 +37,6 @@ export default function AuthenticatedUserDropDown(): React.ReactNode {
       document.removeEventListener("click", handleUserMenuVisibility);
     };
   }, []);
-
-  useEffect(() => {
-    if (!isUserMenuVisible) {
-      setIsChangePasswordFormVisible(false);
-    }
-  }, [isUserMenuVisible]);
 
   // Template.
   return (
@@ -62,25 +60,26 @@ export default function AuthenticatedUserDropDown(): React.ReactNode {
 
           <span>{authenticationStore.authenticatedUser?.userName}</span>
 
-          {isChangePasswordFormVisible ? (
-            <ChangePasswordForm onFinished={() => setIsChangePasswordFormVisible(false)} />
-          ) : (
-            <div className="flex justify-between w-full mt-5">
-              <button type="button" className="btn btn-sm" onClick={() => setIsChangePasswordFormVisible(true)}>
-                Đổi mật khẩu
-              </button>
+          <div className="flex justify-between w-full mt-5">
+            <button type="button" className="btn btn-sm" onClick={handleChangePasswordButtonClicked}>
+              Đổi mật khẩu
+            </button>
 
-              <button
-                type="button"
-                className="btn btn-sm"
-                onClick={() => authenticationStore.setAuthenticationUser(null)}
-              >
-                Đăng xuất
-              </button>
-            </div>
-          )}
+            <button
+              type="button"
+              className="btn btn-sm"
+              onClick={() => authenticationStore.setAuthenticationUser(null)}
+            >
+              Đăng xuất
+            </button>
+          </div>
         </div>
       )}
+
+      <ChangePasswordFormModal
+        isOpen={isChangePasswordFormModalOpened}
+        onClosed={() => setIsChangePasswordFormModalOpened(false)}
+      />
     </div>
   );
 }

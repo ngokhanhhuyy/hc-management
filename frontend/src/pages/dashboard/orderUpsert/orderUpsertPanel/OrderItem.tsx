@@ -42,7 +42,7 @@ export default function OrderItem(props: OrderItemProps): React.ReactNode {
                 value={props.model.amountBeforeVatPerUnit}
                 onInput={amountBeforeVatPerUnit => props.onUpdated({ amountBeforeVatPerUnit })}
                 min={1}
-                max={999}
+                max={999_999_999}
               />
               <span className="form-input-group-text py-0 border-s-0 rounded-s-none">
                 vnđ

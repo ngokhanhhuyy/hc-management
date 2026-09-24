@@ -6,7 +6,7 @@ import { displayNames } from "#/localization";
 import { joinClassName, compute } from "#/helpers";
 
 // Child components.
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import type { DataLoadedResult } from "../dataLoader";
 import { Form, FormField, TextInput } from "#/components/form";
 import MenuItem from "./MenuItem";
@@ -23,6 +23,11 @@ type MenuItemListPanelProps = {
   onPicked?(pickedMenuItem: MenuItemBasicModel): any;
 };
 
+type ProcessingRequest = {
+  id: string;
+  handler: () => Promise<void>;
+};
+
 // Component.
 export default function MenuItemListPanel(props: MenuItemListPanelProps): React.ReactNode {
   // Dependencies.
@@ -31,7 +36,7 @@ export default function MenuItemListPanel(props: MenuItemListPanelProps): React.
   // States.
   const [itemListModel, setItemListModel] = useState<MenuItemListModel>(initialLoadedModels.menuItemListModel);
   const [loadingState, setLoadingState] = useState<"initialLoading" | "reloading" | null>("initialLoading");
-  const latestLoadingRequestId = useRef<number>(-1);
+  const processingRequests = useRef<ProcessingRequest[]>([]);
 
   // Computed.
   const categoryListModel = compute<MenuCategoryBasicModel[]>(() => initialLoadedModels.menuCategoryListModel);
@@ -51,19 +56,41 @@ export default function MenuItemListPanel(props: MenuItemListPanelProps): React.
       setLoadingState(null);
       return;
     }
-    
-    const loadItemListModelAsync = async () => {
-      const responseDto = await api.menuItem.getListAsync(itemListModel.toRequestDto());
-      setItemListModel(m => m.mapFromResponseDto(responseDto));
-    };
 
     const loadAsync = async () => {
-      setLoadingState("reloading");
-      await loadItemListModelAsync();
+      const promise = new Promise(resolve => setTimeout(resolve, 1000));
+      try {
+        setLoadingState("reloading");
+        const responseDto = await api.menuItem.getListAsync(itemListModel.toRequestDto());
+        setItemListModel(m => m.mapFromResponseDto(responseDto));
+      } finally {
+        setLoadingState(null);
+        await promise;
+        processingRequests.current.splice(0, 1);
+
+        if (processingRequests.current.length > 0) {
+          processingRequests.current[0].handler();
+        }
+      }
     };
 
-    loadAsync().finally(() => setLoadingState(null));
+    const requestId = crypto.randomUUID();
+    const request = {
+      id: requestId,
+      handler: () => loadAsync()
+    };
+
+    if (processingRequests.current.length > 0) {
+      processingRequests.current[1] = request;
+    } else {
+      processingRequests.current[0] = request;
+      loadAsync();
+    }
   }, [itemListModel.searchContent, itemListModel.category?.id]);
+
+  useEffect(() => {
+    console.log(JSON.stringify(processingRequests.current, null, 2));
+  }, [itemListModel.searchContent]);
 
   // Templates.
   function renderSpinner(): React.ReactNode {
@@ -83,14 +110,18 @@ export default function MenuItemListPanel(props: MenuItemListPanelProps): React.
   return (
     <div className="flex flex-col gap-3 h-full">
       <Form
-        className="bg-white border border-black/15 flex flex-col gap-3 p-3 pt-2 rounded-lg"
+        className="flex flex-col gap-3"
         submitAction={submitAsync}
         onSubmissionSucceeded={onSubmissionSucceeded}
       >
-        <FormField path="searchContent" displayName={displayNames["searchContent"]}>
+        <FormField path="searchContent" displayName={displayNames["searchContent"]} hideLabel>
           <div className="form-input-group">
+            <div className="form-input-group-text px-2">
+              <MagnifyingGlassIcon className="size-4.5" />
+            </div>
+
             <TextInput
-              className={joinClassName("z-0", itemListModel.searchContent && "rounded-e-none")}
+              className={joinClassName("shadow-xs z-0", itemListModel.searchContent && "rounded-e-none")}
               placeholder="Tìm kiếm tên món ăn ..."
               value={itemListModel.searchContent}
               onInput={(searchContent) => setItemListModel(m => ({ ...m, searchContent }))}
@@ -108,7 +139,7 @@ export default function MenuItemListPanel(props: MenuItemListPanelProps): React.
           </div>
         </FormField>
 
-        <FormField path="categoryId" displayName={displayNames.category}>
+        <FormField path="categoryId" displayName={displayNames.category} hideLabel>
           <div className="flex flex-row flex-wrap justify-start items-start gap-2">
             <MenuCategory
               model={null}

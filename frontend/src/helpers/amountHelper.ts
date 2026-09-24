@@ -1,4 +1,8 @@
-import type { OrderDetailResponseDto, OrderUpsertRequestDto } from "../dtos/index.js";
+import type {
+  OrderDetailResponseDto,
+  OrderUpsertRequestDto,
+} from "#/api";
+import type { OrderItemUpsertModel } from "#/models";
 
 type OrderAmount = {
   amountBeforeVat: number;
@@ -29,4 +33,12 @@ export function calculateOrderAmount(order: OrderUpsertRequestDto | OrderDetailR
     vatAmount,
     totalAmount
   };
+}
+
+export function calculateOrderItemAmount(item: OrderItemUpsertModel): number {
+  const amountBeforeVatPerUnit = item.amountBeforeVatPerUnit;
+  const vatPercentagePerUnit = item.vatPercentagePerUnit;
+  const vatAmountPerUnit = Math.round((amountBeforeVatPerUnit * (vatPercentagePerUnit / 100)) / 1000) * 1000;
+
+  return (amountBeforeVatPerUnit + vatAmountPerUnit) * item.quantity;
 }

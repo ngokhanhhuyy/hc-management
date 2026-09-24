@@ -57,10 +57,10 @@ export default function FormField(props: FormFieldProps) {
   const validationMessageClassName = compute<string | undefined>(() => {
     if (formContext?.errorCollection.isValidated) {
       if (errorMessage) {
-        return "text-red-600";
+        return "text-red-600 text-sm";
       }
 
-      return "text-emerald-600";
+      return "text-emerald-600 text-sm";
     }
   });
 

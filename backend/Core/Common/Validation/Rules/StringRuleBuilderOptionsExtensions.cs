@@ -56,7 +56,7 @@ internal static partial class StringRuleBuilderOptionsExtensions
         {
             return ruleBuilder
                 .MinimumLength(AuthenticationContracts.PasswordMinLength)
-                .Matches(@"^[\\x21-\\x7E]+$");
+                .Matches(GetPasswordRegex());
         }
     }
     #endregion
@@ -67,5 +67,8 @@ internal static partial class StringRuleBuilderOptionsExtensions
 
     [GeneratedRegex(@"^\+?[0-9]+$")]
     private static partial Regex GetPhoneNumberRegex();
+
+    [GeneratedRegex(@"^[\x21-\x7E]+$")]
+    private static partial Regex GetPasswordRegex();
     #endregion
 }

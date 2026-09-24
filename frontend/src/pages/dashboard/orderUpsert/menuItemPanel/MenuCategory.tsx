@@ -20,7 +20,7 @@ export default function MenuCategory(props: MenuCategoryProps): React.ReactNode 
       type="button"
       className={joinClassName(
         "menu-category btn flex-none w-fit rounded-lg px-3 cursor-pointer",
-        "transition-all duration-200 whitespace-nowrap",
+        "transition-all duration-200 whitespace-nowrap shadow-xs",
         props.isSelected ? "btn-primary" : undefined
       )}
       onClick={props.onSelected}

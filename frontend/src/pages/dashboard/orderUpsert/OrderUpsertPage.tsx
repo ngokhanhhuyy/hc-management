@@ -7,7 +7,7 @@ import {
   type OrderUpsertModel,
   type OrderItemUpsertModel
 } from "#/models";
-import { getDashboardRoutePath } from "#/helpers";
+import { getDashboardRoutePath, joinClassName } from "#/helpers";
 
 // Child components.
 import type { DataLoadedResult } from "./dataLoader";
@@ -96,7 +96,7 @@ export default function OrderUpsertPage(): React.ReactNode {
       }
 
       currentTimeoutId.current = null;
-    }, 500);
+    }, 10_000);
   }
 
   async function handleFinishedAsync(): Promise<void> {
@@ -116,7 +116,10 @@ export default function OrderUpsertPage(): React.ReactNode {
 
   // Templates.
   return (
-    <div className="grid grid-cols-[1fr_320px] gap-3 h-full">
+    <div className={joinClassName(
+      "grid grid-cols-[1fr_320px] gap-3 h-full",
+      loadingState === "syncing" && "opacity-50 pe-none"
+    )}>
       <MenuItemListPanel pickedItems={pickedMenuItems} onPicked={onMenuItemPicked} />
       <OrderUpsertPanel
         model={model}

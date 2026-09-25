@@ -14,5 +14,5 @@ export const api = {
   user: userApi
 };
 
-export type * from "./generated/client/schema.schemas";
+export * from "./generated/client/schema.schemas";
 export * from "./generated/mutators/errors";

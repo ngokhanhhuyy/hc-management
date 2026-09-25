@@ -17,3 +17,19 @@ export function getSeatingOrderUpsertRoutePath(seatingId: number): string {
 export function getDashboardRoutePath(): string {
   return "/dashboard";
 }
+
+export function getEditorRoutePath(): string {
+  return "/editors";
+}
+
+export function getSeatingEditorRoutePath(): string {
+  return `${getEditorRoutePath()}/seatings`;
+}
+
+export function getSeatingEditorCreateRoutePath(): string {
+  return `${getSeatingEditorRoutePath()}/create`;
+}
+
+export function getSeatingEditorUpdateRoutePath(id: number): string {
+  return `${getSeatingEditorRoutePath()}/${id}`;
+}

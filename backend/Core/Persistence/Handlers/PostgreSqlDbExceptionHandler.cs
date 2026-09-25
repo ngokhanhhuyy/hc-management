@@ -125,7 +125,7 @@ internal partial class PostgreSqlDbExceptionHandler : IDbExceptionHandler
     #endregion
 
     #region StaticMethods
-    [GeneratedRegex(@"IX_(?<tableName>[A-Z][a-zA-Z]+)_(?<columnName>[A-Z][a-zA-Z0-9_]+)")]
+    [GeneratedRegex(@"UNIQUE_(?<tableName>[A-Z][a-zA-Z]+)_(?<columnName>[A-Z][a-zA-Z0-9_]+)")]
     private static partial Regex GetUniqueConstraintNameRegex();
 
     [GeneratedRegex(@"FK_(?<referencingTableName>[A-Z][a-zA-Z]+)_(?<referencedTableName>[A-Z][a-zA-Z]+)_(?<referencingColumnName>[A-Z][a-zA-Z0-9_]+)")]

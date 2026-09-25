@@ -46,7 +46,11 @@ const ConfirmationModal = forwardRef<ConfirmationModalHandler, ConfirmationModal
   
   // Template.
   const footerChildren = (
-    <button type="button" className={joinClassName("h-fit", props.okButtonClassName)} onClick={handleOkButtonClicked}>
+    <button
+      type="button"
+      className={joinClassName("btn h-fit", props.okButtonClassName)}
+      onClick={handleOkButtonClicked}
+    >
       {props.okButtonText ?? "Đã hiểu"}
     </button>
   );

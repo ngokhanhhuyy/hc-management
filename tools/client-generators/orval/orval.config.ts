@@ -21,6 +21,7 @@ export default defineConfig({
           name: "fetchAndThrowAsync"
         },
         useTypeOverInterfaces: true,
+        enumGenerationType: "enum",
         operationName: (operation) => {
           const operationId = operation.operationId as string;
           let name = operationId.split("_")[1];

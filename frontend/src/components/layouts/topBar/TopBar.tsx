@@ -14,7 +14,7 @@ export default function TopBar(): React.ReactNode {
           <img src={logoUrl} className="h-full rounded-full m-0.5" />
           <div className="flex flex-col">
             <span className="uppercase">Quán nhậu sân vườn</span>
-            <span className="text-sm opacity-50">117/14 Nguyễn Hữu Thấu, BMT</span>
+            <span className="text-sm opacity-50">04 Trịnh Tố Tâm, BMT</span>
           </div>
         </div>
 

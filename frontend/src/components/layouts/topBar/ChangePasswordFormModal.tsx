@@ -56,13 +56,13 @@ export default function ChangePasswordFormModal(props: ChangePasswordFormModalPr
       isOpen={props.isOpen}
       onClosed={props.onClosed}
       footerChildren={
-        <div className="flex justify-between gap-3">
-          <button type="button" className="btn btn-sm" onClick={props.onClosed}>
+        <div className="flex justify-between gap-2">
+          <button type="button" className="btn" onClick={props.onClosed}>
             {isSubmissionSuccess ? "Hoàn tất" : "Huỷ bỏ"}
           </button>
 
           {!isSubmissionSuccess && (
-            <button type="submit" className="btn btn-sm" form="change-password-form">
+            <button type="submit" className="btn" form="change-password-form">
               Xác nhận đổi
             </button>
           )}

@@ -90,8 +90,8 @@
     }
 
     .panel-footer {
-        background-color: --alpha(var(--color-blue-500) / 25%);
-        border: 1px solid --alpha(var(--color-blue-500) / 50%);
+        background-color: white;
+        border: 1px solid --alpha(var(--color-black) / 20%);
         border-bottom-left-radius: var(--radius-xl);
         border-bottom-right-radius: var(--radius-xl);
         padding: --spacing(2);

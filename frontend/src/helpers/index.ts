@@ -1,5 +1,6 @@
 export * from "./amountHelper";
 export * from "./currencyHelper";
+export * from "./dateTimeHelper";
 export * from "./displayNameHelper";
 export * from "./routeHelper";
 export * from "./typeHelper";

@@ -1,12 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useLocation, useMatches, Outlet } from "react-router";
 import {
-  compute,
-  getSignInRoutePath,
   getSeatingListRoutePath,
-  getSeatingOrderUpsertRoutePath,
-  getDashboardRoutePath,
-  getHomeRoutePath
+  getHomeRoutePath,
+  getSeatingEditorRoutePath
 } from "#/helpers";
 
 // Child components.
@@ -32,7 +29,7 @@ export default function NavigationMenu(): React.ReactNode {
 
   // Effect.
   useEffect(() => {
-    for (const item of navigationBarOperationItems) {
+    for (const item of [...navigationBarOperationItems, ...navigationBarUpsertItems]) {
       if (location.pathname.startsWith(getSeatingListRoutePath())) {
         if (location.pathname.endsWith(getSeatingListRoutePath()) && item.name === "seatingList") {
           setActiveItemName("seatingList");
@@ -115,7 +112,7 @@ const navigationBarUpsertItems: NavigationBarItemData[] = [
   {
     name: "seatingUpsert",
     displayName: "Chỉnh sửa bàn ăn",
-    routePath: getHomeRoutePath(),
+    routePath: getSeatingEditorRoutePath(),
     Icon: ({ isActive, className, title }) => {
       const Component = isActive ? PencilSquareSolidIcon : PencilSquareOutlineIcon;
       return <Component className={className} title={title} />;
@@ -131,7 +128,7 @@ const navigationBarUpsertItems: NavigationBarItemData[] = [
     }
   },
   {
-    name: "menuItemUpsert",
+    name: "menuCategoryUpsert",
     displayName: "Chỉnh sửa phân loại",
     routePath: getHomeRoutePath(),
     Icon: ({ isActive, className, title }) => {

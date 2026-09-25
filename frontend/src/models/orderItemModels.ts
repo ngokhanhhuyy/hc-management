@@ -2,6 +2,14 @@ import { createMenuItemBasicModel, type MenuItemBasicModel } from "./sharedModel
 import type { OrderItemDetailResponseDto, OrderItemUpsertRequestDto } from "#/api";
 import { isOrderItemDetailResponseDto } from "#/helpers";
 
+export type OrderItemDetailModel = {
+  id: number;
+  amountBeforeVatPerUnit: number;
+  vatPercentagePerUnit: number;
+  quantity: number;
+  menuItem: MenuItemBasicModel;
+};
+
 export type OrderItemUpsertModel = {
   id: number | null,
   amountBeforeVatPerUnit: number,
@@ -11,6 +19,16 @@ export type OrderItemUpsertModel = {
   guid: string;
   toRequestDto(): OrderItemUpsertRequestDto;
 };
+
+export function createOrderItemDetailModel(responseDto: OrderItemDetailResponseDto): OrderItemDetailModel {
+  return {
+    id: responseDto.id,
+    amountBeforeVatPerUnit: responseDto.amountBeforeVatPerUnit,
+    vatPercentagePerUnit: responseDto.vatPercentagePerUnit,
+    quantity: responseDto.quantity,
+    menuItem: createMenuItemBasicModel(responseDto.menuItem)
+  };
+}
 
 export function createOrderItemUpsertModel(arg: OrderItemDetailResponseDto | MenuItemBasicModel): OrderItemUpsertModel {
   const model: OrderItemUpsertModel = {

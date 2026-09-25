@@ -53,11 +53,19 @@ const YesNoModal = forwardRef<YesNoModalHandler, YesNoModalProps>((props, ref): 
   // Template.
   const footerChildren = (
     <>
-      <button type="button" className={joinClassName("h-fit", props.noButtonClassName)} onClick={handleNoButtonClicked}>
+      <button
+        type="button"
+        className={joinClassName("btn h-fit", props.noButtonClassName)}
+        onClick={handleNoButtonClicked}
+      >
         {props.noButtonText ?? "Không đồng ý"}
       </button>
 
-      <button type="button" className={joinClassName("h-fit", props.yesButtonClassName)} onClick={handleYesButtonClicked}>
+      <button
+        type="button"
+        className={joinClassName("btn h-fit", props.yesButtonClassName)}
+        onClick={handleYesButtonClicked}
+      >
         {props.yesButtonText ?? "Đồng ý"}
       </button>
     </>

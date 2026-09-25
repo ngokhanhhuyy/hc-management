@@ -14,14 +14,14 @@
 
 @font-face {
   font-family: "Roboto";
-  src: url("@/assets/fonts/Roboto-VariableFont_wdth,wght.ttf") format("truetype");
+  src: url("../fonts/Roboto-VariableFont_wdth,wght.ttf") format("truetype");
   font-weight: 100 900;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Quicksand";
-  src: url("@/assets/fonts/Quicksand-VariableFont_wght.ttf") format("truetype");
+  src: url("../fonts/Quicksand-VariableFont_wght.ttf") format("truetype");
   font-weight: 100 900;
   size-adjust: 92%;
 }

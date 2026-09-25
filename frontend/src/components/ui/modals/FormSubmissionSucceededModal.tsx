@@ -19,9 +19,11 @@ const FormSubmissionSucceededModal = forwardRef<ConfirmationModalHandler, { }>((
   // Template.
   return (
     <ConfirmationModal
+      ref={componentRef}
       title="Dữ liệu không hợp lệ"
       IconComponent={ExclamationCircleIcon}
-      informationContent={["Dữ liệu đã nhập không hợp lệ.", "Vui lòng kiểm tra lại."]}
+      iconClassName="text-emerald-700"
+      informationContent={["Dữ liệu đã được lưu thành công.", "Bạn sẽ được đưa trở lại trang trước."]}
     />
   );
 });

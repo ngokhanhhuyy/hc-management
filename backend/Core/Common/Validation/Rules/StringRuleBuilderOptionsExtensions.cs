@@ -12,41 +12,7 @@ internal static partial class StringRuleBuilderOptionsExtensions
     {
         public IRuleBuilderOptions<T, string?> IsValidName()
         {
-            const string regexPattern = 
-                "^[A-Za-zÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾ" +
-                "ưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸỳỵỷỹ]+$";
-            
-            return ruleBuilder.Matches(regexPattern);
-        }
-        
-        public IRuleBuilderOptions<T, string?> IsValidWebsiteUrl()
-        {
-            return ruleBuilder
-                .Must((_, url) =>
-                {
-                    if (url is null)
-                    {
-                        return true;
-                    }
-
-                    return GetWebsiteUrlRegex().IsMatch(url);
-                })
-                .WithMessage(ErrorMessages.Invalid);
-        }
-
-        public IRuleBuilderOptions<T, string?> IsValidPhoneNumber()
-        {
-            return ruleBuilder
-                .Must((_, url) =>
-                {
-                    if (url is null)
-                    {
-                        return true;
-                    }
-
-                    return GetPhoneNumberRegex().IsMatch(url);
-                })
-                .WithMessage(ErrorMessages.Invalid);
+            return ruleBuilder.Matches(GetNameRegex());
         }
     }
 
@@ -62,11 +28,8 @@ internal static partial class StringRuleBuilderOptionsExtensions
     #endregion
 
     #region StaticMethods
-    [GeneratedRegex(@"^((http|https)://)?(www\.)?([A-Za-z0-9]+(-[A-Za-z0-9]+)*)(\.([A-Za-z0-9]+(-[A-Za-z0-9]+)*))+(\/.*)?$")]
-    private static partial Regex GetWebsiteUrlRegex();
-
-    [GeneratedRegex(@"^\+?[0-9]+$")]
-    private static partial Regex GetPhoneNumberRegex();
+    [GeneratedRegex(@"^[A-Za-z0-9 ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸỳỵỷỹ]+$")]
+    private static partial Regex GetNameRegex();
 
     [GeneratedRegex(@"^[\x21-\x7E]+$")]
     private static partial Regex GetPasswordRegex();

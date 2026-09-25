@@ -18,6 +18,7 @@ using HCManagement.Core.Features.Orders;
 using HCManagement.Core.Features.Users;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -115,7 +116,9 @@ public static class Program
             .AddControllersWithViews(options =>
             {
                 // options.Conventions.Add(new RouteTokenTransformerConvention(new PluralParameterTransformer()));
-                // options.Conventions.Add(new RouteTokenTransformerConvention(new KebabParameterTransformer()));
+                KebabCaseRouteSegmentsTransformer kebabCaseRouteSegmentsTransformer = new();
+                options.Conventions.Add(new RouteTokenTransformerConvention(kebabCaseRouteSegmentsTransformer));
+                // options.ModelMetadataDetailsProviders.Add(new KebabCaseBindingMetadataProvider());
                 options.Filters.Add<ExceptionFilter>();
             })
             .AddJsonOptions(options =>
@@ -205,7 +208,6 @@ public static class Program
     {
         public async Task EnsureDatabaseCreatedAsync()
         {
-
             IServiceScopeFactory serviceScopeFactory = serviceProvider.GetRequiredService<IServiceScopeFactory>();
             using IServiceScope serviceScope = serviceScopeFactory.CreateScope();
             AppDbContext context = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();

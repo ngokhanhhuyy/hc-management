@@ -1,9 +1,10 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useLocation, useMatches, Outlet } from "react-router";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router";
 import {
   getSeatingListRoutePath,
   getHomeRoutePath,
-  getSeatingEditorRoutePath
+  getSeatingEditorRoutePath,
+  getMenuItemEditorRoutePath
 } from "#/helpers";
 
 // Child components.
@@ -121,7 +122,7 @@ const navigationBarUpsertItems: NavigationBarItemData[] = [
   {
     name: "menuItemUpsert",
     displayName: "Chỉnh sửa món ăn",
-    routePath: getHomeRoutePath(),
+    routePath: getMenuItemEditorRoutePath(),
     Icon: ({ isActive, className, title }) => {
       const Component = isActive ? PencilSquareSolidIcon : PencilSquareOutlineIcon;
       return <Component className={className} title={title} />;

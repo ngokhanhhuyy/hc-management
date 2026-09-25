@@ -1,6 +1,7 @@
+using HCManagement.Core.Features.Orders;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using HCManagement.Core.Features.Orders;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace HCManagement.Api.Controllers;
 
@@ -25,7 +26,9 @@ public class OrderController : ControllerBase
     [ProducesResponseType<OrderListResponseDto>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> GetList([FromBody] OrderListRequestDto requestDto)
+    public async Task<IActionResult> GetList(
+        [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)]
+        OrderListRequestDto requestDto)
     {
         return Ok(await _service.GetListAsync(requestDto));
     }

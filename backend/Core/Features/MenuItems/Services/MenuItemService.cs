@@ -44,19 +44,17 @@ internal class MenuItemService : IMenuItemService
     {
         _listValidator.ValidateAndThrow(requestDto);
 
-        IQueryable<MenuItem> query = _context.MenuItems;
+        IQueryable<MenuItem> query = _context.MenuItems.Include(mi => mi.Category);
 
         switch (requestDto.SortByCriterion)
         {
             case MenuItemListSortingCriterion.Name:
                 query = query
-                    .Include(mi => mi.Category)
                     .ApplySorting(mi => mi.Name, requestDto.SortByAscending)
                     .ThenApplySorting(mi => mi.Category == null ? null : mi.Category.Name, requestDto.SortByAscending);
                 break;
             case MenuItemListSortingCriterion.Category:
                 query = query
-                    .Include(mi => mi.Category)
                     .ApplySorting(mi => mi.Category == null ? null : mi.Category.Name, requestDto.SortByAscending)
                     .ThenApplySorting(mi => mi.Name, requestDto.SortByAscending);
                 break;
@@ -96,8 +94,9 @@ internal class MenuItemService : IMenuItemService
             .Include(mi => mi.CreatedUser)
             .Include(mi => mi.LastUpdatedUser)
             .Include(mi => mi.DeletedUser)
+            .Where(mi => mi.Id == id)
             .Select(mi => new MenuItemDetailResponseDto(mi))
-            .SingleOrDefaultAsync(mi => mi.Id == id)
+            .SingleOrDefaultAsync()
             ?? throw new NotFoundException();
     }
 
@@ -167,7 +166,6 @@ internal class MenuItemService : IMenuItemService
             throw convertedException;
         }
     }
-
 
     public async Task DeleteAsync(int id)
     {

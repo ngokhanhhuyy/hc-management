@@ -5,6 +5,7 @@ import type {
   OrderBasicResponseDto,
   UserBasicResponseDto,
 } from "#/api";
+import { getDisplayAmountText } from "#/helpers";
 
 export type MenuCategoryBasicModel = {
   id: number;
@@ -17,7 +18,9 @@ export type MenuItemBasicModel = {
   unit: string | null;
   defaultAmountBeforeVatPerUnit: number;
   defaultVatPercentagePerUnit: number;
+  category: MenuCategoryBasicModel | null;
   isDeleted: boolean;
+  readonly displayDefaultAmountBeforeVatPerUnit: string;
 };
 
 export type SeatingBasicModel = {
@@ -31,6 +34,7 @@ export type OrderBasicModel = {
   id: number;
   itemAmount: number;
   isFinished: boolean;
+  readonly displayItemAmount: string;
 };
 
 export type UserBasicModel = {
@@ -53,7 +57,9 @@ export function createMenuItemBasicModel(responseDto: MenuItemBasicResponseDto):
     unit: responseDto.unit,
     defaultAmountBeforeVatPerUnit: responseDto.defaultAmountBeforeVatPerUnit,
     defaultVatPercentagePerUnit: responseDto.defaultVatPercentagePerUnit,
-    isDeleted: responseDto.isDeleted
+    category: responseDto.category && createMenuCategoryBasicModel(responseDto.category),
+    isDeleted: responseDto.isDeleted,
+    displayDefaultAmountBeforeVatPerUnit: getDisplayAmountText(responseDto.defaultAmountBeforeVatPerUnit)
   };
 }
 
@@ -70,7 +76,8 @@ export function createOrderBasicModel(responseDto: OrderBasicResponseDto): Order
   return {
     id: responseDto.id,
     itemAmount: responseDto.itemAmount,
-    isFinished: responseDto.isFinished
+    isFinished: responseDto.isFinished,
+    displayItemAmount: getDisplayAmountText(responseDto.itemAmount)
   };
 }
 

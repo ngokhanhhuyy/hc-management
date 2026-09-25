@@ -1,4 +1,5 @@
 using HCManagement.Core.Common.Dtos;
+using HCManagement.Core.Features.MenuCategories;
 
 namespace HCManagement.Core.Features.MenuItems;
 
@@ -13,6 +14,11 @@ public class MenuItemBasicResponseDto : IResponseDto
         DefaultAmountBeforeVatPerUnit = menuItem.DefaultAmountBeforeVatPerUnit;
         DefaultVatPercentagePerUnit = menuItem.DefaultVatPercentagePerUnit;
         IsDeleted = menuItem.DeletedDateTime is not null;
+
+        if (menuItem.Category is not null)
+        {
+            Category = new(menuItem.Category);
+        }
     }
     #endregion
 
@@ -22,6 +28,7 @@ public class MenuItemBasicResponseDto : IResponseDto
     public string Unit { get; }
     public long DefaultAmountBeforeVatPerUnit { get; }
     public int DefaultVatPercentagePerUnit { get; }
+    public MenuCategoryBasicResponseDto? Category { get; }
     public bool IsDeleted { get; }
     #endregion
 }

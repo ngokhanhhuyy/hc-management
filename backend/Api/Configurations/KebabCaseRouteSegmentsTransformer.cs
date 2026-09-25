@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 namespace HCManagement.Api.Configurations;
 
-public partial class KebabParameterTransformer : IOutboundParameterTransformer
+public partial class KebabCaseRouteSegmentsTransformer : IOutboundParameterTransformer
 {
     #region Methods
     public string? TransformOutbound(object? value)

@@ -1,4 +1,5 @@
 using HCManagement.Core.Common.Dtos;
+using HCManagement.Core.Features.MenuCategories;
 using HCManagement.Core.Features.Users;
 
 namespace HCManagement.Core.Features.MenuItems;
@@ -18,6 +19,11 @@ public class MenuItemDetailResponseDto : IResponseDto
         LastUpdatedDateTime = menuItem.LastUpdatedDateTime;
         DeletedDateTime = menuItem.DeletedDateTime;
 
+        if (menuItem.Category is not null)
+        {
+            Category = new(menuItem.Category);
+        }
+
         if (menuItem.LastUpdatedUser is not null)
         {
             LastUpdatedUser = new(menuItem.LastUpdatedUser);
@@ -36,6 +42,7 @@ public class MenuItemDetailResponseDto : IResponseDto
     public string Unit { get; }
     public long DefaultAmountBeforeVatPerUnit { get; }
     public int DefaultVatPercentagePerUnit { get; }
+    public MenuCategoryBasicResponseDto? Category { get; }
     public UserBasicResponseDto CreatedUser { get; }
     public DateTime CreatedDateTime { get; }
     public UserBasicResponseDto? LastUpdatedUser { get; }

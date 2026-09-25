@@ -11,6 +11,7 @@ internal class SeatingUpsertValidator : Validator<SeatingUpsertRequestDto>
     {
         RuleFor(dto => dto.Name)
             .NotEmpty()
+            .IsValidName()
             .MaximumLength(SeatingContracts.NameMaxLength)
             .WithName(DisplayNames.Seating);
     }

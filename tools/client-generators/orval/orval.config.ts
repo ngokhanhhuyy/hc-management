@@ -29,6 +29,9 @@ export default defineConfig({
           console.log(name);
           return name;
         },
+        namingConvention: {
+          properties: "camelCase"
+        },
       },
     },
   },

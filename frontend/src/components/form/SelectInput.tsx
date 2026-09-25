@@ -17,7 +17,7 @@ export type SelectInputProps = {
   value: string;
   onInput(newValue: string): any;
   disabled?: boolean;
-} & Omit<React.ComponentPropsWithoutRef<"div">, "children">;
+} & Omit<React.ComponentPropsWithoutRef<"div">, "children" | "onInput">;
 
 // Component.
 export default function SelectInput(props: SelectInputProps): React.ReactNode {

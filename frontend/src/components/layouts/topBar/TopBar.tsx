@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import logoUrl from "#/assets/images/logo.png";
 
 // Child components.

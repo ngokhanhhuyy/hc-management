@@ -84,6 +84,11 @@ internal class SeatingService : ISeatingService
             int updatedRecordCount = await _context.Seatings
                 .Where(s => s.Id == id && !s.IsDeleted)
                 .ExecuteUpdateAsync(setters => setters.SetProperty(s => s.Name, requestDto.Name));
+            
+            if (updatedRecordCount == 0)
+            {
+                throw new NotFoundException();
+            }
         }
         catch (Exception exception)
         {
@@ -104,6 +109,11 @@ internal class SeatingService : ISeatingService
             int deletedRecordCount = await _context.Seatings
                 .Where(s => s.Id == id && !s.IsDeleted)
                 .ExecuteUpdateAsync(setters => setters.SetProperty(s => s.IsDeleted, true));
+            
+            if (deletedRecordCount == 0)
+            {
+                throw new NotFoundException();
+            }
         }
         catch (Exception exception)
         {

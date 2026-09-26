@@ -1,4 +1,4 @@
-import React, { useState, useRef, useImperativeHandle, forwardRef } from "react";
+import React, { useState, useRef, useEffect, useImperativeHandle, forwardRef } from "react";
 import { joinClassName } from "#/helpers";
 
 // Child components.
@@ -30,11 +30,12 @@ const ConfirmationModal = forwardRef<ConfirmationModalHandler, ConfirmationModal
     setIsOpen(false);
   };
 
-  const handleOpenOrCloseTransitionEnded = () => {
+  // Effects.
+  useEffect(() => {
     if (!isOpen) {
       confirmationPromise.current?.();
     }
-  };
+  }, [isOpen]);
   
   // Handler.
   useImperativeHandle(ref, () => ({
@@ -59,12 +60,11 @@ const ConfirmationModal = forwardRef<ConfirmationModalHandler, ConfirmationModal
     <BaseModal
       isOpen={isOpen}
       onClosed={() => setIsOpen(false)}
-      onOpenOrCloseTransitionEnded={handleOpenOrCloseTransitionEnded}
       title={props.title}
       footerChildren={footerChildren}
     >
       <div className="grid grid-cols-[auto_1fr] items-center gap-4 p-5">
-        <props.IconComponent className={joinClassName("size-8 shrink-0 grow-0", props.iconClassName)} />
+        <props.IconComponent className={joinClassName("size-10 shrink-0 grow-0", props.iconClassName)} />
         <div className="flex flex-col">
           {props.informationContent && (Array.isArray(props.informationContent)
               ? props.informationContent.map((sentence, index) => <span key={index}>{sentence}</span>)

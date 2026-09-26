@@ -5,7 +5,7 @@ type QueueRequest = {
   callback: () => Promise<void>;
 };
 
-export function useThrottledState<T>(state: T, delayInMilliseconds: number = 1000): T {
+export function useThrottledState<T>(state: T, delayInMilliseconds: number = 500): T {
   const [throttledState, setThrottledState] = useState<T>(state);
   const [isInitialRendering, setIsInitialRendering] = useState<boolean>(true);
   const queue = useRef<QueueRequest[]>([]);

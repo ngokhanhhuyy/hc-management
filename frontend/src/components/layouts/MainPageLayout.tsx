@@ -31,7 +31,7 @@ export function MainPageLayout(): React.ReactNode {
     <>
       <TopBar />
 
-      <div className="hidden lg:grid grid-cols-[200px_1fr] max-w-350 mx-auto gap-3 p-3 min-h-full mt-(--topbar-height)">
+      <div className="hidden lg:grid grid-cols-[200px_1fr] max-w-350 mx-auto gap-3 p-3 mt-(--topbar-height)">
         <NavigationMenu />
         <Outlet />
       </div>

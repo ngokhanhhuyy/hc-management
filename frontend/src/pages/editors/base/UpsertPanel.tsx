@@ -46,8 +46,8 @@ function UpsertPanel<TUpsertModel extends IUpsertModel>(props: UpsertPanelProps<
 
   async function handleSubmissionSucceeeded(): Promise<void> {
     await submissionSucceeededModalRef.current?.confirmAsync();
-    editorPageContext.requestReload();
     navigate(props.editorRoutePath);
+    editorPageContext.requestReload();
   }
 
   // Templates.

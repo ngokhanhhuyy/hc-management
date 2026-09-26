@@ -13,7 +13,7 @@ export default defineConfig({
     },
   },
   server: {
-    allowedHosts: ["frontend.khanhhuy.dev", "frontend-workstation.khanhhuy.dev", "frontend-wsl.khanhhuy.dev"],
+    allowedHosts: ["frontend.khanhhuy.dev", "fedora-mac-mini.com"],
     strictPort: true,
     port: 5173,
     host: "::",

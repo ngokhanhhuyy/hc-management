@@ -2,7 +2,7 @@ import React, { useRef, useImperativeHandle, forwardRef } from "react";
 
 // Child components.
 import ConfirmationModal, { type ConfirmationModalHandler } from "./ConfirmationModal";
-import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
 
 // Component.
 const FormSubmissionSucceededModal = forwardRef<ConfirmationModalHandler, { }>((_, ref): React.ReactNode => {

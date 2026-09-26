@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import type { OrderUpsertModel } from "#/models";
 import { compute, calculateOrderItemAmount, getDisplayAmountText } from "#/helpers";
 import logoUrl from "#/assets/images/logo.png";
@@ -26,13 +26,13 @@ export default function Bill(props: BillProps): React.ReactNode {
     };
   });
 
-  const totalAmountText = useMemo<string>(() => {
+  const totalAmountText = compute<string>(() => {
     const amount = props.model.items.reduce((total, item) => {
       return total + calculateOrderItemAmount(item);
     }, 0);
 
     return getDisplayAmountText(amount);
-  }, []);
+  });
 
   // Templates.
   return (

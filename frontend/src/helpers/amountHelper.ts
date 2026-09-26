@@ -39,6 +39,6 @@ export function calculateOrderItemAmount(item: OrderItemUpsertModel): number {
   const amountBeforeVatPerUnit = item.amountBeforeVatPerUnit;
   const vatPercentagePerUnit = item.vatPercentagePerUnit;
   const vatAmountPerUnit = Math.round((amountBeforeVatPerUnit * (vatPercentagePerUnit / 100)) / 1000) * 1000;
-
+  
   return (amountBeforeVatPerUnit + vatAmountPerUnit) * item.quantity;
 }

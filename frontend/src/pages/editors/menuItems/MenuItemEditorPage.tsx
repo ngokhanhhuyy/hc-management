@@ -20,7 +20,7 @@ import {
 // Child components.
 import EditorPage from "../base/EditorPage";
 import { Squares2X2Icon, TagIcon, CurrencyDollarIcon } from "@heroicons/react/24/outline";
-import { Form, FormField, TextInput, SelectInput, type SelectInputOption } from "#/components/form";
+import { FormField, TextInput, SelectInput, type SelectInputOption } from "#/components/form";
 
 // Components.
 export default function MenuItemEditorPage(): React.ReactNode {
@@ -73,7 +73,7 @@ export default function MenuItemEditorPage(): React.ReactNode {
 
   async function handleReloadAsync(): Promise<void> {
     const requestId = latestRequestId.current += 1;
-    const responseDtos = await api.menuItem.getListAsync(throttledModel);
+    const responseDtos = await api.menuItem.getListAsync(throttledModel.toRequestDto());
 
     if (latestRequestId.current == requestId) {
       setModel(m => m.mapFromResponseDto(responseDtos));
@@ -92,7 +92,12 @@ export default function MenuItemEditorPage(): React.ReactNode {
 
   useEffect(() => {
     handleReloadAsync();
-  }, [throttledModel.sortByAscending, throttledModel.sortByCriterion, throttledModel.searchContent]);
+  }, [
+    throttledModel.sortByAscending,
+    throttledModel.sortByCriterion,
+    throttledModel.searchContent,
+    throttledModel.category
+  ]);
 
   // Templates.
   return (

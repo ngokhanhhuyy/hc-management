@@ -4,12 +4,8 @@ import { displayNames } from "#/localization";
 import { compute, joinClassName } from "#/helpers"; 
 
 // Child components.
-import {
-  PencilSquareIcon,
-  TrashIcon,
-  ExclamationTriangleIcon,
-  PlusIcon
-} from "@heroicons/react/24/outline";
+import { PencilSquareIcon, TrashIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { ExclamationTriangleIcon } from "@heroicons/react/24/solid";
 import {
   YesNoModal,
   FormSubmissionSucceededModal,
@@ -51,6 +47,10 @@ export default function EditorPage<TBasicModel extends IBasic>(props: EditorPage
   const deletionSuccessModalHandlerRef = useRef<ConfirmationModalHandler | null>(null);
 
   // Computed.
+  const displayName = compute<string>(() => {
+    return displayNames[props.resourceName]?.toLowerCase() ?? props.resourceName;
+  });
+
   const isEditorRoutePath = compute(() => {
     return location.pathname === props.editorRoutePath;
   });
@@ -74,10 +74,9 @@ export default function EditorPage<TBasicModel extends IBasic>(props: EditorPage
     const answer = await yesNoModalRef.current.getAnswerAsync();
     if (answer) {
       await props.onDeletingAsync(seating.id);
+      await deletionSuccessModalHandlerRef.current?.confirmAsync();
+      props.onItemRemoved(seating.id);
     }
-
-    await deletionSuccessModalHandlerRef.current?.confirmAsync();
-    props.onItemRemoved(seating.id);
   }
   
   // Templates.
@@ -159,13 +158,13 @@ export default function EditorPage<TBasicModel extends IBasic>(props: EditorPage
       </EditorPageContext.Provider>
 
       <YesNoModal
-        title={`Xác nhận xoá ${displayNames[props.resourceName]}`}
+        title={`Xác nhận xoá ${displayName}`}
         IconComponent={ExclamationTriangleIcon}
         iconClassName="text-yellow-500"
         yesButtonClassName="btn btn-danger-outline"
         questionContent={[
           "Dữ liệu đã xoá có thể sẽ không thể khôi phục lại",
-          `Bạn có chắc chắn muốn xoá ${displayNames[props.resourceName]} này?`
+          `Bạn có chắc chắn muốn xoá ${displayName} này?`
         ]}
         ref={yesNoModalRef}
       />

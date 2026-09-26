@@ -79,7 +79,7 @@ const YesNoModal = forwardRef<YesNoModalHandler, YesNoModalProps>((props, ref): 
       footerChildren={footerChildren}
     >
       <div className="grid grid-cols-[auto_1fr] items-center gap-4 p-5">
-        <props.IconComponent className={joinClassName("size-8 shrink-0 grow-0", props.iconClassName)} />
+        <props.IconComponent className={joinClassName("size-10 shrink-0 grow-0", props.iconClassName)} />
         <div className="flex flex-col">
           {props.questionContent && (Array.isArray(props.questionContent)
               ? props.questionContent.map((sentence, index) => <span key={index}>{sentence}</span>)

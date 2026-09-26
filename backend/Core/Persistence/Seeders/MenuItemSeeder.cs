@@ -57,6 +57,10 @@ internal class MenuItemSeeder
         {
             menuItem.CreatedUser = users.OrderBy(_ => Guid.NewGuid()).First();
             menuItem.CreatedDateTime = _clock.Now;
+            
+            long defaultAmount = menuItem.DefaultAmountBeforeVatPerUnit;
+            defaultAmount = (long)Math.Round((double)defaultAmount / 1000) * 1000;
+            menuItem.DefaultAmountBeforeVatPerUnit = defaultAmount;
         }
 
         _context.MenuItems.AddRange(menuData.MenuItems);

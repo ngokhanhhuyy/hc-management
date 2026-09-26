@@ -78,9 +78,12 @@ Cookie: {{accessCookie}}
 
 ###
 # @name MenuItemList
-GET {{basePath}}/menu-items?categoryId=1
+POST {{basePath}}/menu-items/list
 Content-Type: application/json
+Content-Length: 0
 Cookie: {{accessCookie}}
+
+null
 
 ###
 # @name SeatingList

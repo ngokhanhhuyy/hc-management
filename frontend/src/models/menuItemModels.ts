@@ -4,17 +4,21 @@ import {
   type MenuCategoryBasicModel,
   type MenuItemBasicModel
 } from "#/models";
-import type {
-  MenuItemListRequestDto,
-  MenuItemBasicResponseDto,
-  MenuItemDetailResponseDto,
-  MenuItemUpsertRequestDto
+import {
+  type MenuItemListRequestDto,
+  type MenuItemBasicResponseDto,
+  type MenuItemDetailResponseDto,
+  type MenuItemUpsertRequestDto,
+  MenuItemListSortingCriterion
 } from "#/api";
 
 export type MenuItemListModel = {
+  sortByAscending: boolean;
+  sortByCriterion: MenuItemListSortingCriterion;
   category: MenuCategoryBasicModel | null;
   searchContent: string;
   items: MenuItemBasicModel[];
+  mapFromRequestDto(requestDto: MenuItemListRequestDto): MenuItemListModel;
   mapFromResponseDto(responseDtos: MenuItemBasicResponseDto[]): MenuItemListModel;
   toRequestDto(): MenuItemListRequestDto;
 };
@@ -30,9 +34,18 @@ export type MenuItemUpsertModel = {
 
 export function createMenuItemListModel(): MenuItemListModel {
   return {
+    sortByAscending: true,
+    sortByCriterion: MenuItemListSortingCriterion.Name,
     category: null,
     searchContent: "",
     items: [],
+    mapFromRequestDto(requestDto: MenuItemListRequestDto): MenuItemListModel {
+      return {
+        ...this,
+        sortByAscending: requestDto?.sortByAscending ?? this.sortByAscending,
+        sortByCriterion: requestDto?.sortByCriterion ?? this.sortByCriterion
+      };
+    },
     mapFromResponseDto(responseDtos: MenuItemBasicResponseDto[]): MenuItemListModel {
       return {
         ...this,

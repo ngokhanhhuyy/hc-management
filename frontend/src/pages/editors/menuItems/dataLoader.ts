@@ -8,11 +8,11 @@ import {
   type MenuCategoryBasicModel
 } from "#/models";
 
-export async function loadMenuItemListDataAsync(model?: MenuItemListModel): Promise<MenuItemListModel> {
-  const requestDto = model?.toRequestDto();
-  const responseDto = await api.menuItem.getListAsync(requestDto);
-  
-  return createMenuItemListModel().mapFromResponseDto(responseDto);
+export async function loadMenuItemListDataAsync(): Promise<MenuItemListModel> {
+  const defaultRequestDto = await api.menuItem.getDefaultListParametersAsync();
+  const responseDto = await api.menuItem.getListAsync();
+
+  return createMenuItemListModel().mapFromRequestDto(defaultRequestDto).mapFromResponseDto(responseDto);
 }
 
 export type MenuItemUpsertLoadedData = {

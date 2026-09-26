@@ -52,13 +52,13 @@ export function getMenuItemEditorUpdateRoutePath(id: number): string {
 
 // Menu category editor routes.
 export function getMenuCategoryEditorRoutePath(): string {
-  return "/editors/menu-items";
+  return "/editors/menu-categories";
 }
 
 export function getMenuCategoryEditorCreateRoutePath(): string {
-  return "/editors/menu-items/create";
+  return "/editors/menu-categories/create";
 }
 
 export function getMenuCategoryEditorUpdateRoutePath(id: number): string {
-  return `/editors/menu-items/${id}`;
+  return `/editors/menu-categories/${id}`;
 }

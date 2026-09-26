@@ -1,6 +1,7 @@
 import type {
   MenuCategoryBasicResponseDto,
   MenuItemBasicResponseDto,
+  MenuItemDetailResponseDto,
   SeatingBasicResponseDto,
   OrderBasicResponseDto,
   UserBasicResponseDto,
@@ -50,7 +51,16 @@ export function createMenuCategoryBasicModel(responseDto: MenuCategoryBasicRespo
   };
 }
 
-export function createMenuItemBasicModel(responseDto: MenuItemBasicResponseDto): MenuItemBasicModel {
+export function createMenuItemBasicModel(
+  responseDto: MenuItemBasicResponseDto | MenuItemDetailResponseDto): MenuItemBasicModel
+{
+  let isDeleted = false;
+  if (Object.hasOwn(responseDto, "isDeleted")) {
+    isDeleted = !!responseDto["isDeleted" as keyof typeof responseDto];
+  } else {
+    isDeleted = responseDto["deletedDateTime" as keyof typeof responseDto] == null;
+  }
+
   return {
     id: responseDto.id,
     name: responseDto.name,
@@ -58,7 +68,7 @@ export function createMenuItemBasicModel(responseDto: MenuItemBasicResponseDto):
     defaultAmountBeforeVatPerUnit: responseDto.defaultAmountBeforeVatPerUnit,
     defaultVatPercentagePerUnit: responseDto.defaultVatPercentagePerUnit,
     category: responseDto.category && createMenuCategoryBasicModel(responseDto.category),
-    isDeleted: responseDto.isDeleted,
+    isDeleted,
     displayDefaultAmountBeforeVatPerUnit: getDisplayAmountText(responseDto.defaultAmountBeforeVatPerUnit)
   };
 }

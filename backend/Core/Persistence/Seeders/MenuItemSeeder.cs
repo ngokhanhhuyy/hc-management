@@ -87,10 +87,10 @@ internal class MenuItemSeeder
                 continue;
             }
 
-            category.Index = index;
+            category.SortingIndex = index;
         }
 
-        drinkCategory?.Index = menuData.MenuCategories.Max(mc => mc.Index);
+        drinkCategory?.SortingIndex = menuData.MenuCategories.Max(mc => mc.SortingIndex);
 
         _context.MenuCategories.AddRange(menuData.MenuCategories);
 

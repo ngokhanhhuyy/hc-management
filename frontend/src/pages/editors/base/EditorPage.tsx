@@ -34,8 +34,10 @@ type EditorPageProps<TBasicModel extends IBasic> = {
   onItemRemoved(id: number): any;
   onReloading(): any
   onDeletingAsync(id: number): Promise<any>;
-  Icon: (props: { className: string }) => React.ReactNode;
-  renderItemDescription(item: TBasicModel): React.ReactNode;
+  ItemIcon: (props: { className: string }) => React.ReactNode;
+  renderItemDescription?(item: TBasicModel): React.ReactNode;
+  renderUpperArea?(isEditorRoutePath: boolean, semiTransparentClassName: string): React.ReactNode;
+  renderLowerArea?(isEditorRoutePath: boolean, semiTransparentClassName: string): React.ReactNode;
 };
 
 // Components.
@@ -52,6 +54,8 @@ export default function EditorPage<TBasicModel extends IBasic>(props: EditorPage
   const isEditorRoutePath = compute(() => {
     return location.pathname === props.editorRoutePath;
   });
+
+  const semiTransparentClassName = compute(() => "opacity-25 pointer-events-none select-none");
 
   function isSelected(seating: TBasicModel): boolean {
     return id === seating.id.toString();
@@ -85,28 +89,29 @@ export default function EditorPage<TBasicModel extends IBasic>(props: EditorPage
       <div className="panel flex-1">
         <div className="panel-header">
           <span className="panel-header-title">Danh sách {displayNames[props.resourceName]}</span>
-          <Link
-            className={joinClassName(
-              "btn btn-sm gap-0.5",
-              !isEditorRoutePath && "invisible pe-none"
-            )}
-            to={props.editorCreateRoutePath}
-          >
-            <PlusIcon />
-            <span>Tạo bàn ăn mới</span>
-          </Link>
+          {isEditorRoutePath && (
+            <Link
+              className="btn btn-sm gap-0.5"
+              to={props.editorCreateRoutePath}
+            >
+              <PlusIcon />
+              <span>Thêm {displayNames[props.resourceName].toLowerCase()} mới</span>
+            </Link>
+          )}
         </div>
 
-        <div className="panel-body p-3">
+        <div className="panel-body p-3 flex flex-col gap-3">
+          {props.renderUpperArea?.(isEditorRoutePath, semiTransparentClassName)}
+
           <ul className="list-group bg-black/2.5">
             {props.model.map(item => (
               <li className="list-group-item flex p-0" key={item.id}>
                 <div className={joinClassName(
                   "flex gap-2 p-2 justify-start items-center w-full",
-                  (!isEditorRoutePath && !isSelected(item)) && "opacity-25 pe-none"
+                  (!isEditorRoutePath && !isSelected(item)) && semiTransparentClassName
                 )}>
                   <div className="img-thumbnail size-11 flex justify-center items-center">
-                    <props.Icon className="size-[50%] opacity-25" />
+                    <props.ItemIcon className="size-[50%] opacity-25" />
                   </div>
 
                   <div className="flex flex-col justify-center flex-1">
@@ -119,7 +124,7 @@ export default function EditorPage<TBasicModel extends IBasic>(props: EditorPage
                       </span>
                     </div>
 
-                    {props.renderItemDescription(item)}
+                    {props.renderItemDescription?.(item)}
                   </div>
 
                   <div className="flex gap-2">
@@ -143,8 +148,11 @@ export default function EditorPage<TBasicModel extends IBasic>(props: EditorPage
               </li>
             ))}
           </ul>
+
+          {props.renderLowerArea?.(isEditorRoutePath, semiTransparentClassName)}
         </div>
       </div>
+      
 
       <EditorPageContext.Provider value={contextPayload}>
         <Outlet />

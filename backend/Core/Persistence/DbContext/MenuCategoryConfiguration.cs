@@ -11,7 +11,7 @@ internal class MenuCategoryConfiguration : IEntityTypeConfiguration<MenuCategory
     {
         // Index.
         entityBuilder.HasIndex(mc => mc.Name).IsUnique();
-        entityBuilder.HasIndex(mc => mc.Index);
+        entityBuilder.HasIndex(mc => mc.SortingIndex);
 
         // RowVersion.
         entityBuilder.Property<byte[]?>("RowVersion").IsRowVersion();

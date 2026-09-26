@@ -47,7 +47,7 @@ public static class DisplayNames
     public const string IsPinned = "Được đánh dấu";
     public const string Order = "Gọi món";
     public const string OrderItem = "Mục gọi món";
-    public const string SortByFieldName = "Trường sắp xếp";
+    public const string SortByCriterion = "Tiêu chí sắp xếp";
     public const string SortByAscending = "Thứ tự sắp xếp";
     public const string SearchByField = "Trường tìm kiếm";
     public const string SearchContent = "Nội dung tìm kiếm";

@@ -8,7 +8,14 @@ import {
 } from "./errors";
 
 export const fetchAndThrowAsync = async <TResponse>(url: string, options: RequestInit): Promise<TResponse> => {
-  const response = await globalThis.fetch(url, options);
+  let modifiedBody = options.body;
+  if (options.method?.toLowerCase() !== "get") {
+    if (modifiedBody === undefined || (typeof modifiedBody === "string" && modifiedBody.length == 0)) {
+      modifiedBody = "null";
+    }
+  }
+
+  const response = await globalThis.fetch(url, { ...options, body: modifiedBody });
   if (response.status >= 200 && response.status < 300) {
     const rawText = await response.text();
     const text = rawText.trim();

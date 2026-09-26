@@ -32,7 +32,7 @@ export default function SeatingEditorPage(): React.ReactNode {
       onReloading={loadSeatingListDataAsync}
       onDeletingAsync={async (id) => await api.seating.deleteAsync(id)}
       onItemRemoved={(id) => setModel(m => m.filter(item => item.id !== id))}
-      Icon={Squares2X2Icon}
+      ItemIcon={Squares2X2Icon}
       renderItemDescription={(item) => (
         <div className="flex gap-1">
           <span className="opacity-50 text-sm">

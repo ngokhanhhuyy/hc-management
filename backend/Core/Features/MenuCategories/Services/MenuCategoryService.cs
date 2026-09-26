@@ -1,6 +1,5 @@
 using FluentValidation;
 using HCManagement.Core.Common.Exceptions;
-using HCManagement.Core.Common.Extensions;
 using HCManagement.Core.Common.Localization;
 using HCManagement.Core.Persistence.DbContext;
 using HCManagement.Core.Persistence.Handlers;
@@ -33,7 +32,7 @@ internal class MenuCategoryService : IMenuCategoryService
     public async Task<List<MenuCategoryBasicResponseDto>> GetAllAsync()
     {
         return await _context.MenuCategories
-            .OrderBy(mc => mc.Index == null ? int.MaxValue : mc.Index).ThenBy(mc => mc.Name)
+            .OrderBy(mc => mc.SortingIndex == null ? int.MaxValue : mc.SortingIndex).ThenBy(mc => mc.Name)
             .Select(mc => new MenuCategoryBasicResponseDto(mc))
             .ToListAsync();
     }
@@ -54,7 +53,7 @@ internal class MenuCategoryService : IMenuCategoryService
         MenuCategory menuCategory = new()
         {
             Name = requestDto.Name,
-            Index = requestDto.Index
+            SortingIndex = requestDto.SortingIndex
         };
 
         _context.MenuCategories.Add(menuCategory);
@@ -86,7 +85,7 @@ internal class MenuCategoryService : IMenuCategoryService
                 .Where(mc => mc.Id == id)
                 .ExecuteUpdateAsync(setters => setters
                     .SetProperty(mc => mc.Name, requestDto.Name)
-                    .SetProperty(mc => mc.Index, requestDto.Index));
+                    .SetProperty(mc => mc.SortingIndex, requestDto.SortingIndex));
 
             if (updatedRecordCount == 0)
             {

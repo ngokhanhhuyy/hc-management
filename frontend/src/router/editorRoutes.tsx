@@ -7,6 +7,8 @@ const SeatingEditorPage = lazy(() => import("#/pages/editors/seatings/SeatingEdi
 const SeatingUpsertPanel = lazy(() => import("#/pages/editors/seatings/SeatingUpsertPanel"));
 const MenuItemEditorPage = lazy(() => import("#/pages/editors/menuItems/MenuItemEditorPage"));
 const MenuItemUpsertPanel = lazy(() => import("#/pages/editors/menuItems/MenuItemUpsertPanel"));
+const MenuCategoryEditorPage = lazy(() => import("#/pages/editors/menuCategories/MenuCategoryEditorPage"));
+const MenuCategoryUpsertPanel = lazy(() => import("#/pages/editors/menuCategories/MenuCategoryUpsertPanel"));
 
 export const editorRoutes: RouteObject = {
   path: "editors",
@@ -76,6 +78,37 @@ export const editorRoutes: RouteObject = {
           loader: async () => {
             const module = await import("#/pages/editors/menuItems/dataLoader");
             return await module.loadMenuItemUpsertDataAsync();
+          },
+        },
+      ]
+    },
+    {
+      path: "menu-categories",
+      Component: MenuCategoryEditorPage,
+      loader: async () => {
+        const module = await import("#/pages/editors/menuCategories/dataLoader");
+        return await module.loadMenuCategoryListDataAsync();
+      },
+      handle: {
+        breadcrumbTitle: "Danh sách phân loại"
+      },
+      children: [
+        {
+          path: ":id",
+          Component: MenuCategoryUpsertPanel,
+          loader: async ({ params }) => {
+            const module = await import("#/pages/editors/menuCategories/dataLoader");
+            const { id } = params;
+            const parsedId = parseInt(id!);
+            return await module.loadMenuCategoryUpsertDataAsync(parsedId);
+          },
+        },
+        {
+          path: "create",
+          Component: MenuCategoryUpsertPanel,
+          loader: async () => {
+            const module = await import("#/pages/editors/menuCategories/dataLoader");
+            return await module.loadMenuCategoryUpsertDataAsync();
           },
         },
       ]

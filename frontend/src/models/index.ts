@@ -1,4 +1,5 @@
 export * from "./authenticationModels";
+export * from "./menuCategoryModels";
 export * from "./menuItemModels";
 export * from "./seatingModels";
 export * from "./orderModels";

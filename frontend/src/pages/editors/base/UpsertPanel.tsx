@@ -77,8 +77,8 @@ function UpsertPanel<TUpsertModel extends IUpsertModel>(props: UpsertPanelProps<
         </Form>
       </div>
 
-      <div className="panel-footer">
-        <div className="flex gap-2 justify-end">
+      <div className="panel-footer flex justify-end">
+        <div className="grid grid-cols-2 gap-2 w-fit">
           <Link className="btn" to={props.editorRoutePath}>
             <XMarkIcon />
             <span>Huỷ bỏ</span>

@@ -13,7 +13,7 @@ internal class ListValidator<TListRequestDto, TSortingCriterion> : Validator<TLi
     {
         RuleFor(dto => dto.SortByCriterion)
             .IsInEnum()
-            .WithName(DisplayNames.SortByFieldName);
+            .WithName(DisplayNames.SortByCriterion);
     }
     #endregion
 }

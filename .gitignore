@@ -15,3 +15,4 @@ backend/bin/*
 backend/obj/*
 
 tools/client-generators/orval/src/client/**/*
+tools/localization-generators/temp.ts

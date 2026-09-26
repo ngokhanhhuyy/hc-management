@@ -13,7 +13,7 @@ internal class MenuCategory
     [StringLength(MenuCategoryContracts.NameMaxLength)]
     public required string Name { get; set; }
 
-    public int? Index { get; set; }
+    public int? SortingIndex { get; set; }
     #endregion
 
     #region NavigationProperties

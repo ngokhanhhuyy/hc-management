@@ -22,13 +22,11 @@ public class OrderController : ControllerBase
     #endregion
 
     #region Methods
-    [HttpPost("list")]
+    [HttpGet]
     [ProducesResponseType<OrderListResponseDto>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> GetList(
-        [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)]
-        OrderListRequestDto requestDto)
+    public async Task<IActionResult> GetList([FromQuery] OrderListRequestDto requestDto)
     {
         return Ok(await _service.GetListAsync(requestDto));
     }

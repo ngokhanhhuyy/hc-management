@@ -10,6 +10,7 @@ public class OrderItemUpsertRequestDto : IRequestDto
     public required int VatPercentagePerUnit { get; set; }
     public required int Quantity { get; set; }
     public required int MenuItemId { get; set; }
+    public required Guid Guid { get; set; }
     #endregion
 
     #region Methods

@@ -22,13 +22,11 @@ public class MenuItemController : ControllerBase
     #endregion
 
     #region Methods
-    [HttpPost("list")]
+    [HttpGet]
     [ProducesResponseType<List<MenuItemBasicResponseDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> GetList(
-        [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)]
-        MenuItemListRequestDto? requestDto)
+    public async Task<IActionResult> GetList([FromQuery] MenuItemListRequestDto requestDto)
     {
         return Ok(await _service.GetListAsync(requestDto ?? new()));
     }

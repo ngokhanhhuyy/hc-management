@@ -1,4 +1,4 @@
-import { api } from "#/api";
+import { api, defaultMenuItemListRequestDto } from "#/api";
 import {
   createMenuItemListModel,
   createMenuItemUpsertModel,
@@ -9,10 +9,9 @@ import {
 } from "#/models";
 
 export async function loadMenuItemListDataAsync(): Promise<MenuItemListModel> {
-  const defaultRequestDto = await api.menuItem.getDefaultListParametersAsync();
   const responseDto = await api.menuItem.getListAsync();
 
-  return createMenuItemListModel().mapFromRequestDto(defaultRequestDto).mapFromResponseDto(responseDto);
+  return createMenuItemListModel().mapFromRequestDto(defaultMenuItemListRequestDto).mapFromResponseDto(responseDto);
 }
 
 export type MenuItemUpsertLoadedData = {

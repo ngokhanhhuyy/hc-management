@@ -88,10 +88,6 @@ export default function MenuItemListPanel(props: MenuItemListPanelProps): React.
     }
   }, [itemListModel.searchContent, itemListModel.category?.id]);
 
-  useEffect(() => {
-    console.log(JSON.stringify(processingRequests.current, null, 2));
-  }, [itemListModel.searchContent]);
-
   // Templates.
   function renderSpinner(): React.ReactNode {
     return (

@@ -8,6 +8,7 @@ export type OrderItemDetailModel = {
   vatPercentagePerUnit: number;
   quantity: number;
   menuItem: MenuItemBasicModel;
+  guid: string;
 };
 
 export type OrderItemUpsertModel = {
@@ -26,7 +27,8 @@ export function createOrderItemDetailModel(responseDto: OrderItemDetailResponseD
     amountBeforeVatPerUnit: responseDto.amountBeforeVatPerUnit,
     vatPercentagePerUnit: responseDto.vatPercentagePerUnit,
     quantity: responseDto.quantity,
-    menuItem: createMenuItemBasicModel(responseDto.menuItem)
+    menuItem: createMenuItemBasicModel(responseDto.menuItem),
+    guid: responseDto.guid
   };
 }
 
@@ -45,6 +47,7 @@ export function createOrderItemUpsertModel(arg: OrderItemDetailResponseDto | Men
         vatPercentagePerUnit: this.vatPercentagePerUnit,
         quantity: this.quantity,
         menuItemId: this.menuItem.id,
+        guid: this.guid
       };
     }
   };

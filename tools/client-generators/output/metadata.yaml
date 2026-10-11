@@ -1,0 +1,1278 @@
+controllers:
+- className: AuthenticationController
+  path: api/[controller]/[action]
+  actions:
+  - name: GetAccessCookie
+    httpMethod: POST
+    path: ''
+    parameters:
+    - name: requestDto
+      bindingSource: Body
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: VerifyCredentialsRequestDto
+    responseTypeName: 
+    isResponseNullable: false
+  - name: ClearAccessCookie
+    httpMethod: POST
+    path: ''
+    parameters: []
+    responseTypeName: 
+    isResponseNullable: false
+  - name: GetCallerDetail
+    httpMethod: GET
+    path: ''
+    parameters: []
+    responseTypeName: UserDetailResponseDto
+    isResponseNullable: false
+  - name: ChangePassword
+    httpMethod: PUT
+    path: ''
+    parameters:
+    - name: requestDto
+      bindingSource: Body
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: ChangePasswordRequestDto
+    responseTypeName: 
+    isResponseNullable: false
+  - name: CheckAuthenticationStatus
+    httpMethod: POST
+    path: ''
+    parameters: []
+    responseTypeName: 
+    isResponseNullable: false
+  name: Authentication
+- className: MenuCategoryController
+  path: api/menu-categories
+  actions:
+  - name: GetAll
+    httpMethod: GET
+    path: ''
+    parameters: []
+    responseTypeName: List<MenuCategoryBasicResponseDto>
+    isResponseNullable: false
+  - name: GetSingle
+    httpMethod: GET
+    path: '{id:int}'
+    parameters:
+    - name: id
+      bindingSource: Route
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: Int32
+    responseTypeName: MenuCategoryBasicResponseDto
+    isResponseNullable: false
+  - name: Create
+    httpMethod: POST
+    path: ''
+    parameters:
+    - name: requestDto
+      bindingSource: Body
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: MenuCategoryUpsertRequestDto
+    responseTypeName: Int32
+    isResponseNullable: false
+  - name: Update
+    httpMethod: PUT
+    path: '{id:int}'
+    parameters:
+    - name: id
+      bindingSource: Route
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: Int32
+    - name: requestDto
+      bindingSource: Body
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: MenuCategoryUpsertRequestDto
+    responseTypeName: 
+    isResponseNullable: false
+  - name: Delete
+    httpMethod: DELETE
+    path: '{id:int}'
+    parameters:
+    - name: id
+      bindingSource: Route
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: Int32
+    responseTypeName: 
+    isResponseNullable: false
+  name: MenuCategory
+- className: MenuItemController
+  path: api/menu-items
+  actions:
+  - name: GetList
+    httpMethod: GET
+    path: ''
+    parameters:
+    - name: requestDto
+      bindingSource: Query
+      isNullable: false
+      isOptional: true
+      isPartial: true
+      typeName: MenuItemListRequestDto
+    responseTypeName: List<MenuItemBasicResponseDto>
+    isResponseNullable: false
+  - name: GetDetail
+    httpMethod: GET
+    path: '{id:int}'
+    parameters:
+    - name: id
+      bindingSource: Route
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: Int32
+    responseTypeName: MenuItemDetailResponseDto
+    isResponseNullable: false
+  - name: Create
+    httpMethod: POST
+    path: ''
+    parameters:
+    - name: requestDto
+      bindingSource: Body
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: MenuItemUpsertRequestDto
+    responseTypeName: Int32
+    isResponseNullable: false
+  - name: Update
+    httpMethod: PUT
+    path: '{id:int}'
+    parameters:
+    - name: id
+      bindingSource: Route
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: Int32
+    - name: requestDto
+      bindingSource: Body
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: MenuItemUpsertRequestDto
+    responseTypeName: 
+    isResponseNullable: false
+  - name: Delete
+    httpMethod: DELETE
+    path: '{id:int}'
+    parameters:
+    - name: id
+      bindingSource: Route
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: Int32
+    responseTypeName: 
+    isResponseNullable: false
+  - name: GetDefaultListParameters
+    httpMethod: GET
+    path: default-list-parameters
+    parameters: []
+    responseTypeName: MenuItemListRequestDto
+    isResponseNullable: false
+  name: MenuItem
+- className: OrderController
+  path: api/orders
+  actions:
+  - name: GetList
+    httpMethod: GET
+    path: ''
+    parameters:
+    - name: requestDto
+      bindingSource: Query
+      isNullable: false
+      isOptional: true
+      isPartial: true
+      typeName: OrderListRequestDto
+    responseTypeName: OrderListResponseDto
+    isResponseNullable: false
+  - name: GetDetail
+    httpMethod: GET
+    path: '{id:int}'
+    parameters:
+    - name: id
+      bindingSource: Route
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: Int32
+    responseTypeName: OrderDetailResponseDto
+    isResponseNullable: false
+  - name: Create
+    httpMethod: POST
+    path: ''
+    parameters:
+    - name: requestDto
+      bindingSource: Body
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: OrderUpsertRequestDto
+    responseTypeName: OrderDetailResponseDto
+    isResponseNullable: false
+  - name: Update
+    httpMethod: PUT
+    path: '{id:int}'
+    parameters:
+    - name: id
+      bindingSource: Route
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: Int32
+    - name: requestDto
+      bindingSource: Body
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: OrderUpsertRequestDto
+    responseTypeName: OrderDetailResponseDto
+    isResponseNullable: false
+  - name: Finish
+    httpMethod: PUT
+    path: '{id:int}/finish'
+    parameters:
+    - name: id
+      bindingSource: Route
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: Int32
+    responseTypeName: 
+    isResponseNullable: false
+  - name: Delete
+    httpMethod: DELETE
+    path: '{id:int}'
+    parameters:
+    - name: id
+      bindingSource: Route
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: Int32
+    responseTypeName: 
+    isResponseNullable: false
+  - name: GetDefaultListParameters
+    httpMethod: GET
+    path: default-list-parameters
+    parameters: []
+    responseTypeName: OrderListRequestDto
+    isResponseNullable: false
+  name: Order
+- className: SeatingController
+  path: api/seatings
+  actions:
+  - name: GetAll
+    httpMethod: GET
+    path: ''
+    parameters: []
+    responseTypeName: List<SeatingBasicResponseDto>
+    isResponseNullable: false
+  - name: GetDetail
+    httpMethod: GET
+    path: '{id:int}'
+    parameters:
+    - name: id
+      bindingSource: Route
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: Int32
+    responseTypeName: SeatingDetailResponseDto
+    isResponseNullable: false
+  - name: CreateAsync
+    httpMethod: POST
+    path: ''
+    parameters:
+    - name: requestDto
+      bindingSource: Body
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: SeatingUpsertRequestDto
+    responseTypeName: Int32
+    isResponseNullable: false
+  - name: Update
+    httpMethod: PUT
+    path: '{id:int}'
+    parameters:
+    - name: id
+      bindingSource: Route
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: Int32
+    - name: requestDto
+      bindingSource: Body
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: SeatingUpsertRequestDto
+    responseTypeName: 
+    isResponseNullable: false
+  - name: Delete
+    httpMethod: DELETE
+    path: '{id:int}'
+    parameters:
+    - name: id
+      bindingSource: Route
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: Int32
+    responseTypeName: 
+    isResponseNullable: false
+  name: Seating
+- className: UserController
+  path: api/users
+  actions:
+  - name: GetDetailById
+    httpMethod: GET
+    path: '{id:int}'
+    parameters:
+    - name: id
+      bindingSource: Route
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: Int32
+    responseTypeName: UserDetailResponseDto
+    isResponseNullable: false
+  - name: Create
+    httpMethod: POST
+    path: ''
+    parameters:
+    - name: requestDto
+      bindingSource: Body
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: UserCreateRequestDto
+    responseTypeName: Int32
+    isResponseNullable: false
+  - name: Delete
+    httpMethod: DELETE
+    path: '{id:int}'
+    parameters:
+    - name: id
+      bindingSource: Route
+      isNullable: false
+      isOptional: false
+      isPartial: false
+      typeName: Int32
+    responseTypeName: 
+    isResponseNullable: false
+  name: User
+dtos:
+- name: VerifyCredentialsRequestDto
+  properties:
+    UserName:
+      name: UserName
+      typeName: String
+      isNullable: false
+      isReadOnly: false
+    Password:
+      name: Password
+      typeName: String
+      isNullable: false
+      isReadOnly: false
+  elementNames: []
+  kind: Class
+  fullName: HCManagement.Core.Features.Authentication.VerifyCredentialsRequestDto
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames: []
+  interfaceNames:
+  - IRequestDto
+- name: UserDetailResponseDto
+  properties:
+    Id:
+      name: Id
+      typeName: Int32
+      isNullable: false
+      isReadOnly: false
+    UserName:
+      name: UserName
+      typeName: String
+      isNullable: false
+      isReadOnly: false
+    DeletedDateTime:
+      name: DeletedDateTime
+      typeName: DateTime
+      isNullable: true
+      isReadOnly: false
+  elementNames: []
+  kind: Class
+  fullName: HCManagement.Core.Features.Users.UserDetailResponseDto
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames: []
+  interfaceNames: []
+- name: ChangePasswordRequestDto
+  properties:
+    CurrentPassword:
+      name: CurrentPassword
+      typeName: String
+      isNullable: false
+      isReadOnly: false
+    NewPassword:
+      name: NewPassword
+      typeName: String
+      isNullable: false
+      isReadOnly: false
+  elementNames: []
+  kind: Class
+  fullName: HCManagement.Core.Features.Authentication.ChangePasswordRequestDto
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames: []
+  interfaceNames:
+  - IRequestDto
+- name: MenuCategoryBasicResponseDto
+  properties:
+    Id:
+      name: Id
+      typeName: Int32
+      isNullable: false
+      isReadOnly: true
+    Name:
+      name: Name
+      typeName: String
+      isNullable: false
+      isReadOnly: true
+    SortingIndex:
+      name: SortingIndex
+      typeName: Int32
+      isNullable: true
+      isReadOnly: true
+  elementNames: []
+  kind: Class
+  fullName: HCManagement.Core.Features.MenuCategories.MenuCategoryBasicResponseDto
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames: []
+  interfaceNames: []
+- name: MenuCategoryUpsertRequestDto
+  properties:
+    Name:
+      name: Name
+      typeName: String
+      isNullable: false
+      isReadOnly: false
+    SortingIndex:
+      name: SortingIndex
+      typeName: Int32
+      isNullable: true
+      isReadOnly: false
+  elementNames: []
+  kind: Class
+  fullName: HCManagement.Core.Features.MenuCategories.MenuCategoryUpsertRequestDto
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames: []
+  interfaceNames:
+  - IRequestDto
+- name: MenuItemBasicResponseDto
+  properties:
+    Id:
+      name: Id
+      typeName: Int32
+      isNullable: false
+      isReadOnly: true
+    Name:
+      name: Name
+      typeName: String
+      isNullable: false
+      isReadOnly: true
+    Unit:
+      name: Unit
+      typeName: String
+      isNullable: false
+      isReadOnly: true
+    DefaultAmountBeforeVatPerUnit:
+      name: DefaultAmountBeforeVatPerUnit
+      typeName: Int64
+      isNullable: false
+      isReadOnly: true
+    DefaultVatPercentagePerUnit:
+      name: DefaultVatPercentagePerUnit
+      typeName: Int32
+      isNullable: false
+      isReadOnly: true
+    Category:
+      name: Category
+      typeName: MenuCategoryBasicResponseDto
+      isNullable: true
+      isReadOnly: true
+    IsDeleted:
+      name: IsDeleted
+      typeName: Boolean
+      isNullable: false
+      isReadOnly: true
+  elementNames: []
+  kind: Class
+  fullName: HCManagement.Core.Features.MenuItems.MenuItemBasicResponseDto
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames: []
+  interfaceNames:
+  - IResponseDto
+- name: MenuItemListRequestDto
+  properties:
+    SortByAscending:
+      name: SortByAscending
+      typeName: Boolean
+      isNullable: false
+      isReadOnly: false
+    SortByCriterion:
+      name: SortByCriterion
+      typeName: MenuItemListSortingCriterion
+      isNullable: false
+      isReadOnly: false
+    SearchContent:
+      name: SearchContent
+      typeName: String
+      isNullable: true
+      isReadOnly: false
+    CategoryId:
+      name: CategoryId
+      typeName: Int32
+      isNullable: true
+      isReadOnly: false
+    DeletedIncluded:
+      name: DeletedIncluded
+      typeName: Boolean
+      isNullable: false
+      isReadOnly: false
+  elementNames: []
+  kind: Class
+  fullName: HCManagement.Core.Features.MenuItems.MenuItemListRequestDto
+  isListRequestDtoInterfaceImplementation: true
+  genericTypeParameterNames: []
+  interfaceNames:
+  - IListRequestDto<MenuItemListSortingCriterion>
+- name: UserBasicResponseDto
+  properties:
+    Id:
+      name: Id
+      typeName: Int32
+      isNullable: false
+      isReadOnly: false
+    UserName:
+      name: UserName
+      typeName: String
+      isNullable: false
+      isReadOnly: false
+    IsDeleted:
+      name: IsDeleted
+      typeName: Boolean
+      isNullable: false
+      isReadOnly: false
+  elementNames: []
+  kind: Class
+  fullName: HCManagement.Core.Features.Users.UserBasicResponseDto
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames: []
+  interfaceNames:
+  - IResponseDto
+- name: MenuItemDetailResponseDto
+  properties:
+    Id:
+      name: Id
+      typeName: Int32
+      isNullable: false
+      isReadOnly: true
+    Name:
+      name: Name
+      typeName: String
+      isNullable: false
+      isReadOnly: true
+    Unit:
+      name: Unit
+      typeName: String
+      isNullable: false
+      isReadOnly: true
+    DefaultAmountBeforeVatPerUnit:
+      name: DefaultAmountBeforeVatPerUnit
+      typeName: Int64
+      isNullable: false
+      isReadOnly: true
+    DefaultVatPercentagePerUnit:
+      name: DefaultVatPercentagePerUnit
+      typeName: Int32
+      isNullable: false
+      isReadOnly: true
+    Category:
+      name: Category
+      typeName: MenuCategoryBasicResponseDto
+      isNullable: true
+      isReadOnly: true
+    CreatedUser:
+      name: CreatedUser
+      typeName: UserBasicResponseDto
+      isNullable: false
+      isReadOnly: true
+    CreatedDateTime:
+      name: CreatedDateTime
+      typeName: DateTime
+      isNullable: false
+      isReadOnly: true
+    LastUpdatedUser:
+      name: LastUpdatedUser
+      typeName: UserBasicResponseDto
+      isNullable: true
+      isReadOnly: true
+    LastUpdatedDateTime:
+      name: LastUpdatedDateTime
+      typeName: DateTime
+      isNullable: true
+      isReadOnly: true
+    DeletedUser:
+      name: DeletedUser
+      typeName: UserBasicResponseDto
+      isNullable: true
+      isReadOnly: true
+    DeletedDateTime:
+      name: DeletedDateTime
+      typeName: DateTime
+      isNullable: true
+      isReadOnly: true
+  elementNames: []
+  kind: Class
+  fullName: HCManagement.Core.Features.MenuItems.MenuItemDetailResponseDto
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames: []
+  interfaceNames:
+  - IResponseDto
+- name: MenuItemUpsertRequestDto
+  properties:
+    Name:
+      name: Name
+      typeName: String
+      isNullable: false
+      isReadOnly: false
+    Unit:
+      name: Unit
+      typeName: String
+      isNullable: false
+      isReadOnly: false
+    DefaultAmountBeforeVatPerUnit:
+      name: DefaultAmountBeforeVatPerUnit
+      typeName: Int64
+      isNullable: false
+      isReadOnly: false
+    DefaultVatPercentagePerUnit:
+      name: DefaultVatPercentagePerUnit
+      typeName: Int32
+      isNullable: false
+      isReadOnly: false
+    CategoryId:
+      name: CategoryId
+      typeName: Int32
+      isNullable: true
+      isReadOnly: false
+  elementNames: []
+  kind: Class
+  fullName: HCManagement.Core.Features.MenuItems.MenuItemUpsertRequestDto
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames: []
+  interfaceNames:
+  - IRequestDto
+- name: OrderBasicResponseDto
+  properties:
+    Id:
+      name: Id
+      typeName: Int32
+      isNullable: false
+      isReadOnly: true
+    ItemAmount:
+      name: ItemAmount
+      typeName: Int64
+      isNullable: false
+      isReadOnly: true
+    IsFinished:
+      name: IsFinished
+      typeName: Boolean
+      isNullable: false
+      isReadOnly: true
+  elementNames: []
+  kind: Class
+  fullName: HCManagement.Core.Features.Orders.OrderBasicResponseDto
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames: []
+  interfaceNames:
+  - IResponseDto
+- name: OrderListResponseDto
+  properties:
+    Items:
+      name: Items
+      typeName: List<OrderBasicResponseDto>
+      isNullable: false
+      isReadOnly: true
+    PageCount:
+      name: PageCount
+      typeName: Int32
+      isNullable: false
+      isReadOnly: true
+    ItemCount:
+      name: ItemCount
+      typeName: Int32
+      isNullable: false
+      isReadOnly: true
+  elementNames: []
+  kind: Class
+  fullName: HCManagement.Core.Features.Orders.OrderListResponseDto
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames: []
+  interfaceNames:
+  - IPaginatedListResponseDto<OrderBasicResponseDto>
+- name: OrderListRequestDto
+  properties:
+    SortByAscending:
+      name: SortByAscending
+      typeName: Boolean
+      isNullable: false
+      isReadOnly: false
+    SortByCriterion:
+      name: SortByCriterion
+      typeName: OrderListSortingCriterion
+      isNullable: false
+      isReadOnly: false
+    Page:
+      name: Page
+      typeName: Int32
+      isNullable: false
+      isReadOnly: false
+    ResultsPerPage:
+      name: ResultsPerPage
+      typeName: Int32
+      isNullable: false
+      isReadOnly: false
+    DeletedIncluded:
+      name: DeletedIncluded
+      typeName: Boolean
+      isNullable: false
+      isReadOnly: false
+  elementNames: []
+  kind: Class
+  fullName: HCManagement.Core.Features.Orders.OrderListRequestDto
+  isListRequestDtoInterfaceImplementation: true
+  genericTypeParameterNames: []
+  interfaceNames:
+  - IPaginatedListRequestDto<OrderListSortingCriterion>
+- name: OrderItemDetailResponseDto
+  properties:
+    Id:
+      name: Id
+      typeName: Int32
+      isNullable: false
+      isReadOnly: true
+    AmountBeforeVatPerUnit:
+      name: AmountBeforeVatPerUnit
+      typeName: Int64
+      isNullable: false
+      isReadOnly: true
+    VatPercentagePerUnit:
+      name: VatPercentagePerUnit
+      typeName: Int32
+      isNullable: false
+      isReadOnly: true
+    Quantity:
+      name: Quantity
+      typeName: Int32
+      isNullable: false
+      isReadOnly: true
+    MenuItem:
+      name: MenuItem
+      typeName: MenuItemBasicResponseDto
+      isNullable: false
+      isReadOnly: true
+  elementNames: []
+  kind: Class
+  fullName: HCManagement.Core.Features.Orders.OrderItemDetailResponseDto
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames: []
+  interfaceNames:
+  - IResponseDto
+- name: SeatingBasicResponseDto
+  properties:
+    Id:
+      name: Id
+      typeName: Int32
+      isNullable: false
+      isReadOnly: true
+    Name:
+      name: Name
+      typeName: String
+      isNullable: false
+      isReadOnly: true
+    ActiveOrder:
+      name: ActiveOrder
+      typeName: OrderBasicResponseDto
+      isNullable: true
+      isReadOnly: true
+    IsDeleted:
+      name: IsDeleted
+      typeName: Boolean
+      isNullable: false
+      isReadOnly: true
+  elementNames: []
+  kind: Class
+  fullName: HCManagement.Core.Features.Seatings.SeatingBasicResponseDto
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames: []
+  interfaceNames:
+  - IResponseDto
+- name: OrderDetailResponseDto
+  properties:
+    Id:
+      name: Id
+      typeName: Int32
+      isNullable: false
+      isReadOnly: true
+    CreatedDateTime:
+      name: CreatedDateTime
+      typeName: DateTime
+      isNullable: false
+      isReadOnly: true
+    LastUpdatedDateTime:
+      name: LastUpdatedDateTime
+      typeName: DateTime
+      isNullable: true
+      isReadOnly: true
+    FinishedDateTime:
+      name: FinishedDateTime
+      typeName: DateTime
+      isNullable: true
+      isReadOnly: true
+    ItemAmount:
+      name: ItemAmount
+      typeName: Int64
+      isNullable: false
+      isReadOnly: true
+    Items:
+      name: Items
+      typeName: List<OrderItemDetailResponseDto>
+      isNullable: false
+      isReadOnly: true
+    CreatedUser:
+      name: CreatedUser
+      typeName: UserBasicResponseDto
+      isNullable: false
+      isReadOnly: true
+    LastUpdatedUser:
+      name: LastUpdatedUser
+      typeName: UserBasicResponseDto
+      isNullable: true
+      isReadOnly: true
+    FinishedUser:
+      name: FinishedUser
+      typeName: UserBasicResponseDto
+      isNullable: true
+      isReadOnly: true
+    Seating:
+      name: Seating
+      typeName: SeatingBasicResponseDto
+      isNullable: false
+      isReadOnly: true
+  elementNames: []
+  kind: Class
+  fullName: HCManagement.Core.Features.Orders.OrderDetailResponseDto
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames: []
+  interfaceNames:
+  - IResponseDto
+- name: OrderItemUpsertRequestDto
+  properties:
+    Id:
+      name: Id
+      typeName: Int32
+      isNullable: true
+      isReadOnly: false
+    AmountBeforeVatPerUnit:
+      name: AmountBeforeVatPerUnit
+      typeName: Int64
+      isNullable: false
+      isReadOnly: false
+    VatPercentagePerUnit:
+      name: VatPercentagePerUnit
+      typeName: Int32
+      isNullable: false
+      isReadOnly: false
+    Quantity:
+      name: Quantity
+      typeName: Int32
+      isNullable: false
+      isReadOnly: false
+    MenuItemId:
+      name: MenuItemId
+      typeName: Int32
+      isNullable: false
+      isReadOnly: false
+  elementNames: []
+  kind: Class
+  fullName: HCManagement.Core.Features.Orders.OrderItemUpsertRequestDto
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames: []
+  interfaceNames:
+  - IRequestDto
+- name: OrderUpsertRequestDto
+  properties:
+    SeatingId:
+      name: SeatingId
+      typeName: Int32
+      isNullable: false
+      isReadOnly: false
+    Items:
+      name: Items
+      typeName: List<OrderItemUpsertRequestDto>
+      isNullable: false
+      isReadOnly: false
+  elementNames: []
+  kind: Class
+  fullName: HCManagement.Core.Features.Orders.OrderUpsertRequestDto
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames: []
+  interfaceNames:
+  - IRequestDto
+- name: SeatingDetailResponseDto
+  properties:
+    Id:
+      name: Id
+      typeName: Int32
+      isNullable: false
+      isReadOnly: true
+    Name:
+      name: Name
+      typeName: String
+      isNullable: false
+      isReadOnly: true
+    ActiveOrder:
+      name: ActiveOrder
+      typeName: OrderBasicResponseDto
+      isNullable: true
+      isReadOnly: true
+  elementNames: []
+  kind: Class
+  fullName: HCManagement.Core.Features.Seatings.SeatingDetailResponseDto
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames: []
+  interfaceNames:
+  - IResponseDto
+- name: SeatingUpsertRequestDto
+  properties:
+    Name:
+      name: Name
+      typeName: String
+      isNullable: false
+      isReadOnly: false
+  elementNames: []
+  kind: Class
+  fullName: HCManagement.Core.Features.Seatings.SeatingUpsertRequestDto
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames: []
+  interfaceNames:
+  - IRequestDto
+- name: UserCreateRequestDto
+  properties:
+    UserName:
+      name: UserName
+      typeName: String
+      isNullable: false
+      isReadOnly: false
+    Password:
+      name: Password
+      typeName: String
+      isNullable: false
+      isReadOnly: false
+  elementNames: []
+  kind: Class
+  fullName: HCManagement.Core.Features.Users.UserCreateRequestDto
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames: []
+  interfaceNames:
+  - IRequestDto
+- name: MenuItemListSortingCriterion
+  properties: {}
+  elementNames:
+  - Name
+  - Category
+  - DefaultAmountBeforeVatPerUnit
+  kind: Enum
+  fullName: HCManagement.Core.Features.MenuItems.MenuItemListSortingCriterion
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames: []
+  interfaceNames: []
+- name: OrderListSortingCriterion
+  properties: {}
+  elementNames:
+  - CreatedDateTime
+  - LastUpdatedDateTime
+  - FinishedDateTime
+  - ItemAmount
+  kind: Enum
+  fullName: HCManagement.Core.Features.Orders.OrderListSortingCriterion
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames: []
+  interfaceNames: []
+- name: IRequestDto
+  properties: {}
+  elementNames: []
+  kind: Interface
+  fullName: HCManagement.Core.Common.Dtos.IRequestDto
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames: []
+  interfaceNames: []
+- name: IResponseDto
+  properties: {}
+  elementNames: []
+  kind: Interface
+  fullName: HCManagement.Core.Common.Dtos.IResponseDto
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames: []
+  interfaceNames: []
+- name: IListRequestDto<TSortingCriterion>
+  properties:
+    SortByAscending:
+      name: SortByAscending
+      typeName: Boolean
+      isNullable: false
+      isReadOnly: false
+    SortByCriterion:
+      name: SortByCriterion
+      typeName: TSortingCriterion
+      isNullable: false
+      isReadOnly: false
+  elementNames: []
+  kind: Interface
+  fullName: HCManagement.Core.Common.Dtos.IListRequestDto`1
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames:
+  - TSortingCriterion
+  interfaceNames:
+  - IRequestDto
+- name: IListResponseDto<TBasic>
+  properties:
+    Items:
+      name: Items
+      typeName: List<TBasic>
+      isNullable: false
+      isReadOnly: true
+    ItemCount:
+      name: ItemCount
+      typeName: Int32
+      isNullable: false
+      isReadOnly: true
+  elementNames: []
+  kind: Interface
+  fullName: HCManagement.Core.Common.Dtos.IListResponseDto`1
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames:
+  - TBasic
+  interfaceNames: []
+- name: IPaginatedListResponseDto<TBasic>
+  properties:
+    PageCount:
+      name: PageCount
+      typeName: Int32
+      isNullable: false
+      isReadOnly: true
+  elementNames: []
+  kind: Interface
+  fullName: HCManagement.Core.Common.Dtos.IPaginatedListResponseDto`1
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames:
+  - TBasic
+  interfaceNames:
+  - IListResponseDto<TBasic>
+- name: IPaginatedListRequestDto<TSortingCriterion>
+  properties:
+    Page:
+      name: Page
+      typeName: Int32
+      isNullable: false
+      isReadOnly: false
+    ResultsPerPage:
+      name: ResultsPerPage
+      typeName: Int32
+      isNullable: false
+      isReadOnly: false
+  elementNames: []
+  kind: Interface
+  fullName: HCManagement.Core.Common.Dtos.IPaginatedListRequestDto`1
+  isListRequestDtoInterfaceImplementation: false
+  genericTypeParameterNames:
+  - TSortingCriterion
+  interfaceNames:
+  - IListRequestDto<TSortingCriterion>
+constants:
+- name: DisplayNames
+  properties:
+    User: Người dùng
+    Role: Vị trí
+    Photo: Hình ảnh
+    Announcement: Thông báo
+    Id: Mã số
+    Name: Tên
+    Account: Tài khoản
+    UserName: Tên đăng nhập
+    Password: Mật khẩu
+    CurrentPassword: Mật khẩu hiện tại
+    NewPassword: Mật khẩu mới
+    Status: Tình trạng
+    CreatedDateTime: Ngày tạo
+    LastUpdatedDateTime: Ngày cập nhật
+    CreatedUser: Nhân viên tạo
+    LastUpdatedUser: Nhân viên cập nhật
+    Note: Ghi chú
+    Introducer: Người giới thiệu
+    Description: Mô tả
+    Unit: Đơn vị
+    DefaultAmountBeforeVatPerUnit: Giá niêm yết
+    DefaultVatPercentagePerUnit: Thuế VAT mặc định
+    Amount: Số tiền
+    AmountBeforeVatPerUnit: Số tiền trước thuế
+    VatAmount: Thuế VAT
+    VatPercentagePerUnit: Hệ số thuế
+    Seating: Bàn ăn
+    MenuItem: Món ăn
+    Index: Chỉ mục
+    TotalAmount: Tổng giá tiền
+    PaidAmount: Số tiền đã thanh toán
+    StartingDateTime: Ngày giờ bắt đầu
+    EndingDateTime: Ngày giờ kết thúc
+    Category: Phân loại
+    IsPinned: Được đánh dấu
+    Order: Gọi món
+    OrderItem: Mục gọi món
+    SortByCriterion: Tiêu chí sắp xếp
+    SortByAscending: Thứ tự sắp xếp
+    SearchByField: Trường tìm kiếm
+    SearchContent: Nội dung tìm kiếm
+    Page: Trang
+    ResultsPerPage: Kết quả mỗi trang
+    PageCount: Số trang
+    ResultsCount: Số kết quả
+    Results: Kết quả
+    ThumbnailFile: File ảnh xem trước
+    RangeFrom: Khoảng bắt đầu
+    RangeTo: Khoảng kết thúc
+    RangeType: Kiểu khoảng
+    RangeLength: Độ dài khoảng
+    File: File
+    UpdatedReason: Lý do chỉnh sửa
+    Debt: Khoản nợ
+    DebtIncurrence: Ghi nợ
+    DebtPayment: Thanh toán nợ
+    DebtRemainingAmount: Số nợ còn lại
+    MonthlyStats: Thống kê tháng
+    Month: Tháng
+    MonthCount: Số lượng tháng
+    DayCount: Số lượng ngày
+    Year: Năm
+    DailyStats: Thống kê theo ngày
+    RecordedDate: Ngày thống kê
+    RecordedMonth: Tháng thống kê
+    RecordedYear: Năm thống kê
+    RecordedMonthAndYear: Tháng và năm thông kê
+    IntervalInMinutes: Số phút hiệu lực
+    StatsDate: Ngày thống kê
+    Home: Trang chủ
+    Creteria: Tiêu chí
+    Count: Số lượng
+    Date: Ngày
+    Day: Ngày
+    PurchasedAmount: Số tiền đã mua
+    PurchasedTransactionCount: Số lượng giao dịch mua
+    Quantity: Số lượng
+    Default: Mặc định
+    TimeRangeUnitType: Kiểu đơn vị khung thời gian
+    TimeRangeUnitCount: Số lượng đơn vị khung thời gian
+  typeName: HCManagement.Core.Common.Localization.DisplayNames
+- name: ErrorMessages
+  properties:
+    NotNull: '{PropertyName} không được để trống.'
+    NotEmpty: '{PropertyName} không được để trống.'
+    NotEqual: '{PropertyName} phải bằng {ComparisonValue}.'
+    MinimumLength: '{PropertyName} phải chứa tối thiểu {MinLength} ký tự.'
+    MaximumLength: '{PropertyName} chỉ được chứa tối đa {MaxLength} ký tự.'
+    StringLength: '{PropertyName} phải chứa trong khoảng từ {MinLength} đến {MaxLength} ký tự.'
+    CollectionMinimumLength: '{PropertyName} phải chứa tối thiểu {MinLength} phần tử.'
+    CollectionMaximumLength: '{PropertyName} chỉ được chứa tối đa {MaxLength} phần tử.'
+    CollectionLength: '{PropertyName} chỉ được chứa trong khoảng từ {MinLength} đến {MaxLength} phần tử.'
+    LessThan: '{PropertyName} phải có giá trị nhỏ hơn {ComparisonValue}.'
+    LessThanOrEqual: '{PropertyName} phải có giá trị nhỏ hơn {ComparisonValue}.'
+    GreaterThan: '{PropertyName} phải có giá trị lớn hơn {ComparisonValue}.'
+    GreaterThanOrEqual: '{PropertyName} phải có giá trị lớn hơn {ComparisonValue}.'
+    EarlierThan: '{PropertyName} phải đại diện cho thời gian sớm hơn "{ComparisonValue}".'
+    EarlierThanOrEqual: '{PropertyName} phải đại diện cho thời gian sớm hơn hoặc bằng "{ComparisonValue}".'
+    LaterThan: '{PropertyName} phải đại diện cho thời gian muộn hơn "{ComparisonValue}"'
+    LaterThanOrEqual: '{PropertyName} phải đại diện cho thời gian muộn hơn hoặc bằng "{ComparisonValue}".'
+    Invalid: '{PropertyName} không hợp lệ.'
+    EarlierThanOrEqualToNow: '{PropertyName} phải là ngày giờ trước hoặc trùng với thời điểm hiện tại ({ComparisonValue}).'
+    EarlierThanOrEqualToToday: '{PropertyName} phải là ngày trước hoặc trùng với ngày hôm nay ({ComparisonValue}).'
+    Null: '{PropertyName} phải chứa giá trị null.'
+    PhotosCannotContainsMoreThanOneThumbnail: Danh sách {Photos} không thể chứa nhiều hơn 1 ảnh {Thumbnail}.
+    Undefined: Đã xảy ra lỗi không xác định.
+    Duplicated: '{PropertyName} đã tồn tại.'
+    NotFound: '{ResourceName} không tồn tại.'
+    NotFoundByProperty: "{ResourceName} có {PropertyName} '{AttemptedValue}' không tồn tại."
+    ImageFormatNotAllowed: Hình ảnh có định dạng không được hỗ trợ.
+    Incorrect: '{PropertyName} không chính xác.'
+    MismatchedWith: '{PropertyName} không khớp với {ComparisonPropertyName}.'
+    InvalidUserNamePattern: '{PropertyName} chỉ được chứa chữ cái hoặc chữ số.'
+    NotAvailable: '{ResourceName} hiện đang không khả dụng.'
+    NotAvailableByProperty: "{ResourceName} có {PropertyName} '{AttemptedValue}' hiện đang không khả dụng."
+    UpdateRestricted: '{ResourceName} không thể được chỉnh sửa do liên kết với các tài nguyên khác.'
+    AlreadyDeleted: '{ResourceName} đã bị xoá từ trước.'
+    DeleteRestricted: '{ResourceName} không thể được xoá do liên kết với các tài nguyên khác.'
+    UserAlreadyInRole: Người dùng hiện đã được thêm vào vị trí {RoleName} từ trước.
+    UserNotInRole: Người dùng không thuộc về vị trí {RoleName} từ trước.
+    PaymentAlreadyCompleted: '{ResourceName} đã được thanh toán đầy đủ, Không thể thanh toán thêm.'
+    ModificationTimeExpired: '{ResourceName} đã bị khoá do quá hạn chỉnh sửa/xoá.'
+    PaidAmountIsGreaterThanRemainingDebtAmount: Số tiền thanh toán phải nhỏ hơn số tiền nợ của khách hàng.
+    NegativeRemainingDebtAmount: Với giá trị đã nhập, khoản nợ còn lại của khách hàng này sẽ trở thành số âm.
+    NegativeProductStockingQuantity: Không đủ số lượng hàng trong kho.
+    CannotSetDateTimeAfterLocked: '{ResourceName} đã bị khoá, không thể chỉnh sửa {PropertyName}.'
+    NavigationPropertyHasNotBeenLoaded: Navigation property "{PropertyName}" hasn't been loaded yet.
+  typeName: HCManagement.Core.Common.Localization.ErrorMessages
+- name: AuthenticationContracts
+  properties:
+    PasswordMinLength: 3
+  typeName: HCManagement.Core.Features.Authentication.AuthenticationContracts
+- name: MenuCategoryContracts
+  properties:
+    NameMinLength: 3
+    NameMaxLength: 15
+  typeName: HCManagement.Core.Features.MenuCategories.MenuCategoryContracts
+- name: MenuItemContracts
+  properties:
+    NameMinLength: 3
+    NameMaxLength: 35
+    UnitMaxLength: 12
+    DefaultPriceBeforeVatPerUnitMinValue: 0
+    DefaultVatPercentagePerUnitMinValue: 0
+    DefaultVatPercentagePerUnitMaxValue: 100
+  typeName: HCManagement.Core.Features.MenuItems.MenuItemContracts
+- name: OrderItemContracts
+  properties:
+    QuantityMinValue: 1
+  typeName: HCManagement.Core.Features.Orders.OrderItemContracts
+- name: SeatingContracts
+  properties:
+    NameMaxLength: 20
+  typeName: HCManagement.Core.Features.Seatings.SeatingContracts
+- name: UserContracts
+  properties:
+    UserNameMinLength: 5
+    UserNameMaxLength: 20
+  typeName: HCManagement.Core.Features.Users.UserContracts
+hasDtoInterfaceImplementation: true

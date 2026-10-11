@@ -24,11 +24,6 @@ internal class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
             .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
 
-        // Indexes.
-        entityBuilder
-            .HasIndex(mi => new { mi.OrderId, mi.MenuItemId })
-            .IsUnique();
-
         // RowVersion.
         entityBuilder.Property<byte[]?>("RowVersion").IsRowVersion();
     }

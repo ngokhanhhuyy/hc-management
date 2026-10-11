@@ -135,6 +135,7 @@ internal class OrderService : IOrderService
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
+
             for (int index = 0; index < requestDto.Items.Count; index += 1)
             {
                 evaluatingOrderItemIndex = index;
@@ -144,7 +145,8 @@ internal class OrderService : IOrderService
                     AmountBeforeVatPerUnit = itemRequestDto.AmountBeforeVatPerUnit,
                     VatPercentagePerUnit = itemRequestDto.VatPercentagePerUnit,
                     Quantity = itemRequestDto.Quantity,
-                    MenuItemId = itemRequestDto.MenuItemId
+                    MenuItemId = itemRequestDto.MenuItemId,
+                    Guid = itemRequestDto.Guid
                 };
 
                 order.Items.Add(orderItem);
@@ -195,7 +197,8 @@ internal class OrderService : IOrderService
                         AmountBeforeVatPerUnit = itemRequestDto.AmountBeforeVatPerUnit,
                         VatPercentagePerUnit = itemRequestDto.VatPercentagePerUnit,
                         Quantity = itemRequestDto.Quantity,
-                        MenuItemId = itemRequestDto.MenuItemId
+                        MenuItemId = itemRequestDto.MenuItemId,
+                        Guid = itemRequestDto.Guid
                     };
 
                     order.Items.Add(orderItem);

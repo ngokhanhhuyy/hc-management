@@ -13,6 +13,7 @@ public class OrderItemDetailResponseDto : IResponseDto
         VatPercentagePerUnit = orderItem.VatPercentagePerUnit;
         Quantity = orderItem.Quantity;
         MenuItem = new(orderItem.MenuItem);
+        Guid = orderItem.Guid;
     }
     #endregion
 
@@ -22,5 +23,6 @@ public class OrderItemDetailResponseDto : IResponseDto
     public int VatPercentagePerUnit { get; }
     public int Quantity { get; }
     public MenuItemBasicResponseDto MenuItem { get; }
+    public Guid Guid { get; }
     #endregion
 }

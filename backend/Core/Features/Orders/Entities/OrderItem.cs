@@ -26,6 +26,9 @@ internal class OrderItem
 
     [Required]
     public int MenuItemId { get; set; }
+
+    [Required]
+    public required Guid Guid { get; set; }
     #endregion
 
     #region NavigationProperties

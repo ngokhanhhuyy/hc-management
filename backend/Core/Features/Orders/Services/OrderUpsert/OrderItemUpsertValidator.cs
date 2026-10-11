@@ -19,13 +19,16 @@ internal class OrderItemUpsertValidator : Validator<OrderItemUpsertRequestDto>
             .WithName(DisplayNames.VatPercentagePerUnit);
         
         RuleFor(dto => dto.Quantity)
-            .GreaterThanOrEqualTo(1)
-            .LessThanOrEqualTo(999)
+            .GreaterThanOrEqualTo(OrderItemContracts.QuantityMinValue)
+            .LessThanOrEqualTo(OrderItemContracts.QuantityMaxValue)
             .WithName(DisplayNames.Quantity);
 
         RuleFor(dto => dto.MenuItemId)
             .NotEmpty()
             .WithName(DisplayNames.MenuItem);
+
+        RuleFor(dto => dto.Guid)
+            .NotEmpty();
     }
     #endregion
 }

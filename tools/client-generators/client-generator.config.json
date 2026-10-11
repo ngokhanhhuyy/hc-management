@@ -1,0 +1,37 @@
+{
+  "input": {
+    "targetAssemblyPath": "../../backend/bin/Debug/net10.0/HCManagement.dll",
+    "customFetchFilePath": "./fetch.ts",
+    "customFetchFunctionName": "fetchOrThrowAsync"
+  },
+  "cSharp": {
+    "rootNamespace": "HCManagement",
+    "baseRequestDtoInterfaceFullName": "HCManagement.Core.Common.Dtos.IRequestDto",
+    "baseListRequestDtoInterfaceFullName": "HCManagement.Core.Common.Dtos.IListRequestDto",
+    "constantsWithFullName": [
+      "HCManagement.Core.Common.Localization.DisplayNames",
+      "HCManagement.Core.Common.Localization.ErrorMessages",
+      "HCManagement.Core.Features.Authentication.AuthenticationContracts",
+      "HCManagement.Core.Features.MenuCategories.MenuCategoryContracts",
+      "HCManagement.Core.Features.MenuItems.MenuItemContracts",
+      "HCManagement.Core.Features.Orders.OrderItemContracts",
+      "HCManagement.Core.Features.Seatings.SeatingContracts",
+      "HCManagement.Core.Features.Users.UserContracts"
+    ]
+  },
+  "typeScript": {
+    "generateListRequestDtoAsOptionalPartialType": true,
+    "generateDefaultListRequestDtoInstance": true,
+    "generateConstants": true,
+    "enumGenerationMode": "StringEnum"
+  },
+  "output": {
+    "shouldGenerateMetadataFile": false,
+    "shouldGenerateDtosFile": true,
+    "shouldGenerateApiClientFile": true,
+    "directory": "../../frontend/src/api/generated",
+    "apiClientFileName": "api.ts",
+    "dtoFileName": "dtos.ts",
+    "constantsFileName": "constants.ts"
+  }
+}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useLoaderData } from "react-router";
-import { api } from "#/api";
+import { api, menuCategoryContracts } from "#/api";
 import type { MenuCategoryUpsertModel } from "#/models";
 import { getMenuCategoryEditorRoutePath } from "#/helpers";
 
@@ -8,7 +8,7 @@ import { getMenuCategoryEditorRoutePath } from "#/helpers";
 import UpsertPanel from "../base/UpsertPanel";
 import { XMarkIcon, NumberedListIcon } from "@heroicons/react/24/outline";
 import { FormField, NumberInput } from "#/components/form";
-import { displayNames } from "#/localization";
+import { displayNames } from "#/api";
 
 // Components.
 export default function MenuItemUpsertPanel(): React.ReactNode {
@@ -33,6 +33,7 @@ export default function MenuItemUpsertPanel(): React.ReactNode {
       resourceName="category"
       editorRoutePath={getMenuCategoryEditorRoutePath()}
       model={model}
+      nameMaxLength={menuCategoryContracts.nameMaxLength}
       onModelUpdated={(updatedData) => setModel(m => ({ ...m, ...updatedData }))}
       onCreatingAsync={handleCreatingAsync}
       onUpdatingAsync={handleUpdatingAsync}

@@ -15,6 +15,7 @@ using HCManagement.Core.Features.MenuCategories;
 using HCManagement.Core.Features.MenuItems;
 using HCManagement.Core.Features.Seatings;
 using HCManagement.Core.Features.Orders;
+using HCManagement.Core.Features.Reports;
 using HCManagement.Core.Features.Users;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -55,6 +56,7 @@ public static class Program
         builder.Services.AddScoped<IMenuItemService, MenuItemService>();
         builder.Services.AddScoped<ISeatingService, SeatingService>();
         builder.Services.AddScoped<IOrderService, OrderService>();
+        builder.Services.AddScoped<IReportService, ReportService>();
         builder.Services.AddScoped<IUserService, UserService>();
 
         // Seeders.

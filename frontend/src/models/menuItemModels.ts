@@ -5,21 +5,25 @@ import {
   type MenuItemBasicModel
 } from "#/models";
 import {
+  defaultMenuItemListRequestDto,
+  MenuItemListSortingCriterion,
   type MenuItemListRequestDto,
-  type MenuItemBasicResponseDto,
+  type MenuItemListResponseDto,
   type MenuItemDetailResponseDto,
   type MenuItemUpsertRequestDto,
-  MenuItemListSortingCriterion
 } from "#/api";
 
 export type MenuItemListModel = {
   sortByAscending: boolean;
   sortByCriterion: MenuItemListSortingCriterion;
+  page: number;
+  resultsPerPage: number;
   category: MenuCategoryBasicModel | null;
   searchContent: string;
   items: MenuItemBasicModel[];
-  mapFromRequestDto(requestDto: MenuItemListRequestDto): MenuItemListModel;
-  mapFromResponseDto(responseDtos: MenuItemBasicResponseDto[]): MenuItemListModel;
+  itemCount: number;
+  pageCount: number;
+  mapFromResponseDto(responseDto: MenuItemListResponseDto): MenuItemListModel;
   toRequestDto(): MenuItemListRequestDto;
 };
 
@@ -34,26 +38,27 @@ export type MenuItemUpsertModel = {
 
 export function createMenuItemListModel(): MenuItemListModel {
   return {
-    sortByAscending: true,
-    sortByCriterion: MenuItemListSortingCriterion.Name,
+    sortByAscending: defaultMenuItemListRequestDto.sortByAscending ?? true,
+    sortByCriterion: defaultMenuItemListRequestDto.sortByCriterion ?? MenuItemListSortingCriterion.Name,
+    page: defaultMenuItemListRequestDto.page ?? 1,
+    resultsPerPage: defaultMenuItemListRequestDto.resultsPerPage ?? 15,
+    itemCount: 0,
+    pageCount: 0,
     category: null,
     searchContent: "",
     items: [],
-    mapFromRequestDto(requestDto: MenuItemListRequestDto): MenuItemListModel {
+    mapFromResponseDto(responseDto: MenuItemListResponseDto): MenuItemListModel {
       return {
         ...this,
-        sortByAscending: requestDto?.sortByAscending ?? this.sortByAscending,
-        sortByCriterion: requestDto?.sortByCriterion ?? this.sortByCriterion
-      };
-    },
-    mapFromResponseDto(responseDtos: MenuItemBasicResponseDto[]): MenuItemListModel {
-      return {
-        ...this,
-        items: responseDtos.map(dto => createMenuItemBasicModel(dto)),
+        items: responseDto.items.map(dto => createMenuItemBasicModel(dto)),
+        itemCount: responseDto.itemCount,
+        pageCount: responseDto.pageCount
       };
     },
     toRequestDto(): MenuItemListRequestDto {
       return {
+        page: this.page,
+        resultsPerPage: this.resultsPerPage,
         categoryId: this.category?.id,
         searchContent: this.searchContent || undefined
       };

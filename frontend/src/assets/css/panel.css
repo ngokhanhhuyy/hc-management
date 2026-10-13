@@ -15,11 +15,12 @@
     .panel-header {
         background-color: var(--color-white);
         border: 1px solid --alpha(var(--color-black) / 20%);
+        border-bottom-color: --alpha(var(--color-black) / 15%);
         display: flex;
         justify-content: space-between;
         gap: --spacing(3);
         align-items: center;
-        min-height: --spacing(10);
+        min-height: 38.81px;
         padding-left: --spacing(3);
         padding-right: --spacing(1.5);
         padding-block: --spacing(1.5);
@@ -92,6 +93,7 @@
     .panel-footer {
         background-color: white;
         border: 1px solid --alpha(var(--color-black) / 20%);
+        border-top-color: --alpha(var(--color-black) / 15%);
         border-bottom-left-radius: var(--radius-xl);
         border-bottom-right-radius: var(--radius-xl);
         padding: --spacing(2);

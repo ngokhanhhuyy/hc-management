@@ -53,6 +53,7 @@ export type OrderUpsertModel = {
   seating: SeatingBasicModel;
   items: OrderItemUpsertModel[];
   mapFromResponseDto(responseDto: OrderDetailResponseDto): OrderUpsertModel;
+  mapIdsFromResponseDto(responseDto: OrderDetailResponseDto): OrderUpsertModel;
   toRequestDto(): OrderUpsertRequestDto;
 };
 
@@ -125,6 +126,24 @@ export function createOrderUpsertModel(seating: SeatingBasicModel | SeatingDetai
         ...this,
         id: responseDto.id,
         items: responseDto.items.map(createOrderItemUpsertModel),
+      };
+    },
+    mapIdsFromResponseDto(responseDto: OrderDetailResponseDto): OrderUpsertModel {
+      return {
+        ...this,
+        id: responseDto.id,
+        items: this.items.map(item => {
+          if (item.id != null) {
+            return item;
+          }
+          
+          const itemResponseDto = responseDto.items.find(i => i.guid == item.guid);
+          if (!itemResponseDto) {
+            return item;
+          }
+
+          return { ...item, id: responseDto.id };
+        })
       };
     },
     toRequestDto(): OrderUpsertRequestDto {

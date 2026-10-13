@@ -27,8 +27,6 @@ public static class DisplayNames
     public const string CreatedUser = "Nhân viên tạo";
     public const string LastUpdatedUser = "Nhân viên cập nhật";
     public const string Note = "Ghi chú";
-    public const string Introducer = "Người giới thiệu";
-    public const string Description = "Mô tả";
     public const string Unit = "Đơn vị";
     public const string DefaultAmountBeforeVatPerUnit = "Giá niêm yết";
     public const string DefaultVatPercentagePerUnit = "Thuế VAT mặc định";
@@ -63,14 +61,7 @@ public static class DisplayNames
     public const string RangeLength = "Độ dài khoảng";
     public const string File = "File";
     public const string UpdatedReason = "Lý do chỉnh sửa";
-    public const string Debt = "Khoản nợ";
-    public const string DebtIncurrence = "Ghi nợ";
-    public const string DebtPayment = "Thanh toán nợ";
-    public const string DebtRemainingAmount = "Số nợ còn lại";
     public const string MonthlyStats = "Thống kê tháng";
-    public const string Month = "Tháng";
-    public const string MonthCount = "Số lượng tháng";
-    public const string DayCount = "Số lượng ngày";
     public const string Year = "Năm";
     public const string DailyStats = "Thống kê theo ngày";
     public const string RecordedDate = "Ngày thống kê";
@@ -84,12 +75,9 @@ public static class DisplayNames
     public const string Count = "Số lượng";
     public const string Date = "Ngày";
     public const string Day = "Ngày";
-    public const string PurchasedAmount = "Số tiền đã mua";
-    public const string PurchasedTransactionCount = "Số lượng giao dịch mua";
     public const string Quantity = "Số lượng";
     public const string Default = "Mặc định";
-    public const string TimeRangeUnitType = "Kiểu đơn vị khung thời gian";
-    public const string TimeRangeUnitCount = "Số lượng đơn vị khung thời gian";
+    public const string Period = "Khoảng thời gian";
     #endregion
 
     #region StaticConstructors

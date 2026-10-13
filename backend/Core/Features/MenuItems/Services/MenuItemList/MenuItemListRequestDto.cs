@@ -3,11 +3,13 @@ using HCManagement.Core.Common.Extensions;
 
 namespace HCManagement.Core.Features.MenuItems;
 
-public class MenuItemListRequestDto : IListRequestDto<MenuItemListSortingCriterion>
+public class MenuItemListRequestDto : IPaginatedListRequestDto<MenuItemListSortingCriterion>
 {
     #region Properties
     public bool SortByAscending { get; set; } = true;
     public MenuItemListSortingCriterion SortByCriterion { get; set; } = MenuItemListSortingCriterion.Name;
+    public int Page { get; set; } = 1;
+    public int ResultsPerPage { get; set; } = 25;
     public string? SearchContent { get; set; }
     public int? CategoryId { get; set; }
     public bool DeletedIncluded { get; set; }

@@ -1,7 +1,6 @@
 using HCManagement.Core.Features.MenuItems;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace HCManagement.Api.Controllers;
 
@@ -23,7 +22,7 @@ public class MenuItemController : ControllerBase
 
     #region Methods
     [HttpGet]
-    [ProducesResponseType<List<MenuItemBasicResponseDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MenuItemListResponseDto>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetList([FromQuery] MenuItemListRequestDto requestDto)
@@ -75,14 +74,6 @@ public class MenuItemController : ControllerBase
     {
         await _service.DeleteAsync(id);
         return Ok();
-    }
-
-    [HttpGet("default-list-parameters")]
-    [ProducesResponseType<MenuItemListRequestDto>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetDefaultListParameters()
-    {
-        await Task.CompletedTask;
-        return Ok(new MenuItemListRequestDto());
     }
     #endregion
 }

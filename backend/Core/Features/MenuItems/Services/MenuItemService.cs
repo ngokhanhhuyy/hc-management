@@ -3,6 +3,7 @@ using HCManagement.Core.Common.Exceptions;
 using HCManagement.Core.Common.Extensions;
 using HCManagement.Core.Common.Localization;
 using HCManagement.Core.Common.Security;
+using HCManagement.Core.Common.Services;
 using HCManagement.Core.Common.Time;
 using HCManagement.Core.Persistence.DbContext;
 using HCManagement.Core.Persistence.Handlers;
@@ -14,6 +15,7 @@ internal class MenuItemService : IMenuItemService
 {
     #region Fields
     private readonly AppDbContext _context;
+    private readonly IListFetchingService _listFetchingService;
     private readonly IValidator<MenuItemListRequestDto> _listValidator;
     private readonly IValidator<MenuItemUpsertRequestDto> _upsertValidator;
     private readonly IDbExceptionHandler _dbExceptionHandler;
@@ -24,6 +26,7 @@ internal class MenuItemService : IMenuItemService
     #region Constructors
     public MenuItemService(
         AppDbContext context,
+        IListFetchingService listFetchingService,
         IValidator<MenuItemListRequestDto> listValidator,
         IValidator<MenuItemUpsertRequestDto> upsertValidator,
         IDbExceptionHandler dbExceptionHandler,
@@ -31,6 +34,7 @@ internal class MenuItemService : IMenuItemService
         IClock clock)
     {
         _context = context;
+        _listFetchingService = listFetchingService;
         _listValidator = listValidator;
         _upsertValidator = upsertValidator;
         _dbExceptionHandler = dbExceptionHandler;
@@ -40,7 +44,7 @@ internal class MenuItemService : IMenuItemService
     #endregion
     
     #region Methods
-    public async Task<List<MenuItemBasicResponseDto>> GetListAsync(MenuItemListRequestDto requestDto)
+    public async Task<MenuItemListResponseDto> GetListAsync(MenuItemListRequestDto requestDto)
     {
         _listValidator.ValidateAndThrow(requestDto);
 
@@ -83,9 +87,12 @@ internal class MenuItemService : IMenuItemService
             query = query.Where(mi => mi.DeletedDateTime == null);
         }
 
-        return await query
-            .Select(mi => new MenuItemBasicResponseDto(mi))
-            .ToListAsync();
+        Page<MenuItemBasicResponseDto> page = await _listFetchingService.GetPagedListAsync(
+            query.Select(o => new MenuItemBasicResponseDto(o)),
+            requestDto.Page,
+            requestDto.ResultsPerPage);
+
+        return new(items: page.Items.ToList(), pageCount: page.PageCount, itemCount: page.ItemCount);
     }
 
     public async Task<MenuItemDetailResponseDto> GetDetailAsync(int id)

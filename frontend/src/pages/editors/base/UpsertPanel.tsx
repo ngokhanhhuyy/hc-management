@@ -1,6 +1,6 @@
-import React, { useState, useRef, useMemo, useContext } from "react";
-import { useLoaderData, useNavigate, useParams, Link } from "react-router";
-import { displayNames } from "#/localization";
+import React, { useRef, useContext } from "react";
+import { useNavigate, useParams, Link } from "react-router";
+import { displayNames } from "#/api";
 
 // Child components.
 import { ArrowDownTrayIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -18,6 +18,7 @@ type UpsertPanelProps<TUpsertModel extends IUpsertModel> = {
   resourceName: "seating" | "menuItem" | "category";
   editorRoutePath: string;
   model: TUpsertModel;
+  nameMaxLength: number;
   onModelUpdated(updatedData: Partial<TUpsertModel>): any;
   onCreatingAsync(): Promise<any>;
   onUpdatingAsync(id: number): Promise<any>;
@@ -68,6 +69,7 @@ function UpsertPanel<TUpsertModel extends IUpsertModel>(props: UpsertPanelProps<
         >
           <FormField path="name">
             <TextInput
+              maxLength={props.nameMaxLength}
               value={props.model.name}
               onInput={(name) => props.onModelUpdated({ name } as Partial<TUpsertModel>)}
             />

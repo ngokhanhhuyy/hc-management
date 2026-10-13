@@ -1,62 +1,36 @@
-import React, { useState, useRef, useMemo, useEffect } from "react";
-import { useLoaderData, useNavigate } from "react-router";
+import React, { useState, useRef, useEffect } from "react";
+import { useLoaderData, useBlocker, type BlockerFunction } from "react-router";
 import { api, type OrderDetailResponseDto } from "#/api";
 import {
   createOrderItemUpsertModel,
   type MenuItemBasicModel,
   type OrderUpsertModel,
-  type OrderItemUpsertModel
 } from "#/models";
-import { getDashboardRoutePath, joinClassName } from "#/helpers";
+import { joinClassName } from "#/helpers";
 
 // Child components.
 import type { DataLoadedResult } from "./dataLoader";
-import MenuItemListPanel, { type MenuItemWithPickedQuantity } from "./menuItemPanel/MenuItemListPanel";
+import MenuItemListPanel from "./menuItemPanel/MenuItemListPanel";
 import OrderUpsertPanel, { type LoadingState } from "./orderUpsertPanel/OrderUpsertPanel";
 
 // Components.
 export default function OrderUpsertPage(): React.ReactNode {
   // Dependencies.
-  const navigate = useNavigate();
   const initialLoadedModels = useLoaderData<DataLoadedResult>();
 
   // States.
   const [model, setModel] = useState<OrderUpsertModel>(initialLoadedModels.orderUpsertModel);
   const [loadingState, setLoadingState] = useState<LoadingState>(null);
   const [renderingKey, setRenderingKey] = useState<number>(0);
-  const currentTimeoutId = useRef<number | null>(null);
+  const currentTimeout = useRef<{ id: number, callback: () => Promise<any> } | null>(null);
   const currentRequestId = useRef<string | number>(null);
   
-  // Computed.
-  const pickedMenuItems = useMemo<MenuItemWithPickedQuantity[]>(() => {
-    return model.items
-      .filter(oi => oi.quantity > 0)
-      .map(oi => ({
-        item: oi.menuItem,
-        quantity: oi.quantity
-      }));
-  }, [model.items]);
+  // Blocker.
+  const blocker = useBlocker(() => currentTimeout.current != null);
 
   // Callbacks.
   function onMenuItemPicked(pickedMenuItem: MenuItemBasicModel): void {
-    setModel(m => {
-      let isPickedMenuItemAlreadyPicked = false;
-      const newItems: OrderItemUpsertModel[] = m.items.map(i => {
-        if (i.menuItem.id === pickedMenuItem.id) {
-          isPickedMenuItemAlreadyPicked = true;
-          return { ...i, quantity: i.quantity + 1 };
-        }
-
-        return i;
-      });
-
-      if (!isPickedMenuItemAlreadyPicked) {
-        newItems.push(createOrderItemUpsertModel(pickedMenuItem));
-      }
-
-      return { ...m, items: newItems };
-    });
-
+    setModel(m => ({ ...m, items: [...m.items, createOrderItemUpsertModel(pickedMenuItem)] }));
     setRenderingKey(key => key + 1);
   }
 
@@ -81,11 +55,11 @@ export default function OrderUpsertPage(): React.ReactNode {
   };
 
   function syncDataWithDelayAndDebounce(): void {
-    if (currentTimeoutId.current) {
-      window.clearTimeout(currentTimeoutId.current);
+    if (currentTimeout.current) {
+      window.clearTimeout(currentTimeout.current.id);
     }
 
-    currentTimeoutId.current = window.setTimeout(async () => {
+    const timeoutCallback = async () => {
       try {
         await Promise.all([
           syncDataAsync(),
@@ -95,8 +69,23 @@ export default function OrderUpsertPage(): React.ReactNode {
         setLoadingState(null);
       }
 
-      currentTimeoutId.current = null;
-    }, 10_000);
+      currentTimeout.current = null;
+    };
+
+    const timeoutId = window.setTimeout(timeoutCallback, 10_000);
+
+    currentTimeout.current = {
+      id: timeoutId,
+      callback: timeoutCallback
+    };
+  }
+
+  async function clearDataAndSyncImmediately(): Promise<void> {
+    if (currentTimeout.current) {
+      window.clearTimeout(currentTimeout.current.id);
+      await currentTimeout.current.callback();
+      currentTimeout.current = null;
+    }
   }
 
   async function handleFinishedAsync(): Promise<void> {
@@ -104,30 +93,51 @@ export default function OrderUpsertPage(): React.ReactNode {
       await api.order.finishAsync(model.id);
     }
 
-    navigate(getDashboardRoutePath());
+    setLoadingState("finished");
   }
 
   // Effect.
   useEffect(() => {
-    if (renderingKey > 0) {
-      syncDataWithDelayAndDebounce();
+    if (renderingKey == 0) {
+      return;
     }
+
+    syncDataWithDelayAndDebounce();
   }, [renderingKey]);
+
+  useEffect(() => {
+    return () => {
+      clearDataAndSyncImmediately();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (blocker.state === "blocked") {
+      clearDataAndSyncImmediately().then(() => blocker.proceed?.());
+    }
+  }, [blocker.state]);
 
   // Templates.
   return (
     <div className={joinClassName(
-      "grid grid-cols-[1fr_320px] gap-3 h-full",
+      "grid grid-cols-[1fr_320px] gap-3 h-full transition-opacity",
       loadingState === "syncing" && "opacity-50 pe-none"
     )}>
-      <MenuItemListPanel pickedItems={pickedMenuItems} onPicked={onMenuItemPicked} />
+      <MenuItemListPanel
+        pickedOrderItems={model.items}
+        onPicked={onMenuItemPicked}
+        disabled={loadingState === "finished"}
+      />
+
       <OrderUpsertPanel
         model={model}
+        loadingState={loadingState}
         onModelUpdated={updatedData => {
           setModel(m => ({ ...m, ...updatedData }));
           setRenderingKey(key => key + 1);
         }}
         onFinished={handleFinishedAsync}
+        onSyncingRequestingAsync={clearDataAndSyncImmediately}
       />
     </div>
   );

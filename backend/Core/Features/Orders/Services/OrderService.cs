@@ -153,6 +153,8 @@ internal class OrderService : IOrderService
                 await _context.SaveChangesAsync();
             }
             
+            order.ComputeCachedProperties();
+            
             await transaction.CommitAsync();
             return await GetDetailAsync(order.Id);
         }
@@ -221,6 +223,8 @@ internal class OrderService : IOrderService
 
             order.LastUpdatedDateTime = _clock.Now;
             order.LastUpdatedUserId = _callerDetailProvider.GetId();
+            order.ComputeCachedProperties();
+            
             await _context.SaveChangesAsync();
 
             await transaction.CommitAsync();

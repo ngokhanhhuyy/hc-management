@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { useLoaderData } from "react-router";
-import { api } from "#/api";
+import { api, menuItemContracts } from "#/api";
 import type { MenuItemUpsertModel } from "#/models";
-import { displayNames } from "#/localization";
+import { displayNames } from "#/api";
 import { getMenuItemEditorRoutePath } from "#/helpers";
 
 // Child components.
@@ -51,6 +51,7 @@ export default function MenuItemUpsertPanel(): React.ReactNode {
       resourceName="menuItem"
       editorRoutePath={getMenuItemEditorRoutePath()}
       model={model}
+      nameMaxLength={menuItemContracts.nameMaxLength}
       onModelUpdated={(updatedData) => setModel(m => ({ ...m, ...updatedData }))}
       onCreatingAsync={handleCreatingAsync}
       onUpdatingAsync={handleUpdatingAsync}

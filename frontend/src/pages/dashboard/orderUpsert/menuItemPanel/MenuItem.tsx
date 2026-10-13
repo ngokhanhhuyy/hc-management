@@ -1,5 +1,5 @@
-import React from "react";
-import type { MenuItemBasicModel } from "#/models";
+import React, { useMemo } from "react";
+import type { MenuItemBasicModel, OrderItemUpsertModel } from "#/models";
 import { joinClassName, getDisplayAmountText } from "#/helpers";
 
 // Child components.
@@ -8,19 +8,28 @@ import { FoodIcon } from "#/components/ui";
 // Props.
 type MenuItemProps = {
   model: MenuItemBasicModel;
-  pickedQuantity: number;
+  pickedOrderItems: OrderItemUpsertModel[];
+  className?: string;
   onClick(): any;
 };
 
 // Components.
 export default function MenuItem(props: MenuItemProps): React.ReactNode {
+  // Computed.
+  const pickedQuantity = useMemo(() => {
+    return props.pickedOrderItems
+      .filter(pi => pi.menuItem.id == props.model.id)
+      .reduce((total, item) => total + item.quantity, 0);
+  }, [props.pickedOrderItems]);
+
   // Templates.
   return (
     <button
       className={joinClassName(
         "menu-item flex flex-col overflow-hidden h-full flex-1 cursor-pointer transition-shadow duration-150",
         "border border-black/10 hover:border-blue-600/50 hover:text-blue-600",
-        "rounded-lg hover:shadow-lg transition-all duration-150 relative"
+        "rounded-lg hover:shadow-lg transition-all duration-150 relative",
+        props.className
       )}
       onClick={props.onClick}
     >
@@ -62,9 +71,9 @@ export default function MenuItem(props: MenuItemProps): React.ReactNode {
         </div>
       </div>
       
-      {props.pickedQuantity > 0 && (
+      {pickedQuantity > 0 && (
         <div className="alert alert-red-outline in-[.menu-item:hover]:alert-red alert-sm absolute top-1.5 right-1.5 min-w-5">
-          {props.pickedQuantity}
+          {pickedQuantity}
         </div>
       )}
     </button>

@@ -20,8 +20,9 @@ export default function MenuCategory(props: MenuCategoryProps): React.ReactNode 
       type="button"
       className={joinClassName(
         "menu-category btn flex-none w-fit rounded-lg px-3 cursor-pointer",
-        "transition-all duration-200 whitespace-nowrap shadow-xs",
-        props.isSelected ? "btn-primary" : undefined
+        "transition-all duration-200 whitespace-nowrap shadow-xs min-w-20",
+        !props.isSelected && "shadow-none",
+        props.isSelected ? "btn-primary" : (props.model == null && "btn-primary-outline")
       )}
       onClick={props.onSelected}
     >

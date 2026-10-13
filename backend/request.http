@@ -109,8 +109,15 @@ DELETE {{basePath}}/orders/1
 Cookie: {{accessCookie}}
 
 ###
-# @name OrderDefaultListParameters
-GET {{basePath}}/orders/default-list-parameters
+# @name ReportRevenueByPeriod
+GET {{basePath}}/report/get-revenue-by-period?period=Last7Days
+Content-Type: application/json
+Cookie: {{accessCookie}}
+
+###
+# @name ReportTurnoverCountByPeriod
+GET {{basePath}}/report/get-turnover-count-by-period?period=Today
+Content-Type: application/json
 Cookie: {{accessCookie}}
 
 ###

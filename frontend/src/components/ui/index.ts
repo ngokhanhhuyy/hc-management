@@ -1,5 +1,6 @@
 export * from "./TabPanel";
 export * from "./FoodIcon";
+export * from "./Paginator";
 export { default as BaseModal } from "./modals/BaseModal";
 export { default as ConfirmationModal, type ConfirmationModalHandler } from "./modals/ConfirmationModal";
 export { default as FormSubmissionFailedModal } from "./modals/FormSubmissionFailedModal";

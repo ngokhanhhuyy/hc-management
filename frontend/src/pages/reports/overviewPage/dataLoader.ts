@@ -1,4 +1,4 @@
-import { api, type OrderListResponseDto } from "#/api";
+import { api, defaultOrderListRequestDto, type OrderListResponseDto } from "#/api";
 import { createOrderListModel, createOrderDetailModel, type OrderListModel, type OrderDetailModel } from "#/models";
 
 export type OrderPageDataLoadedResult = {
@@ -26,10 +26,9 @@ export async function loadDataAsync(id?: number): Promise<OrderPageDataLoadedRes
 export async function loadOrderListAsync(model?: OrderListModel): Promise<OrderListModel> {
   let responseDto: OrderListResponseDto;
   if (!model) {
-    const defaultRequestDto = await api.order.getDefaultListParametersAsync();
-    responseDto = await api.order.getListAsync(defaultRequestDto);
+    responseDto = await api.order.getListAsync(defaultOrderListRequestDto);
 
-    return createOrderListModel().mapFromRequestDto(defaultRequestDto).mapFromResponseDto(responseDto);
+    return createOrderListModel().mapFromRequestDto(defaultOrderListRequestDto).mapFromResponseDto(responseDto);
   }
 
   responseDto = await api.order.getListAsync(model.toRequestDto());

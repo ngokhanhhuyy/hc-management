@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { useParams, useLocation, Outlet, Link } from "react-router";
-import { displayNames } from "#/localization";
+import { displayNames } from "#/api";
 import { compute, joinClassName } from "#/helpers"; 
 
 // Child components.

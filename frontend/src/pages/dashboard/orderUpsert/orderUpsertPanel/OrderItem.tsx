@@ -11,6 +11,7 @@ type OrderItemProps = {
   onUpdated(updatedData: Partial<OrderItemUpsertModel>): any;
   onDeleted(): any;
   index: number;
+  disabled: boolean;
 };
 
 // Components.

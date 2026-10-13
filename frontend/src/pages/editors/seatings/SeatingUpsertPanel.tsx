@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useLoaderData } from "react-router";
-import { api } from "#/api";
+import { api, seatingContracts } from "#/api";
 import type { SeatingUpsertModel } from "#/models";
 import { getSeatingEditorRoutePath } from "#/helpers";
 
@@ -29,6 +29,7 @@ export default function SeatingUpsertPanel(): React.ReactNode {
       resourceName="seating"
       editorRoutePath={getSeatingEditorRoutePath()}
       model={model}
+      nameMaxLength={seatingContracts.nameMaxLength}
       onModelUpdated={(updatedData) => setModel(m => ({ ...m, ...updatedData }))}
       onCreatingAsync={handleCreatingAsync}
       onUpdatingAsync={handleUpdatingAsync}

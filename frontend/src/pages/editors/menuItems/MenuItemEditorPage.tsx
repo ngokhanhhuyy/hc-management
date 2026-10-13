@@ -1,7 +1,6 @@
 import React, { useState, useRef, useMemo, useEffect } from "react";
 import { useLoaderData } from "react-router";
-import { api, MenuItemListSortingCriterion } from "#/api";
-import { displayNames } from "#/localization";
+import { api, displayNames, MenuItemListSortingCriterion } from "#/api";
 import { useThrottledState } from "#/hooks";
 import {
   createMenuCategoryBasicModel,
@@ -21,6 +20,7 @@ import {
 import EditorPage from "../base/EditorPage";
 import { Squares2X2Icon, TagIcon, CurrencyDollarIcon } from "@heroicons/react/24/outline";
 import { FormField, TextInput, SelectInput, type SelectInputOption } from "#/components/form";
+import { Paginator } from "#/components/ui"; 
 
 // Components.
 export default function MenuItemEditorPage(): React.ReactNode {
@@ -95,6 +95,7 @@ export default function MenuItemEditorPage(): React.ReactNode {
   }, [
     throttledModel.sortByAscending,
     throttledModel.sortByCriterion,
+    throttledModel.page,
     throttledModel.searchContent,
     throttledModel.category
   ]);
@@ -156,6 +157,19 @@ export default function MenuItemEditorPage(): React.ReactNode {
             </FormField>
           </div>
         </div>
+      )}
+      renderLowerArea={(isEditorRoutePath, semiTransparentClassName) => (
+        <>
+          {throttledModel.pageCount > 0 && (
+            <Paginator
+              className={joinClassName(!isEditorRoutePath && semiTransparentClassName)}
+              page={throttledModel.page}
+              pageCount={throttledModel.pageCount}
+              onPageChanged={(page) => setModel(m => ({ ...m, page }))}
+              getPageButtonClassName={(_, isActive) => isActive ? "btn btn-primary" : "btn"}
+            />
+          )}
+        </>
       )}
     />
   );

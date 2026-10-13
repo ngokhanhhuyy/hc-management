@@ -11,7 +11,7 @@ import {
 export async function loadMenuItemListDataAsync(): Promise<MenuItemListModel> {
   const responseDto = await api.menuItem.getListAsync();
 
-  return createMenuItemListModel().mapFromRequestDto(defaultMenuItemListRequestDto).mapFromResponseDto(responseDto);
+  return createMenuItemListModel().mapFromResponseDto(responseDto);
 }
 
 export type MenuItemUpsertLoadedData = {

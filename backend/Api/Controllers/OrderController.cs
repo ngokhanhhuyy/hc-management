@@ -1,7 +1,6 @@
 using HCManagement.Core.Features.Orders;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace HCManagement.Api.Controllers;
 
@@ -87,14 +86,6 @@ public class OrderController : ControllerBase
     {
         await _service.DeleteAsync(id);
         return Ok();
-    }
-
-    [HttpGet("default-list-parameters")]
-    [ProducesResponseType<OrderListRequestDto>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetDefaultListParameters()
-    {
-        await Task.CompletedTask;
-        return Ok(new OrderListRequestDto());
     }
     #endregion
 }

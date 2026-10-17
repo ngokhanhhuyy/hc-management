@@ -33,6 +33,13 @@ Cookie: {{accessCookie}}
 }
 
 ###
+# @name GetCallerDetail
+// @no-log
+GET {{host}}/api/authentication/get-caller-detail
+Content-Type: application/json
+Cookie: {{accessCookie}}
+
+###
 # @name UserDetail
 GET {{basePath}}/users/1
 Content-Type: application/json

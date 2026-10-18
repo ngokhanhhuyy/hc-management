@@ -31,6 +31,6 @@
   },
   "dependencies": {
     "@lucide/svelte": "^1.58.0",
-    "sv-router": "^0.19.0"
+    "svelte-router": "npm:sv-router"
   }
 }

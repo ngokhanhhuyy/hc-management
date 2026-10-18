@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Component } from "svelte";
-  import { routerStore, type RouteName } from "./stores";
+  import { authenticationStore, routerStore, type RouteName } from "./stores";
   import MainPageLayout from "#/components/layouts/MainPageLayout.svelte";
 
   // Computed.=
@@ -18,11 +18,9 @@
 </script>
 
 {#await PagePromise then { default: Page }}
-  {#if routerStore.routeName === "SignIn"}
+  {#if routerStore.routeName === "SignIn" && !authenticationStore.isAuthenticated}
     <Page />
   {:else}
-    <MainPageLayout>
-      <Page />
-    </MainPageLayout>
+    <MainPageLayout PageComponent={Page} />
   {/if}
 {/await}

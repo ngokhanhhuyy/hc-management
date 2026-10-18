@@ -1,28 +1,42 @@
 <script lang="ts">
-  import type { Snippet } from "svelte"; 
-  import { api } from "#/api";
+  import type { Component } from "svelte"; 
+  import { api, AuthenticationError } from "#/api";
   import { authenticationStore, routerStore } from "#/stores";
   import TopBar from "./TopBar.svelte";
   import NavigationMenu from "./NavigationMenu.svelte";
 
   // Props.
-  let props: { children: Snippet } = $props();
+  let { PageComponent }: { PageComponent: Component } = $props();
+  console.log(authenticationStore.isAuthenticated);
+
+  // Callbacks.
+  async function clearAccessCookieAsync(): Promise<void> {
+    try {
+      await api.authentication.clearAccessCookieAsync();
+    } catch (error) {
+      if (error instanceof AuthenticationError) {
+        return;
+      }
+
+      throw error;
+    } finally {
+      routerStore.setRoute("SignIn");
+    }
+  }
 
   // Effects.
   $effect(() => {
-    console.log(authenticationStore.isAuthenticated);
     if (!authenticationStore.isAuthenticated) {
-      api.authentication.clearAccessCookieAsync().finally(() => routerStore.setRoute("SignIn"));
+      clearAccessCookieAsync();
     }
   });
 </script>
 
 {#if authenticationStore.isAuthenticated}
   <TopBar />
-
   <div class="hidden lg:grid grid-cols-[200px_1fr] max-w-350 w-full mx-auto gap-3 p-3 mt-(--topbar-height) h-fit">
     <NavigationMenu />
-    {@render props.children()}
+    <PageComponent />
   </div>
 
   <div class="flex flex-col lg:hidden justify-center items-center size-full opacity-30">

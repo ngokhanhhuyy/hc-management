@@ -1,0 +1,32 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "es2023",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "module": "esnext",
+    "types": ["vite/client"],
+    "noEmit": true,
+    "rootDirs": ["."],
+    "paths": {
+      "#/*": ["./src/*"]
+    },
+    "allowArbitraryExtensions": true,
+
+    /* Linting */
+    "esModuleInterop": true,
+    "verbatimModuleSyntax": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "moduleDetection": "force",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  // "vueCompilerOptions": {
+  //   // "strictTemplates": true,
+  //   // "fallthroughAttributes": true,
+  // },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
+}

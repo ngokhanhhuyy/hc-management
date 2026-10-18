@@ -4,7 +4,7 @@ import { LayoutGridIcon } from '@lucide/vue';
 
 // Props and emits.
 const props = defineProps<{ model: SeatingBasicModel }>();
-const emit = defineEmits<{ (event: 'click'): void }>();
+const emit = defineEmits<{ click: [] }>();
 </script>
 
 <template>

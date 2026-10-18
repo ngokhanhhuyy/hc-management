@@ -38,8 +38,8 @@ const props = withDefaults(defineProps<{
 });
 
 const emit = defineEmits<{
-  (event: 'failed', result: TUpsertResult): void,
-  (event: 'submissionFailed', error: Error, errorHandled: boolean): void;
+  succeeded: [result: TUpsertResult],
+  failed: [error: Error, errorHandled: boolean]
 }>();
 
 // States.
@@ -90,17 +90,17 @@ async function handleUpsertingAsync(event: SubmitEvent): Promise<void> {
 
   try {
     const result = await props.action();
-    emit('failed', result);
+    emit('succeeded', result);
     submissionState.value = 'submissionSucceeded';
   } catch (error) {
     submissionState.value = 'notSubmitting';
     if (error instanceof ValidationError || error instanceof OperationError) {
       errorCollection.value.mapFromApplicationError(error);
-      emit('submissionFailed', error, true);
+      emit('failed', error, true);
       return;
     }
 
-      emit('submissionFailed', error as Error, false);
+      emit('failed', error as Error, false);
     throw error;
   }
 }

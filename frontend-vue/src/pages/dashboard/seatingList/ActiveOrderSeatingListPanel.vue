@@ -7,7 +7,7 @@ const props = defineProps<{ model: SeatingBasicModel[] }>();
 </script>
 
 <template>
-  <div class="panel">
+  <div class="panel h-fit">
     <div class="panel-header">
       <span class="panel-header-title">
         Bàn ăn đang có khách
@@ -15,11 +15,11 @@ const props = defineProps<{ model: SeatingBasicModel[] }>();
     </div>
 
     <div class="panel-body p-3">
-      <div class="panel-body-area p-3">
-        <ul class="list-group list-group-flush">
-          <li v-for="seating in model" :key="seating.id" class="list-group-item flex justify-start items-start gap-3">
+      <div class="panel-body-area">
+        <ul v-if="!model.length" class="list-group list-group-flush">
+          <li v-for="seating in model" :key="seating.id" class="list-group-item item">
             <div class="img-thumbnail size-11 flex justify-center items-center rounded-md">
-              <LayoutGridIcon class="opacity-50 size-4" :stroke-width="1" />
+              <LayoutGridIcon class="opacity-35 size-4.5" :stroke-width="1" />
             </div>
 
             <div class="flex flex-col flex-1">
@@ -32,7 +32,25 @@ const props = defineProps<{ model: SeatingBasicModel[] }>();
             </div>
           </li>
         </ul>
+        
+        <div v-else class="flex justify-center items-center py-10">
+          <span class="opacity-50 text-center">
+            Tất cả các bàn đều đang trống
+          </span>
+      </div>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+@import "#/assets/css/style.css";
+
+.item {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  gap: --spacing(2);
+  padding: --spacing(2);
+}
+</style>

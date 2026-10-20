@@ -20,6 +20,9 @@ importers:
       vue-router:
         specifier: ^5.4.0
         version: 5.4.0(@vue/compiler-sfc@3.5.44)(pinia@4.1.0(@vue/devtools-api@8.2.1)(typescript@6.0.3)(vue@3.5.44(typescript@6.0.3)))(rolldown@1.2.14)(vite@8.3.4(@types/node@24.19.2)(jiti@2.7.0))(vue@3.5.44(typescript@6.0.3))
+      vuegular-template:
+        specifier: link:../../vuegular-template
+        version: link:../../vuegular-template
     devDependencies:
       '@eslint/js':
         specifier: ^10.0.1

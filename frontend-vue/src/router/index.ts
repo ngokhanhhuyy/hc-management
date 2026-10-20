@@ -5,6 +5,7 @@ import RootLayout from '#/components/layouts/RootLayout.vue';
 import MainPageLayout from '#/components/layouts/MainPageLayout.vue';
 import SignInPage from '#/pages/authentication/SignInPage.vue';
 import SeatingListPage from '#/pages/dashboard/seatingList/SeatingListPage.vue';
+import OrderUpsertPage from '#/pages/dashboard/orderUpsert/OrderUpsertPage.vue';
 import BlankPage from '#/pages/BlankPage.vue';
 
 const routes: Readonly<RouteRecordRaw[]> = [
@@ -24,7 +25,7 @@ const routes: Readonly<RouteRecordRaw[]> = [
           {
             path: ':id(\\d+)',
             name: 'orderUpsert',
-            component: BlankPage
+            component: OrderUpsertPage
           },
           {
             path: 'chinh-sua',

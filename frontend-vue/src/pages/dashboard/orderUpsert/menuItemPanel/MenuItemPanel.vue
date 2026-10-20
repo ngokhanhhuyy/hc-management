@@ -10,6 +10,7 @@ import {
 import { Form, FormField, TextInput } from '#/components/form';
 import MenuItem from './MenuItem.vue';
 import MenuCategory from './MenuCategory.vue';
+import { Paginator } from '#/components/ui';
 import { XIcon, SearchIcon } from '@lucide/vue';
 
 // Props and emits.
@@ -170,6 +171,8 @@ watch([itemListModel.pageCount, itemListModel.searchContent, itemListModel.categ
 </template>
 
 <style scoped>
+@import '#/assets/css/style.css';
+
 .form {
   background-color: --alpha(var(--color-black) / 5%);
   border: 1px solid --alpha(var(--color-black) / 10%);

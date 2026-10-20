@@ -49,6 +49,8 @@ const pickedQuantity = computed(() => {
 </template>
 
 <style scoped>
+@import '#/assets/css/style.css';
+
 .menu-item-button {
   display: flex;
   flex-direction: column;
@@ -109,9 +111,9 @@ const pickedQuantity = computed(() => {
 }
 
 .amount-alert {
-  @apply alert alert-blue-outline alert-sm;
   transition-property: background-color, border-color, color;
   transition-duration: .15s;
+  @apply alert alert-blue-outline alert-sm;
 }
 
 .menu-item-button:hover .amount-alert {

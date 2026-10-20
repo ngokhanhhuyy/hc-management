@@ -23,6 +23,8 @@ const className = computed<ClassValue>(() => ['menu-category-button', props.isSe
 </template>
 
 <style scoped>
+@import '#/assets/css/style.css';
+
 .menu-category-button {
   @apply btn;
   flex: none;

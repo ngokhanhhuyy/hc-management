@@ -1,0 +1,149 @@
+export const displayNames = {
+  user: 'Người dùng',
+  role: 'Vị trí',
+  photo: 'Hình ảnh',
+  announcement: 'Thông báo',
+  id: 'Mã số',
+  name: 'Tên',
+  account: 'Tài khoản',
+  userName: 'Tên đăng nhập',
+  password: 'Mật khẩu',
+  currentPassword: 'Mật khẩu hiện tại',
+  newPassword: 'Mật khẩu mới',
+  status: 'Tình trạng',
+  createdDateTime: 'Ngày tạo',
+  lastUpdatedDateTime: 'Ngày cập nhật',
+  createdUser: 'Nhân viên tạo',
+  lastUpdatedUser: 'Nhân viên cập nhật',
+  note: 'Ghi chú',
+  unit: 'Đơn vị',
+  defaultAmountBeforeVatPerUnit: 'Giá niêm yết',
+  defaultVatPercentagePerUnit: 'Thuế VAT mặc định',
+  amount: 'Số tiền',
+  amountBeforeVatPerUnit: 'Số tiền trước thuế',
+  vatAmount: 'Thuế VAT',
+  vatPercentagePerUnit: 'Hệ số thuế',
+  seating: 'Bàn ăn',
+  menuItem: 'Món ăn',
+  index: 'Chỉ mục',
+  totalAmount: 'Tổng giá tiền',
+  paidAmount: 'Số tiền đã thanh toán',
+  startingDateTime: 'Ngày giờ bắt đầu',
+  endingDateTime: 'Ngày giờ kết thúc',
+  category: 'Phân loại',
+  isPinned: 'Được đánh dấu',
+  order: 'Gọi món',
+  orderItem: 'Mục gọi món',
+  sortByCriterion: 'Tiêu chí sắp xếp',
+  sortByAscending: 'Thứ tự sắp xếp',
+  searchByField: 'Trường tìm kiếm',
+  searchContent: 'Nội dung tìm kiếm',
+  page: 'Trang',
+  resultsPerPage: 'Kết quả mỗi trang',
+  pageCount: 'Số trang',
+  resultsCount: 'Số kết quả',
+  results: 'Kết quả',
+  thumbnailFile: 'File ảnh xem trước',
+  rangeFrom: 'Khoảng bắt đầu',
+  rangeTo: 'Khoảng kết thúc',
+  rangeType: 'Kiểu khoảng',
+  rangeLength: 'Độ dài khoảng',
+  file: 'File',
+  updatedReason: 'Lý do chỉnh sửa',
+  monthlyStats: 'Thống kê tháng',
+  year: 'Năm',
+  dailyStats: 'Thống kê theo ngày',
+  recordedDate: 'Ngày thống kê',
+  recordedMonth: 'Tháng thống kê',
+  recordedYear: 'Năm thống kê',
+  recordedMonthAndYear: 'Tháng và năm thông kê',
+  intervalInMinutes: 'Số phút hiệu lực',
+  statsDate: 'Ngày thống kê',
+  home: 'Trang chủ',
+  creteria: 'Tiêu chí',
+  count: 'Số lượng',
+  date: 'Ngày',
+  day: 'Ngày',
+  quantity: 'Số lượng',
+  default: 'Mặc định',
+  period: 'Khoảng thời gian'
+} as const;
+
+export const errorMessages = {
+  notNull: '{PropertyName} không được để trống.',
+  notEmpty: '{PropertyName} không được để trống.',
+  notEqual: '{PropertyName} phải bằng {ComparisonValue}.',
+  minimumLength: '{PropertyName} phải chứa tối thiểu {MinLength} ký tự.',
+  maximumLength: '{PropertyName} chỉ được chứa tối đa {MaxLength} ký tự.',
+  stringLength: '{PropertyName} phải chứa trong khoảng từ {MinLength} đến {MaxLength} ký tự.',
+  collectionMinimumLength: '{PropertyName} phải chứa tối thiểu {MinLength} phần tử.',
+  collectionMaximumLength: '{PropertyName} chỉ được chứa tối đa {MaxLength} phần tử.',
+  collectionLength: '{PropertyName} chỉ được chứa trong khoảng từ {MinLength} đến {MaxLength} phần tử.',
+  lessThan: '{PropertyName} phải có giá trị nhỏ hơn {ComparisonValue}.',
+  lessThanOrEqual: '{PropertyName} phải có giá trị nhỏ hơn {ComparisonValue}.',
+  greaterThan: '{PropertyName} phải có giá trị lớn hơn {ComparisonValue}.',
+  greaterThanOrEqual: '{PropertyName} phải có giá trị lớn hơn {ComparisonValue}.',
+  earlierThan: '{PropertyName} phải đại diện cho thời gian sớm hơn "{ComparisonValue}".',
+  earlierThanOrEqual: '{PropertyName} phải đại diện cho thời gian sớm hơn hoặc bằng "{ComparisonValue}".',
+  laterThan: '{PropertyName} phải đại diện cho thời gian muộn hơn "{ComparisonValue}"',
+  laterThanOrEqual: '{PropertyName} phải đại diện cho thời gian muộn hơn hoặc bằng "{ComparisonValue}".',
+  invalid: '{PropertyName} không hợp lệ.',
+  earlierThanOrEqualToNow: '{PropertyName} phải là ngày giờ trước hoặc trùng với thời điểm hiện tại ({ComparisonValue}).',
+  earlierThanOrEqualToToday: '{PropertyName} phải là ngày trước hoặc trùng với ngày hôm nay ({ComparisonValue}).',
+  null: '{PropertyName} phải chứa giá trị null.',
+  photosCannotContainsMoreThanOneThumbnail: 'Danh sách {Photos} không thể chứa nhiều hơn 1 ảnh {Thumbnail}.',
+  undefined: 'Đã xảy ra lỗi không xác định.',
+  duplicated: '{PropertyName} đã tồn tại.',
+  notFound: '{ResourceName} không tồn tại.',
+  notFoundByProperty: "{ResourceName} có {PropertyName} '{AttemptedValue}' không tồn tại.",
+  imageFormatNotAllowed: 'Hình ảnh có định dạng không được hỗ trợ.',
+  incorrect: '{PropertyName} không chính xác.',
+  mismatchedWith: '{PropertyName} không khớp với {ComparisonPropertyName}.',
+  invalidUserNamePattern: '{PropertyName} chỉ được chứa chữ cái hoặc chữ số.',
+  notAvailable: '{ResourceName} hiện đang không khả dụng.',
+  notAvailableByProperty: "{ResourceName} có {PropertyName} '{AttemptedValue}' hiện đang không khả dụng.",
+  updateRestricted: '{ResourceName} không thể được chỉnh sửa do liên kết với các tài nguyên khác.',
+  alreadyDeleted: '{ResourceName} đã bị xoá từ trước.',
+  deleteRestricted: '{ResourceName} không thể được xoá do liên kết với các tài nguyên khác.',
+  userAlreadyInRole: 'Người dùng hiện đã được thêm vào vị trí {RoleName} từ trước.',
+  userNotInRole: 'Người dùng không thuộc về vị trí {RoleName} từ trước.',
+  paymentAlreadyCompleted: '{ResourceName} đã được thanh toán đầy đủ, Không thể thanh toán thêm.',
+  modificationTimeExpired: '{ResourceName} đã bị khoá do quá hạn chỉnh sửa/xoá.',
+  paidAmountIsGreaterThanRemainingDebtAmount: 'Số tiền thanh toán phải nhỏ hơn số tiền nợ của khách hàng.',
+  negativeRemainingDebtAmount: 'Với giá trị đã nhập, khoản nợ còn lại của khách hàng này sẽ trở thành số âm.',
+  negativeProductStockingQuantity: 'Không đủ số lượng hàng trong kho.',
+  cannotSetDateTimeAfterLocked: '{ResourceName} đã bị khoá, không thể chỉnh sửa {PropertyName}.',
+  navigationPropertyHasNotBeenLoaded: "Navigation property \"{PropertyName}\" hasn't been loaded yet."
+} as const;
+
+export const authenticationContracts = {
+  passwordMinLength: 3
+} as const;
+
+export const menuCategoryContracts = {
+  nameMinLength: 3,
+  nameMaxLength: 15
+} as const;
+
+export const menuItemContracts = {
+  nameMinLength: 3,
+  nameMaxLength: 35,
+  unitMaxLength: 12,
+  defaultPriceBeforeVatPerUnitMinValue: 0,
+  defaultVatPercentagePerUnitMinValue: 0,
+  defaultVatPercentagePerUnitMaxValue: 100
+} as const;
+
+export const orderItemContracts = {
+  quantityMinValue: 1,
+  quantityMaxValue: 999
+} as const;
+
+export const seatingContracts = {
+  nameMaxLength: 20
+} as const;
+
+export const userContracts = {
+  userNameMinLength: 5,
+  userNameMaxLength: 20
+} as const;

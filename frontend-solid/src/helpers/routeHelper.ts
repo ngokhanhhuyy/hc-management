@@ -12,7 +12,7 @@ export function getSeatingListRoutePath(): string {
 }
 
 export function getSeatingOrderUpsertRoutePath(seatingId: number): string {
-  return `/bang-dieu-khien/ban-an/${seatingId}`;
+  return `/bang-dieu-khien/goi-mon/${seatingId}`;
 }
 
 export function getDashboardRoutePath(): string {

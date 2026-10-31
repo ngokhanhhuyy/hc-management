@@ -8,7 +8,7 @@ import SeatingListPanel from "./SeatingListPanel";
 // Components.
 export default function SeatingListPage(): JSXElement {
   // Dependencies.
-  let model = $signal<SeatingBasicModel[]>([]);
+  let model = $state<SeatingBasicModel[]>([]);
 
   $mount(async () => {
     const responseDtos = await api.seating.getAllAsync();

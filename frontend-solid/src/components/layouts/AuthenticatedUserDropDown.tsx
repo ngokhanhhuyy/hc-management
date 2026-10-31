@@ -8,8 +8,8 @@ export default function AuthenticatedUserDropDown(): JSXElement {
   const authenticationStore = useAuthenticationStore();
 
   // States.
-  let isUserMenuVisible = $signal<boolean>(false);
-  let isChangePasswordFormModalOpened = $signal<boolean>(false);
+  let isUserMenuVisible = $state<boolean>(false);
+  let isChangePasswordFormModalOpened = $state<boolean>(false);
   let userMenuContainerElementRef: HTMLDivElement;
 
   // Computed.

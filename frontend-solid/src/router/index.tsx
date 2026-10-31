@@ -7,6 +7,7 @@ import RootLayout from "#/components/layouts/RootLayout";
 import MainPageLayout from "#/components/layouts/MainPageLayout";
 import SignInPage from "#/pages/authentication/SignInPage";
 const SeatingListPage = lazy(() => import("#/pages/dashboard/seatingList/SeatingListPage"));
+const OrderUpsertPage = lazy(() => import("#/pages/dashboard/orderUpsert/OrderUpsertPage"));
 
 // Components.
 export function Routes(): JSX.Element {
@@ -19,7 +20,7 @@ export function Routes(): JSX.Element {
         <Route path="/bang-dieu-khien">
           <Route path="/" component={() => <Navigate href={getSeatingListRoutePath()} />} />
           <Route path="/ban-an" component={SeatingListPage} />
-          <Route path="/ban-an/:id" component={() => <span>OrderUpsert</span>} />
+          <Route path="/goi-mon/:id" component={OrderUpsertPage} />
         </Route>
       </Route>
     </Router>

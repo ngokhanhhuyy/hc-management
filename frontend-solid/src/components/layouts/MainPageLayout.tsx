@@ -21,6 +21,8 @@ export default function MainPageLayout(props: MainPageLayoutProps): JSXElement {
     if (error instanceof AuthenticationError) {
       return <Navigate href="/dang-nhap" />;
     }
+
+    throw error;
   };
 
   // Life cycle.
@@ -36,7 +38,6 @@ export default function MainPageLayout(props: MainPageLayoutProps): JSXElement {
   // Template.
   return (
     <ErrorBoundary fallback={(error) => computeFallbackElement(error)}>
-      {authenticationStore.isAuthenticated.toString()}
       <Show when={authenticationStore.isAuthenticated} fallback={<Navigate href={getSignInRoutePath()} />}>
         <TopBar />
         <div class="hidden lg:grid grid-cols-[200px_1fr] max-w-350 w-full mx-auto gap-3 p-3 mt-(--topbar-height) h-fit">

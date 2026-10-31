@@ -47,8 +47,8 @@ export function Form<TUpsertResult>(props: FormProps<TUpsertResult>) {
   } = $destructure(defaultProps);
 
   // States.
-  const errorCollectionModel = $mutable(new ErrorCollectionModel());
-  let submissionState = $signal<SubmissionState>("notSubmitting");
+  const errorCollectionModel = $state(new ErrorCollectionModel());
+  let submissionState = $state<SubmissionState>("notSubmitting");
 
   // Computed.
   const submittingClassName = $memo(() => {

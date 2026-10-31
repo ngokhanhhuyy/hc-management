@@ -33,14 +33,14 @@ export default function SeatingMapItem(props: SeatingMapItemProps): JSXElement {
       )}>
         <span>{props.model.name}</span>
 
-        {props.model.activeOrder && (
+        <Show when={props.model.activeOrder}>
           <div class={joinClassName(
             "alert alert-emerald-outline in-[.seating-list-item:hover]:alert-emerald",
             "top-2 right-2 transition-colors"
           )}>
             Có khách
           </div>
-        )}
+        </Show>
       </div>
     </button>
   );

@@ -14,8 +14,8 @@ export default function SignInPage(): JSXElement {
   const authenticationStore = useAuthenticationStore();
 
   // States.
-  const model = $signal<SignInModel>(new SignInModel());
-  let isSignedIn = $signal<boolean>(false);
+  const model = $state<SignInModel>(new SignInModel());
+  let isSignedIn = $state<boolean>(false);
 
   // Callbacks.
   async function submitAsync(): Promise<void> {

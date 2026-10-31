@@ -1,5 +1,5 @@
 import type { JSX } from "solid-js";
-import { joinClassName, compute } from "#/helpers";
+import { joinClassName } from "#/helpers";
 import { FormFieldContext } from "./FormField";
 
 // Props.
@@ -12,7 +12,7 @@ export type NumberInputProps = {
 } & Omit<JSX.InputHTMLAttributes<HTMLInputElement>, "type" | "autoFocus" | "min" | "max" | "onInput">;
 
 // Component.
-export default function NumberInput(props: NumberInputProps): JSXElement {
+export function NumberInput(props: NumberInputProps): JSXElement {
   // Props.
   const { value, onInput, autoFocus, ...domProps } = $destructure(props);
 
@@ -23,8 +23,8 @@ export default function NumberInput(props: NumberInputProps): JSXElement {
   let elementRef: HTMLInputElement;
 
   // Computed.
-  const computedValue = compute<string>(() => {
-    return toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  const computedValue = $memo<string>(() => {
+    return props.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   });
 
   // Callbacks.

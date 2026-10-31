@@ -24,7 +24,7 @@ export default function NavigationBarItem(props: NavigationBarItemProps): JSXEle
   const className = $memo(() => {
     const names = ["flex items-center gap-2 hover:no-underline px-2 py-1.5 border rounded-lg w-full"];
     if (isActive) {
-      names.push("bg-white border-black/20 font-bold text-blue-700");
+      names.push("bg-white border-black/20 text-blue-700");
     } else {
       names.push("border-transparent text-black/75");
       if (!isDisabled) {

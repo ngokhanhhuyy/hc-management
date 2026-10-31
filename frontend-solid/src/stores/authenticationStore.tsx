@@ -24,7 +24,7 @@ export function useAuthenticationStore() {
 
 export function AuthenticationContextProvider(props: { children: JSXElement }): JSXElement {
   // States.
-  let authenticatedUser = $signal(initialAuthenticatedUser);
+  let authenticatedUser = $state(initialAuthenticatedUser);
   const isAuthenticated = $memo(() => authenticatedUser != null);
   const payload: AuthenticationStore = {
     get authenticatedUser(): UserDetailModel | null {
@@ -62,7 +62,6 @@ export function AuthenticationContextProvider(props: { children: JSXElement }): 
 
   return (
     <Context.Provider value={payload}>
-      123.
       {props.children}
     </Context.Provider>
   );

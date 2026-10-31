@@ -56,14 +56,14 @@ export default function MenuItem(props: MenuItemProps): JSXElement {
             {getDisplayAmountText(props.model.defaultAmountBeforeVatPerUnit, { suffix: " vnđ" })}
           </span>
 
-          {props.model.defaultVatPercentagePerUnit > 0 && (
+          <Show when={props.model.defaultVatPercentagePerUnit > 0}>
             <span class={joinClassName(
               "alert alert-emerald-outline in-[.menu-item:hover]:alert-emerald",
               "alert-sm transition-colors duration-150"
             )}>
               {props.model.defaultVatPercentagePerUnit}%
             </span>
-          )}
+          </Show>
         </div>
       </div>
 

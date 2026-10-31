@@ -28,9 +28,9 @@ type MenuItemListPanelProps = {
 // Component.
 export default function MenuItemListPanel(props: MenuItemListPanelProps): JSXElement {
   // States.
-  const itemListModel = $mutable<MenuItemListModel>(new MenuItemListModel());
-  const categoryListModel = $mutable<MenuCategoryBasicModel[]>([]);
-  let loadingState = $signal<"initialLoading" | "reloading" | null>("initialLoading");
+  const itemListModel = $state<MenuItemListModel>(new MenuItemListModel());
+  const categoryListModel = $state<MenuCategoryBasicModel[]>([]);
+  let loadingState = $state<"initialLoading" | "reloading" | null>("initialLoading");
   let lastRequestId = 0;
 
   // Callbacks.
@@ -159,15 +159,21 @@ export default function MenuItemListPanel(props: MenuItemListPanelProps): JSXEle
 
             <div class="flex flex-col justify-center items-center gap-3 p-3 border-t border-black/15">
               <Show when={itemListModel.items.length > 0} fallback={gridFallback}>
-                <For each={itemListModel.items}>
-                  {(menuItem) => (
-                    <MenuItem
-                      model={menuItem}
-                      pickedOrderItems={props.pickedOrderItems}
-                      onClick={() => props.onPicked?.(menuItem)}
-                    />
-                  )}
-                </For>
+                <div class={joinClassName(
+                  "grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 gap-3 justify-start items-start",
+                  "w-full transition-opacity",
+                  loadingState === "reloading" && "opacity-50"
+                )}>
+                  <For each={itemListModel.items}>
+                    {(menuItem) => (
+                      <MenuItem
+                        model={menuItem}
+                        pickedOrderItems={props.pickedOrderItems}
+                        onClick={() => props.onPicked?.(menuItem)}
+                      />
+                    )}
+                  </For>
+                </div>
               </Show>
             </div>
           </div>

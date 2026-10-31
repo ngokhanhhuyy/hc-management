@@ -17,7 +17,7 @@ export default function SeatingListPanel(props: SeatingListPanelProps): JSXEleme
   const navigate = useNavigate();
 
   // States.
-  let searchContent = $signal<string>("");
+  let searchContent = $state<string>("");
 
   // Templates.
   return (
@@ -43,7 +43,7 @@ export default function SeatingListPanel(props: SeatingListPanelProps): JSXEleme
                   onInput={(content) => searchContent = content}
                 />
 
-                {searchContent && (
+                <Show when={searchContent}>
                   <button
                     type="button"
                     class="btn btn-danger-outline group-has-[input:focus]:border-s-transparent"
@@ -51,7 +51,7 @@ export default function SeatingListPanel(props: SeatingListPanelProps): JSXEleme
                   >
                     <i class="bi bi-x-lg" />
                   </button>
-                )}
+                </Show>
               </div>
             </FormField>
           </div>

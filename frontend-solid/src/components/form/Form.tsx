@@ -96,7 +96,6 @@ export function Form<TUpsertResult>(props: FormProps<TUpsertResult>) {
   }
 
   async function handleSubmissionAsync(event: SubmitEvent): Promise<void> {
-    console.log("upsert");
     event.preventDefault();
     errorCollectionModel.clear();
     submissionState = "submitting";
@@ -108,7 +107,6 @@ export function Form<TUpsertResult>(props: FormProps<TUpsertResult>) {
 
     } catch (error) {
       submissionState = "notSubmitting";
-      console.log(error instanceof ValidationError || error instanceof OperationError);
       if (error instanceof ValidationError || error instanceof OperationError) {
         errorCollectionModel.mapFromApplicationError(error);
         onFailed?.(error, true);

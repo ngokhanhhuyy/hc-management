@@ -16,13 +16,11 @@ export class SeatingDetailModel {
 export class SeatingUpsertModel {
   public name: string = "";
 
-  public constructor(responseDto?: SeatingDetailResponseDto) {
-    if (responseDto) {
-      this.name = responseDto.name;
-    }
+  public mapFromResponseDto(responseDto: SeatingDetailResponseDto) {
+    this.name = responseDto.name;
   }
 
-  toRequestDto(): SeatingUpsertRequestDto {
+  public toRequestDto(): SeatingUpsertRequestDto {
     return {
       name: this.name
     };

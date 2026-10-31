@@ -9,7 +9,7 @@ import { joinClassName } from "#/helpers";
 
 // Child components.
 import { Form, FormField, TextInput } from "#/components/form";
-// import { Paginator } from "#/components/ui";
+import { Paginator } from "#/components/ui";
 import MenuItem from "./MenuItem";
 import MenuCategory from "./MenuCategory";
 
@@ -178,16 +178,16 @@ export default function MenuItemListPanel(props: MenuItemListPanelProps): JSXEle
             </div>
           </div>
 
-          {/* {itemListModel.pageCount > 1 && (
+          <Show when={itemListModel.pageCount > 1}>
             <div class="panel-footer">
               <Paginator
                 page={itemListModel.page}
                 pageCount={itemListModel.pageCount}
-                onPageChanged={(page) => setItemListModel(m => ({ ...m, page }))}
+                onPageChanged={(page) => itemListModel.page = page}
                 getPageButtonClassName={(_, isActive) => isActive ? "btn btn-primary" : "btn"}
               />
             </div>
-          )} */}
+          </Show>
         </div>
       </div>
     </Show>

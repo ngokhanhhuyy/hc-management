@@ -12,21 +12,22 @@ type BaseModalProps = {
   closeOnEscapeKeyDown?: boolean;
 };
 
-export function BaseModal(props: BaseModalProps) {
+export default function BaseModal(props: BaseModalProps) {
   // States.
   let elementRef: HTMLDivElement | null;
 
   // Computed.
   const backgroundClassName = $memo<string | undefined>(() => {
     return joinClassName(
-      "w-screen h-screen z-1000 contain-[layout-paint]0 fixed top-0 left-0 ease-in-out backdrop-blur-lg",
-      props.isOpen ? "flex justify-center items-center" : "hidden"
+      "w-screen h-screen z-1000 contain-[layout-paint] fixed top-0 left-0 ease-in-out backdrop-blur-lg",
+      "bg-black/40 flex justify-center items-center transition-opacity duration-150",
+      props.isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
     );
   });
 
   const modalClassName = $memo<string | undefined>(() => {
     return joinClassName(
-      "bg-white dark:bg-neutral-900 border border-black/25 rounded-xl shadow max-w-lg w-full mx-3 sm:mx-auto",
+      "bg-white dark:bg-neutral-900 border border-black/50 rounded-xl shadow max-w-lg w-full mx-3 sm:mx-auto",
       props.modalClassName,
     );
   });

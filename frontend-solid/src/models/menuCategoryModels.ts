@@ -4,11 +4,9 @@ export class MenuCategoryUpsertModel {
   public name: string = "";
   public sortingIndex: number = -1;
 
-  public constructor(responseDto?: MenuCategoryBasicResponseDto) {
-    if (responseDto) {
-      this.name = responseDto.name;
-      this.sortingIndex = responseDto.sortingIndex ?? -1;
-    }
+  public mapFromResponseDto(responseDto: MenuCategoryBasicResponseDto): void {
+    this.name = responseDto.name;
+    this.sortingIndex = responseDto.sortingIndex ?? -1;
   }
 
   public toRequestDto(): MenuCategoryUpsertRequestDto {

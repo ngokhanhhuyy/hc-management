@@ -44,7 +44,6 @@ export function AuthenticationContextProvider(props: { children: JSXElement }): 
   async function signInAsync(model: SignInModel): Promise<void> {
     await api.authentication.getAccessCookieAsync(model.toRequestDto());
     authenticatedUser = await getAuthenticatedUserAsync();
-    console.log(authenticatedUser);
   }
 
   async function signOutAsync(): Promise<void> {

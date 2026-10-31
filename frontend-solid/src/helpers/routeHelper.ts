@@ -34,7 +34,7 @@ export function getSeatingEditorCreateRoutePath(): string {
 }
 
 export function getSeatingEditorUpdateRoutePath(id: number): string {
-  return `${getSeatingEditorRoutePath}/${id}`;
+  return `${getSeatingEditorRoutePath()}/${id}`;
 }
 
 // Menu item editor routes.

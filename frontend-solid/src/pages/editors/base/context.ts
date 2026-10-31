@@ -1,0 +1,9 @@
+export type EditorPageContextPayload = {
+  requestReload(): any;
+};
+
+const EditorPageContext = $createContext<EditorPageContextPayload>({
+  requestReload: () => { }
+});
+
+export default EditorPageContext;

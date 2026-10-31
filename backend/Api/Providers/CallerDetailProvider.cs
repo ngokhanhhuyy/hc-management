@@ -45,5 +45,4 @@ public class CallerDetailProvider : ICallerDetailProvider
         return new("Caller detail has not been loaded yet.");
     }
     #endregion
-        
 }

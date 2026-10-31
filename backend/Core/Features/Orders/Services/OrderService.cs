@@ -186,6 +186,18 @@ internal class OrderService : IOrderService
         int evaluatingOrderItemIndex = -1;
         try
         {
+            List<int> requestedExistingItemIds = requestDto.Items
+                .Where(i => i.Id.HasValue)
+                .Select(i => i.Id)
+                .Cast<int>()
+                .ToList();
+                
+            IEnumerable<OrderItem> deletedItems = order.Items.Where(i => !requestedExistingItemIds.Contains(i.Id));
+            foreach (OrderItem item in deletedItems.Reverse())
+            {
+                order.Items.Remove(item);
+            }
+
             for (int index = 0; index < requestDto.Items.Count; index += 1)
             {
                 evaluatingOrderItemIndex = index;

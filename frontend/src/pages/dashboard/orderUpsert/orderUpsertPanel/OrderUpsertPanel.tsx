@@ -5,7 +5,6 @@ import { joinClassName, getDisplayAmountText, calculateOrderAmount } from "#/hel
 // Child components.
 import { TrashIcon, CurrencyDollarIcon } from "@heroicons/react/24/outline";
 import BillModal from "./BillModal";
-import Bill from "./Bill";
 import OrderItem from "./OrderItem";
 
 // Props.

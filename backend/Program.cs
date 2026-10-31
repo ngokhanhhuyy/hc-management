@@ -115,7 +115,7 @@ public static class Program
 
         // Add controllers with JSON serialization policy.
         builder.Services
-            .AddControllersWithViews(options =>
+            .AddControllers(options =>
             {
                 // options.Conventions.Add(new RouteTokenTransformerConvention(new PluralParameterTransformer()));
                 KebabCaseRouteSegmentsTransformer kebabCaseRouteSegmentsTransformer = new();
@@ -147,6 +147,24 @@ public static class Program
 
         // Build application.
         WebApplication app = builder.Build();
+        app.UseMiddleware<RequestLoggingMiddleware>();
+        app.UseExceptionHandler(new ExceptionHandlerOptions
+        {
+            SuppressDiagnosticsCallback = _ => false,
+            ExceptionHandler = async context =>
+            {
+                IResult result = Results.Problem(
+                    statusCode: StatusCodes.Status500InternalServerError,
+                    title: "Internal Server Error",
+                    extensions: new Dictionary<string, object?>
+                    {
+                        ["traceId"] = context.TraceIdentifier
+                    });
+
+                await result.ExecuteAsync(context);
+            }
+        });
+
         app.UseForwardedHeaders(new()
         {
             ForwardedHeaders = ForwardedHeaders.All
@@ -174,8 +192,6 @@ public static class Program
             app.UseHttpsRedirection();
         }
 
-        app.UseMiddleware<RequestLoggingMiddleware>();
-        app.UseDeveloperExceptionPage();
         app.UseRouting();
         app.UseResponseCaching();
         app.UseAuthentication();

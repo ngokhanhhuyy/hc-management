@@ -97,7 +97,7 @@ export default function MenuItemListPanel(props: MenuItemListPanelProps): JSXEle
 
           <div class="panel-body flex flex-col">
             <Form
-              class="bg-black/5 border border-black/10 rounded-lg flex flex-col gap-3 m-3 p-3"
+              class="panel-body-area flex flex-col gap-3 m-3 p-3"
               action={submitAsync}
               onSucceeded={onSubmissionSucceeded}
             >

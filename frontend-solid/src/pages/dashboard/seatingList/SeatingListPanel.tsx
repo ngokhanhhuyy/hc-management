@@ -1,10 +1,11 @@
 import { useNavigate } from "@solidjs/router";
+import { MenuItemListSortingCriterion } from "#/api";
 import type { SeatingBasicModel } from "#/models";
-import { getSeatingOrderUpsertRoutePath, joinClassName } from "#/helpers";
+import { getSeatingOrderUpsertRoutePath, joinClassName, compute, getDisplayNameByKey } from "#/helpers";
 
 // Child components.
 import SeatingListItem from "./SeatingListItem";
-import { FormField, TextInput } from "#/components/form";
+import { FormField, TextInput, SelectInput, type SelectInputOption } from "#/components/form";
 
 // Props.
 type SeatingListPanelProps = {
@@ -17,7 +18,26 @@ export default function SeatingListPanel(props: SeatingListPanelProps): JSXEleme
   const navigate = useNavigate();
 
   // States.
-  let searchContent = $state<string>("");
+  const filters = $state<{ searchContent: string, criterion: string | null; }>({
+    searchContent: "",
+    criterion: null,
+  });
+
+  // Computed.
+  const criterionOptions = compute<SelectInputOption[]>(() => {
+    const options: SelectInputOption[] = [{ value: "", displayName: "Không thiết lập" }];
+    for (const criterion of Object.values(MenuItemListSortingCriterion)) {
+      const key = criterion[0].toLocaleLowerCase() + criterion.slice(1);
+      options.push({ value: criterion, displayName: getDisplayNameByKey(key) ?? undefined });
+    }
+
+    return options;
+  });
+
+  // Life cycle hooks.
+  $mount(() => {
+    filters.criterion = criterionOptions[1].value;
+  });
 
   // Templates.
   return (
@@ -30,7 +50,7 @@ export default function SeatingListPanel(props: SeatingListPanelProps): JSXEleme
 
       <div class="panel-body flex flex-col">
         <div class="p-3 border-b border-black/10">
-          <div class="panel-body-area gap-3 p-3">
+          <div class="panel-body-area grid grid-cols-[3fr_1fr] gap-3 p-3">
             <FormField path="searchContent">
               <div class="form-input-group group">
                 <span class="form-input-group-text px-2">
@@ -38,21 +58,29 @@ export default function SeatingListPanel(props: SeatingListPanelProps): JSXEleme
                 </span>
 
                 <TextInput
-                  class={joinClassName("z-0", searchContent && "not-focus:border-e-transparent")}
-                  value={searchContent}
-                  onInput={(content) => searchContent = content}
+                  class={joinClassName("z-0", filters.searchContent && "not-focus:border-e-transparent")}
+                  value={filters.searchContent}
+                  onInput={(content) => filters.searchContent = content}
                 />
 
-                <Show when={searchContent}>
+                <Show when={filters.searchContent}>
                   <button
                     type="button"
                     class="btn btn-danger-outline group-has-[input:focus]:border-s-transparent"
-                    onClick={() => searchContent = ""}
+                    onClick={() => filters.searchContent = ""}
                   >
                     <i class="bi bi-x-lg" />
                   </button>
                 </Show>
               </div>
+            </FormField>
+
+            <FormField path="sortByCriterion">
+              <SelectInput
+                value={filters.criterion ?? ""}
+                onInput={(criterionAsString) => filters.criterion = criterionAsString || null}
+                options={criterionOptions}
+              />
             </FormField>
           </div>
         </div>
@@ -67,6 +95,16 @@ export default function SeatingListPanel(props: SeatingListPanelProps): JSXEleme
             )}
           </For>
         </div>
+      </div>
+
+      <div class="panel-footer p-3">
+        <FormField path="sortByCriterion">
+          <SelectInput
+            value={filters.criterion ?? ""}
+            onInput={(criterionAsString) => filters.criterion = criterionAsString || null}
+            options={criterionOptions}
+          />
+        </FormField>
       </div>
     </div>
   );

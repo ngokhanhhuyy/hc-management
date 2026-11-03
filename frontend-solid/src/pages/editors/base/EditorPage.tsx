@@ -87,6 +87,12 @@ export default function EditorPage<TBasicModel extends IBasic>(props: EditorPage
     return <i class={joinClassName(className, "text-yellow-500 bi bi-exclamation-triangle-fill")} />;
   }
 
+  const listFallback = (
+    <div class="panel-body-area px-3 py-10 flex justify-center items-center opacity-50">
+      Không có kết quả nào
+    </div>
+  );
+
   return (
     <div class={joinClassName("grid w-full gap-3 h-fit", !children ? "grid-cols-1" : "grid-cols-2")}>
       <div class="panel flex-1">
@@ -107,7 +113,7 @@ export default function EditorPage<TBasicModel extends IBasic>(props: EditorPage
           {props.renderUpperArea?.(isEditorRoutePath, semiTransparentClassName)}
 
           <ul class="list-group bg-black/2.5">
-            <For each={props.model}>
+            <For each={props.model} fallback={listFallback}>
               {(item) => (
                 <li class="list-group-item flex p-0">
                   <div class={joinClassName(
@@ -149,7 +155,7 @@ export default function EditorPage<TBasicModel extends IBasic>(props: EditorPage
               )}
             </For>
           </ul>
-
+          
           {props.renderLowerArea?.(isEditorRoutePath, semiTransparentClassName)}
         </div>
       </div>

@@ -29,7 +29,7 @@
     "shouldGenerateMetadataFile": false,
     "shouldGenerateDtosFile": true,
     "shouldGenerateApiClientFile": true,
-    "directory": "../../frontend/src/api/generated",
+    "directory": "../../frontend-solid/src/api/generated",
     "apiClientFileName": "api.ts",
     "dtoFileName": "dtos.ts",
     "constantsFileName": "constants.ts"

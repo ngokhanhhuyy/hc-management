@@ -8,10 +8,12 @@ import MainPageLayout from "#/components/layouts/MainPageLayout";
 import SignInPage from "#/pages/authentication/SignInPage";
 const SeatingListPage = lazy(() => import("#/pages/dashboard/seatingList/SeatingListPage"));
 const OrderUpsertPage = lazy(() => import("#/pages/dashboard/orderUpsert/OrderUpsertPage"));
-const MenuCategoryEditorPage = lazy(() => import("#/pages/editors/menuCategories/MenuCategoryEditorPage"));
-const MenuCategoryUpsertPanel = lazy(() => import("#/pages/editors/menuCategories/MenuCategoryUpsertPanel"));
 const SeatingCategoryEditorPage = lazy(() => import("#/pages/editors/seatings/SeatingEditorPage"));
 const SeatingUpsertPanel = lazy(() => import("#/pages/editors/seatings/SeatingUpsertPanel"));
+const MenuItemEditorPage = lazy(() => import("#/pages/editors/menuItems/MenuItemEditorPage"));
+const MenuItemUpsertPanel = lazy(() => import("#/pages/editors/menuItems/MenuItemUpsertPanel"));
+const MenuCategoryEditorPage = lazy(() => import("#/pages/editors/menuCategories/MenuCategoryEditorPage"));
+const MenuCategoryUpsertPanel = lazy(() => import("#/pages/editors/menuCategories/MenuCategoryUpsertPanel"));
 
 // Components.
 export function Routes(): JSX.Element {
@@ -34,6 +36,12 @@ export function Routes(): JSX.Element {
             <Route path="/" />
             <Route path="/tao-moi" component={SeatingUpsertPanel} />
             <Route path="/:id" component={SeatingUpsertPanel} />
+          </Route>
+
+          <Route path="/mon-an" component={MenuItemEditorPage}>
+            <Route path="/" />
+            <Route path="/tao-moi" component={MenuItemUpsertPanel} />
+            <Route path="/:id" component={MenuItemUpsertPanel} />
           </Route>
 
           <Route path="/phan-loai" component={MenuCategoryEditorPage}>

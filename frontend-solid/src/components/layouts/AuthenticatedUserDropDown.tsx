@@ -1,6 +1,6 @@
 import { useAuthenticationStore } from "#/stores";
 import { joinClassName } from "#/helpers";
-// import ChangePasswordFormModal from "./ChangePasswordFormModal";
+import ChangePasswordFormModal from "./ChangePasswordFormModal";
 
 // Components.
 export default function AuthenticatedUserDropDown(): JSXElement {
@@ -42,7 +42,7 @@ export default function AuthenticatedUserDropDown(): JSXElement {
     <div class="relative h-full flex justify-start" ref={(element) => userMenuContainerElementRef = element}>
       <button
         type="button"
-        class="btn bg-black/5 hover:bg-black/10 border border-black/10 rounded-full h-full aspect-square"
+        class="btn bg-black/2.5 hover:bg-black/10 border border-black/15 rounded-full h-full aspect-square"
         onClick={() => isUserMenuVisible = true}
       >
         <i class="bi bi-person opacity-50" />
@@ -54,7 +54,7 @@ export default function AuthenticatedUserDropDown(): JSXElement {
           "flex flex-col gap-3 p-3 items-center top-full right-0 mt-1"
         )}>
           <div class={iconAvatarContainerClassName}>
-            <i class="bi bi-person opacity-50 text-3xl" />
+            <i class="bi bi-person opacity-25 text-3xl" />
           </div>
 
           <span>{authenticationStore.authenticatedUser?.userName}</span>
@@ -71,10 +71,10 @@ export default function AuthenticatedUserDropDown(): JSXElement {
         </div>
       </Show>
 
-      {/* <ChangePasswordFormModal
+      <ChangePasswordFormModal
         isOpen={isChangePasswordFormModalOpened}
-        onClosed={() => setIsChangePasswordFormModalOpened(false)}
-      /> */}
+        onClosed={() => isChangePasswordFormModalOpened = false}
+      />
     </div>
   );
 }

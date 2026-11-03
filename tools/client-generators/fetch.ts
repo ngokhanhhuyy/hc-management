@@ -62,7 +62,7 @@ async function convertToErrorAsync(response: Response): Promise<Error> {
     }
 
     default:
-      throw new Error(`Undefined error occurred with payload.`);
+      throw new Error("Undefined error occurred with payload.");
   }
 }
 

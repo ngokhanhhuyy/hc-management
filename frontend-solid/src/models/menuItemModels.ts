@@ -39,6 +39,8 @@ export class MenuItemListModel {
 
   public toRequestDto(): MenuItemListRequestDto {
     return {
+      sortByAscending: this.sortByAscending,
+      sortByCriterion: this.sortByCriterion,
       page: this.page,
       resultsPerPage: this.resultsPerPage,
       categoryId: this.category?.id,
@@ -48,21 +50,24 @@ export class MenuItemListModel {
 }
 
 export class MenuItemUpsertModel {
-  public name: string;
-  public unit: string;
-  public defaultAmountBeforeVatPerUnit: number;
-  public defaultVatPercentagePerUnit: number;
-  public category: MenuCategoryBasicModel | null;
+  public name: string = "";
+  public unit: string = "";
+  public defaultAmountBeforeVatPerUnit: number = 0;
+  public defaultVatPercentagePerUnit: number = 0;
+  public category: MenuCategoryBasicModel | null = null;
 
-  public constructor(responseDto?: MenuItemDetailResponseDto) {
-    this.name = responseDto?.name ?? "";
-    this.unit = responseDto?.unit ?? "";
-    this.defaultAmountBeforeVatPerUnit = responseDto?.defaultAmountBeforeVatPerUnit ?? 0;
-    this.defaultVatPercentagePerUnit = responseDto?.defaultVatPercentagePerUnit ?? 0;
-    this.category = responseDto?.category ? new MenuCategoryBasicModel(responseDto.category) : null;
+  public mapFromResponseDto(responseDto: MenuItemDetailResponseDto): void {
+    this.name = "";
+    this.unit = "";
+    this.defaultAmountBeforeVatPerUnit = 0;
+    this.defaultVatPercentagePerUnit = 0;
+
+    if (responseDto.category) {
+      this.category =new MenuCategoryBasicModel(responseDto.category);
+    }
   }
 
-  toRequestDto(): MenuItemUpsertRequestDto {
+  public toRequestDto(): MenuItemUpsertRequestDto {
     return {
       name: this.name,
       unit: this.unit,

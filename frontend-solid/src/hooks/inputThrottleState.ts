@@ -1,48 +1,35 @@
-type QueueRequest = {
-  id: number;
-  callback: () => Promise<void>;
-};
 
-export function useThrottledState<T>(state: T, delayInMilliseconds: number = 500): T {
-  let throttledState = $state<T>(state);
-  let isInitialRendering = $state<boolean>(true);
-  const queue: QueueRequest[] = [];
-  let latestRequestId = -1;
+export function useThrottledState<T>(state: Accessor<T>, delayInMilliseconds: number = 500): Accessor<T> {
+  const [throttledState, setThrottledState] = createSignal<T>(state());
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  let hasPendingValue = false;
+  let pendingValue: T;
 
-  // Life cycle hooks.
-  $watch([state], () => {
-    if (isInitialRendering) {
-      isInitialRendering = true;
+  // Callbacks.
+  function flushPendingValue(): void {
+    timeoutId = undefined;
+    if (!hasPendingValue) {
       return;
     }
-    
-    const requestId = latestRequestId += 1;
-    const executeAsync = async () => {
-      throttledState = state;
-      await new Promise(resolve => setTimeout(resolve, delayInMilliseconds));
-      if (queue[0].id == requestId) {
-        queue.splice(0, 1);
-      }
 
-      if (queue.length > 0) {
-        queue[0].callback();
-      }
-    };
+    hasPendingValue = false;
+    setThrottledState(() => pendingValue);
+    timeoutId = setTimeout(flushPendingValue, delayInMilliseconds);
+  }
 
-    if (queue.length == 0) {
-      queue[0] = ({
-        id: requestId,
-        callback: executeAsync
-      });
-
-      executeAsync();
-    } else {
-      queue[1] = ({
-        id: requestId,
-        callback: executeAsync
-      });
+  // Life cycle hooks.
+  createEffect(on(state, value => {
+    if (timeoutId === undefined) {
+      setThrottledState(() => value);
+      timeoutId = setTimeout(flushPendingValue, delayInMilliseconds);
+      return;
     }
-  });
+
+    pendingValue = value;
+    hasPendingValue = true;
+  }, { defer: true }));
+
+  onCleanup(() => clearTimeout(timeoutId));
 
   // Results.
   return throttledState;

@@ -1,15 +1,15 @@
 import { defineConfig } from "vite";
 import solid from "vite-plugin-solid";
-import solidCtf from "vite-plugin-solid-ctf";
 import tailwindcss from "@tailwindcss/vite";
+import AutoImport from "unplugin-auto-import/vite";
+import { getSolidImports } from "./auto-imports.ts";
 
 export default defineConfig({
   plugins: [
-    solidCtf({
-      filter: {
-        include: "src/**/*.{tsx,ts,jsx}",
-        exclude: "**/*.test.{tsx,jsx,ts}",
-      },
+    AutoImport({
+      imports: getSolidImports(),
+      dts: false,
+      include: [/\.[tj]sx?$/],
     }),
     solid(),
     tailwindcss(),

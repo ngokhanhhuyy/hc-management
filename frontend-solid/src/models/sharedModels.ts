@@ -8,82 +8,93 @@ import type {
 } from "#/api";
 import { getDisplayAmountText } from "#/helpers";
 
-export class MenuCategoryBasicModel {
-  public readonly id: number;
-  public readonly name: string;
-
-  public constructor(responseDto: MenuCategoryBasicResponseDto) {
-    this.id = responseDto.id;
-    this.name = responseDto.name;
-  }
+export type MenuCategoryBasicModel = {
+  id: number;
+  name: string;
 };
 
-export class MenuItemBasicModel {
-  public readonly id: number;
-  public readonly name: string;
-  public readonly unit: string | null;
-  public readonly defaultAmountBeforeVatPerUnit: number;
-  public readonly defaultVatPercentagePerUnit: number;
-  public readonly category: MenuCategoryBasicModel | null;
-  public readonly isDeleted: boolean;
+export type MenuItemBasicModel = {
+  id: number;
+  name: string;
+  unit: string | null;
+  defaultAmountBeforeVatPerUnit: number;
+  defaultVatPercentagePerUnit: number;
+  category: MenuCategoryBasicModel | null;
+  isDeleted: boolean;
+  readonly displayDefaultAmountBeforeVatPerUnit: string;
+};
 
-  public constructor(responseDto: MenuItemBasicResponseDto | MenuItemDetailResponseDto) {
-    this.id = responseDto.id;
-    this.name = responseDto.name;
-    this.unit = responseDto.unit;
-    this.defaultAmountBeforeVatPerUnit = responseDto.defaultAmountBeforeVatPerUnit;
-    this.defaultVatPercentagePerUnit = responseDto.defaultVatPercentagePerUnit;
-    this.category = responseDto.category ? new MenuCategoryBasicModel(responseDto.category) : null;
+export type SeatingBasicModel = {
+  id: number;
+  name: string;
+  activeOrder: OrderBasicModel | null;
+  isDeleted: boolean;
+};
 
-    const dto = responseDto as MenuItemBasicResponseDto & {
-      isDeleted?: boolean;
-      deletedDateTime?: string | null;
-    };
+export type OrderBasicModel = {
+  id: number;
+  itemAmount: number;
+  isFinished: boolean;
+  readonly displayItemAmount: string;
+};
 
-    this.isDeleted = Object.hasOwn(responseDto, "isDeleted") ? !!dto.isDeleted : dto.deletedDateTime == null;
-  }
+export type UserBasicModel = {
+  id: number;
+  userName: string;
+  isDeleted: boolean;
+};
 
-  public get displayDefaultAmountBeforeVatPerUnit(): string {
-    return getDisplayAmountText(this.defaultAmountBeforeVatPerUnit);
-  }
+export function createMenuCategoryBasicModel(responseDto: MenuCategoryBasicResponseDto): MenuCategoryBasicModel {
+  return {
+    id: responseDto.id,
+    name: responseDto.name
+  };
 }
 
-export class SeatingBasicModel {
-  public readonly id: number;
-  public readonly name: string;
-  public readonly activeOrder: OrderBasicModel | null;
-  public readonly isDeleted: boolean;
-
-  public constructor(responseDto: SeatingBasicResponseDto) {
-    this.id = responseDto.id;
-    this.name = responseDto.name ?? `Bàn không tên ${responseDto.id}`;
-    this.activeOrder = responseDto.activeOrder ? new OrderBasicModel(responseDto.activeOrder) : null;
-    this.isDeleted = responseDto.isDeleted;
+export function createMenuItemBasicModel(
+  responseDto: MenuItemBasicResponseDto | MenuItemDetailResponseDto): MenuItemBasicModel
+{
+  let isDeleted = false;
+  if (Object.hasOwn(responseDto, "isDeleted")) {
+    isDeleted = !!responseDto["isDeleted" as keyof typeof responseDto];
+  } else {
+    isDeleted = responseDto["deletedDateTime" as keyof typeof responseDto] == null;
   }
+
+  return {
+    id: responseDto.id,
+    name: responseDto.name,
+    unit: responseDto.unit,
+    defaultAmountBeforeVatPerUnit: responseDto.defaultAmountBeforeVatPerUnit,
+    defaultVatPercentagePerUnit: responseDto.defaultVatPercentagePerUnit,
+    category: responseDto.category && createMenuCategoryBasicModel(responseDto.category),
+    isDeleted,
+    displayDefaultAmountBeforeVatPerUnit: getDisplayAmountText(responseDto.defaultAmountBeforeVatPerUnit)
+  };
 }
 
-export class OrderBasicModel {
-  public readonly id: number;
-  public readonly itemAmount: number;
-  public readonly isFinished: boolean;
-  public readonly displayItemAmount: string;
-
-  public constructor(responseDto: OrderBasicResponseDto) {
-    this.id = responseDto.id;
-    this.itemAmount = responseDto.itemAmount;
-    this.isFinished = responseDto.isFinished;
-    this.displayItemAmount = getDisplayAmountText(this.itemAmount);
-  }
+export function createSeatingBasicModel(responseDto: SeatingBasicResponseDto): SeatingBasicModel {
+  return {
+    id: responseDto.id,
+    name: responseDto.name ?? `Bàn không tên ${responseDto.id}`,
+    activeOrder: responseDto.activeOrder && createOrderBasicModel(responseDto.activeOrder),
+    isDeleted: responseDto.isDeleted
+  };
 }
 
-export class UserBasicModel {
-  public readonly id: number;
-  public readonly userName: string;
-  public readonly isDeleted: boolean;
+export function createOrderBasicModel(responseDto: OrderBasicResponseDto): OrderBasicModel {
+  return {
+    id: responseDto.id,
+    itemAmount: responseDto.itemAmount,
+    isFinished: responseDto.isFinished,
+    displayItemAmount: getDisplayAmountText(responseDto.itemAmount)
+  };
+}
 
-  public constructor(responseDto: UserBasicResponseDto) {
-    this.id = responseDto.id;
-    this.userName = responseDto.userName;
-    this.isDeleted = responseDto.isDeleted;
-  }
+export function createUserBasicModel(responseDto: UserBasicResponseDto): UserBasicModel {
+  return {
+    id: responseDto.id,
+    userName: responseDto.userName,
+    isDeleted: responseDto.isDeleted
+  };
 }

@@ -1,26 +1,40 @@
 import type { VerifyCredentialsRequestDto, ChangePasswordRequestDto } from "#/api";
 
-export class SignInModel {
-  public userName: string = "";
-  public password: string = "";
-  
-  public toRequestDto(): VerifyCredentialsRequestDto {
-    return {
-      userName: this.userName,
-      password: this.password
-    };
-  }
+export type SignInModel = {
+  userName: string;
+  password: string;
+  toRequestDto(): VerifyCredentialsRequestDto;
+};
+
+export type ChangePasswordModel = {
+  currentPassword: string;
+  newPassword: string;
+  confirmationPassword: string;
+  toRequestDto(): ChangePasswordRequestDto;
+};
+
+export function createSignInModel(): SignInModel {
+  return {
+    userName: "",
+    password: "",
+    toRequestDto(): VerifyCredentialsRequestDto {
+      return {
+        ...this
+      };
+    }
+  };
 }
 
-export class ChangePasswordModel {
-  public currentPassword: string = "";
-  public newPassword: string = "";
-  public confirmationPassword: string = "";
-
-  public toRequestDto(): ChangePasswordRequestDto {
-    return {
-      currentPassword: this.currentPassword,
-      newPassword: this.newPassword
-    };
-  }
+export function createChangePasswordModel(): ChangePasswordModel {
+  return {
+    currentPassword: "",
+    newPassword: "",
+    confirmationPassword: "",
+    toRequestDto(): ChangePasswordRequestDto {
+      return {
+        currentPassword: this.currentPassword,
+        newPassword: this.newPassword
+      };
+    }
+  };
 }

@@ -1,4 +1,3 @@
-import type { JSX } from "solid-js";
 import { joinClassName } from "#/helpers";
 import { FormFieldContext } from "./FormField";
 
@@ -14,16 +13,16 @@ export type NumberInputProps = {
 // Component.
 export function NumberInput(props: NumberInputProps): JSXElement {
   // Props.
-  const { value, onInput, autoFocus, ...domProps } = $destructure(props);
+  const [local, domProps] = splitProps(props, ["value", "onInput", "autoFocus"]);
 
   // Dependencies.
-  const formFieldContext = $useContext(FormFieldContext);
+  const formFieldContext = useContext(FormFieldContext);
 
   // States.
   let elementRef: HTMLInputElement;
 
   // Computed.
-  const computedValue = $memo<string>(() => {
+  const computedValue = createMemo<string>(() => {
     return props.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   });
 
@@ -31,7 +30,7 @@ export function NumberInput(props: NumberInputProps): JSXElement {
   function handleInput(event: InputEvent): void {
     const inputElement = event.target as HTMLInputElement;
     if (!inputElement.value.length) {
-      onInput(0);
+      local.onInput(0);
       return;
     }
 
@@ -41,20 +40,20 @@ export function NumberInput(props: NumberInputProps): JSXElement {
     
     const parsedValue = parseInt(inputElement.value.replaceAll(" ", ""));
     if (props.min != null && parsedValue < props.min) {
-      onInput(props.min);
+      local.onInput(props.min);
       return;
     }
 
     if (props.max != null && parsedValue > props.max) {
-      onInput(props.max);
+      local.onInput(props.max);
       return;
     }
 
-    onInput(parsedValue);
+    local.onInput(parsedValue);
   }
 
   // Effect.
-  $mount(() => {
+  onMount(() => {
     if (props.autoFocus && elementRef) {
       elementRef.focus();
     }
@@ -65,10 +64,10 @@ export function NumberInput(props: NumberInputProps): JSXElement {
     <input
     {...domProps}
     ref={(element) => elementRef = element}
-    name={formFieldContext?.path}
+    name={formFieldContext?.path()}
     class={joinClassName("form-control", domProps.class)}
-    placeholder={props.placeholder ?? formFieldContext?.displayName}
-    value={computedValue}
+    placeholder={props.placeholder ?? formFieldContext?.displayName()}
+    value={computedValue()}
     onInput={handleInput}
     />
   );

@@ -1,57 +1,70 @@
-import { MenuItemBasicModel } from "./sharedModels";
+import { createMenuItemBasicModel, type MenuItemBasicModel } from "./sharedModels";
 import type { OrderItemDetailResponseDto, OrderItemUpsertRequestDto } from "#/api";
 import { isOrderItemDetailResponseDto } from "#/helpers";
 
-export class OrderItemDetailModel {
-  public id: number;
-  public amountBeforeVatPerUnit: number;
-  public vatPercentagePerUnit: number;
-  public quantity: number;
-  public menuItem: MenuItemBasicModel;
-  public guid: string;
+export type OrderItemDetailModel = {
+  id: number;
+  amountBeforeVatPerUnit: number;
+  vatPercentagePerUnit: number;
+  quantity: number;
+  menuItem: MenuItemBasicModel;
+  guid: string;
+};
 
-  public constructor(responseDto: OrderItemDetailResponseDto) {
-    this.id = responseDto.id;
-    this.amountBeforeVatPerUnit = responseDto.amountBeforeVatPerUnit;
-    this.vatPercentagePerUnit = responseDto.vatPercentagePerUnit;
-    this.quantity = responseDto.quantity;
-    this.menuItem = new MenuItemBasicModel(responseDto.menuItem);
-    this.guid = responseDto.guid;
-  }
+export type OrderItemUpsertModel = {
+  id: number | null;
+  amountBeforeVatPerUnit: number;
+  vatPercentagePerUnit: number;
+  quantity: number;
+  menuItem: MenuItemBasicModel;
+  guid: string;
+  toRequestDto(): OrderItemUpsertRequestDto;
+};
+
+export function createOrderItemDetailModel(responseDto: OrderItemDetailResponseDto): OrderItemDetailModel {
+  return {
+    id: responseDto.id,
+    amountBeforeVatPerUnit: responseDto.amountBeforeVatPerUnit,
+    vatPercentagePerUnit: responseDto.vatPercentagePerUnit,
+    quantity: responseDto.quantity,
+    menuItem: createMenuItemBasicModel(responseDto.menuItem),
+    guid: responseDto.guid
+  };
 }
 
-export class OrderItemUpsertModel {
-  public id: number | null = null;
-  public amountBeforeVatPerUnit: number = 0;
-  public vatPercentagePerUnit: number = 0;
-  public quantity: number = 1;
-  public menuItem: MenuItemBasicModel;
-  public guid: string = crypto.randomUUID();
-
-  public constructor(arg: OrderItemDetailResponseDto | MenuItemBasicModel) {
-    if (isOrderItemDetailResponseDto(arg)) {
-      this.id = arg.id;
-      this.amountBeforeVatPerUnit = arg.amountBeforeVatPerUnit;
-      this.vatPercentagePerUnit = arg.vatPercentagePerUnit;
-      this.quantity = arg.quantity;
-      this.menuItem = new MenuItemBasicModel(arg.menuItem);
-
-      return;
+export function createOrderItemUpsertModel(arg: OrderItemDetailResponseDto | MenuItemBasicModel): OrderItemUpsertModel {
+  const model: OrderItemUpsertModel = {
+    id: null,
+    amountBeforeVatPerUnit: 0,
+    vatPercentagePerUnit: 0,
+    quantity: 1,
+    menuItem: null!,
+    guid: crypto.randomUUID(),
+    toRequestDto(): OrderItemUpsertRequestDto {
+      return {
+        id: this.id,
+        amountBeforeVatPerUnit: this.amountBeforeVatPerUnit,
+        vatPercentagePerUnit: this.vatPercentagePerUnit,
+        quantity: this.quantity,
+        menuItemId: this.menuItem.id,
+        guid: this.guid
+      };
     }
-    
-    this.amountBeforeVatPerUnit = arg.defaultAmountBeforeVatPerUnit;
-    this.vatPercentagePerUnit = arg.defaultVatPercentagePerUnit;
-    this.menuItem = arg;
+  };
+
+  if (isOrderItemDetailResponseDto(arg)) {
+    model.id = arg.id;
+    model.amountBeforeVatPerUnit = arg.amountBeforeVatPerUnit;
+    model.vatPercentagePerUnit = arg.vatPercentagePerUnit;
+    model.quantity = arg.quantity;
+    model.menuItem = createMenuItemBasicModel(arg.menuItem);
+
+    return model;
   }
 
-  public toRequestDto(): OrderItemUpsertRequestDto {
-    return {
-      id: this.id,
-      amountBeforeVatPerUnit: this.amountBeforeVatPerUnit,
-      vatPercentagePerUnit: this.vatPercentagePerUnit,
-      quantity: this.quantity,
-      menuItemId: this.menuItem.id,
-      guid: this.guid
-    };
-  }
+  model.amountBeforeVatPerUnit = arg.defaultAmountBeforeVatPerUnit;
+  model.vatPercentagePerUnit = arg.defaultVatPercentagePerUnit;
+  model.menuItem = arg;
+
+  return model;
 }

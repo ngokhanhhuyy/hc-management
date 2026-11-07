@@ -17,7 +17,7 @@ type UpsertPanelProps<TUpsertModel extends IUpsertModel> = {
   editorRoutePath: string;
   model: TUpsertModel;
   nameMaxLength: number;
-  onModelUpdated(mutator: Mutator<TUpsertModel>): void;
+  onModelUpdated(updatedData: Partial<TUpsertModel>): void;
   onCreatingAsync(): Promise<any>;
   onUpdatingAsync(id: number): Promise<any>;
   children?: JSXElement | JSXElement[];
@@ -26,7 +26,7 @@ type UpsertPanelProps<TUpsertModel extends IUpsertModel> = {
 // Components.
 function UpsertPanel<TUpsertModel extends IUpsertModel>(props: UpsertPanelProps<TUpsertModel>): JSXElement {
   // Dependencies.
-  const editorPageContext = $useContext(EditorPageContext);
+  const editorPageContext = useContext(EditorPageContext);
   const navigate = useNavigate();
   const params = useParams();
 
@@ -34,7 +34,7 @@ function UpsertPanel<TUpsertModel extends IUpsertModel>(props: UpsertPanelProps<
   let modalHandler: ConfirmationModalHandler;
 
   // Computed.
-  const title = $memo(() => {
+  const title = createMemo(() => {
     if (params.id == null) {
       return `Tạo ${displayNames[props.resourceName]} mới`;
     }
@@ -63,7 +63,7 @@ function UpsertPanel<TUpsertModel extends IUpsertModel>(props: UpsertPanelProps<
     <div class="panel h-fit sticky top-[calc(var(--topbar-height)+(--spacing(3)))]">
       <div class="panel-header">
         <span class="panel-header-title">
-          {title}
+          {title()}
         </span>
       </div>
 
@@ -78,7 +78,7 @@ function UpsertPanel<TUpsertModel extends IUpsertModel>(props: UpsertPanelProps<
             <TextInput
               maxLength={props.nameMaxLength}
               value={props.model.name}
-              onInput={(name) => props.onModelUpdated(m => m.name = name)}
+              onInput={(name) => props.onModelUpdated({ name } as Partial<TUpsertModel>)}
             />
           </FormField>
 

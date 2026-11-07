@@ -1,28 +1,32 @@
 import type { SeatingDetailResponseDto, SeatingUpsertRequestDto } from "#/api";
-import { OrderBasicModel } from "./sharedModels";
+import { createOrderBasicModel, type OrderBasicModel } from "./sharedModels";
 
-export class SeatingDetailModel {
-  public id: number;
-  public name: string;
-  public activeOrder: OrderBasicModel | null;
+export type SeatingDetailModel = {
+  id: number;
+  name: string;
+  activeOrder: OrderBasicModel | null;
+};
 
-  public constructor(responseDto: SeatingDetailResponseDto) {
-    this.id = responseDto.id;
-    this.name = responseDto.name;
-    this.activeOrder = responseDto.activeOrder && new OrderBasicModel(responseDto.activeOrder);
-  }
+export type SeatingUpsertModel = {
+  name: string;
+  toRequestDto(): SeatingUpsertRequestDto;
+};
+
+export function createSeatingDetailModel(responseDto: SeatingDetailResponseDto): SeatingDetailModel {
+  return {
+    id: responseDto.id,
+    name: responseDto.name,
+    activeOrder: responseDto.activeOrder && createOrderBasicModel(responseDto.activeOrder)
+  };
 }
 
-export class SeatingUpsertModel {
-  public name: string = "";
-
-  public mapFromResponseDto(responseDto: SeatingDetailResponseDto) {
-    this.name = responseDto.name;
-  }
-
-  public toRequestDto(): SeatingUpsertRequestDto {
-    return {
-      name: this.name
-    };
-  }
+export function createSeatingUpsertModel(responseDto?: SeatingDetailResponseDto): SeatingUpsertModel {
+  return {
+    name: responseDto?.name ?? "",
+    toRequestDto(): SeatingUpsertRequestDto {
+      return {
+        name: this.name
+      };
+    }
+  };
 }

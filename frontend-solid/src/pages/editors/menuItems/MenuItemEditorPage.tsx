@@ -1,8 +1,8 @@
 import { api, displayNames, MenuItemListSortingCriterion } from "#/api";
 import {
-  MenuCategoryBasicModel,
-  MenuItemListModel,
-  type MenuItemBasicModel} from "#/models";
+  createMenuItemListModel, createMenuCategoryBasicModel, type MenuCategoryBasicModel, type MenuItemListModel,
+  type MenuItemBasicModel,
+} from "#/models";
 import {
   getMenuItemEditorRoutePath,
   getMenuItemEditorCreateRoutePath,
@@ -25,15 +25,18 @@ type MenuItemEditorPageProps = {
 // Components.
 export default function MenuItemEditorPage(props: MenuItemEditorPageProps): JSXElement {
   // States.
-  const model = $state<MenuItemListModel>(new MenuItemListModel());
-  const categories = $state<MenuCategoryBasicModel[]>([]);
+  const [model, setModel] = createSignal<MenuItemListModel>(createMenuItemListModel());
+  const [categories, setCategories] = createSignal<MenuCategoryBasicModel[]>([]);
   let latestRequestId = -1;
 
   // Computed.
-  const categoryOptions = $memo<SelectInputOption[]>(() => {
+  const categoryOptions = createMemo<SelectInputOption[]>(() => {
     return [
       { displayName: "Tất cả", value: "" },
-      ...categories.map<SelectInputOption>(category => ({ displayName: category.name, value: category.id.toString() }))
+      ...categories().map<SelectInputOption>(category => ({
+        displayName: category.name,
+        value: category.id.toString()
+      }))
     ];
   });
 
@@ -46,18 +49,37 @@ export default function MenuItemEditorPage(props: MenuItemEditorPageProps): JSXE
       }));
   });
 
+  // Computed.
+  const reloadFilters = createMemo(() => [
+    model().sortByAscending,
+    model().sortByCriterion,
+    model().page,
+    model().searchContent,
+    model().category,
+  ] as const, undefined, {
+    equals: (previous, next) => previous.every((value, index) => value === next[index])
+  });
+
   // Callbacks.
+  function getPageButtonClassName(_: number, isActive: boolean): string {
+    if (isActive) {
+      return "btn btn-primary";
+    }
+
+    return "btn";
+  }
+
   function handleCategoryInput(categoryIdAsString: string): void {
     if (!categoryIdAsString) {
-      model.category = null;
+      setModel(previous => ({ ...previous, category: null }));
       return;
     }
 
     const id = parseInt(categoryIdAsString);
-    const index = categories.findIndex(c => c.id === id);
-    const category = categories[index];
+    const index = categories().findIndex(c => c.id === id);
+    const category = categories()[index];
     if (category) {
-      model.category = category;
+      setModel(previous => ({ ...previous, category }));
     }
   }
 
@@ -65,54 +87,45 @@ export default function MenuItemEditorPage(props: MenuItemEditorPageProps): JSXE
     const key = criterionAsString[0].toUpperCase() + criterionAsString.slice(1);
     const criterion = MenuItemListSortingCriterion[key as keyof typeof MenuItemListSortingCriterion];
     if (criterion) {
-      model.sortByCriterion = criterion;
+      setModel(previous => ({ ...previous, sortByCriterion: criterion }));
     }
   }
 
   async function handleReloadAsync(): Promise<void> {
     const requestId = latestRequestId += 1;
-    const responseDtos = await api.menuItem.getListAsync(model.toRequestDto());
+    const responseDtos = await api.menuItem.getListAsync(model().toRequestDto());
 
     if (latestRequestId == requestId) {
-      model.mapFromResponseDto(responseDtos);
+      setModel(previous => previous.mapFromResponseDto(responseDtos));
     }
   }
 
   function handleItemRemoved(id: number): void {
-    const index = model.items.findIndex(i => i.id === id);
-    if (index > -1) {
-      model.items.splice(index, 1);
-    }
+    setModel(previous => ({ ...previous, items: previous.items.filter(item => item.id !== id) }));
   }
 
   // Life cycle hooks.
-  $mount(async () => {
+  onMount(async () => {
     const loadCategoriesAsync = async (): Promise<void> => {
       const responseDtos = await api.menuCategory.getAllAsync();
-      for (const dto of responseDtos) {
-        categories.push(new MenuCategoryBasicModel(dto));
-      }
+      setCategories(responseDtos.map(createMenuCategoryBasicModel));
     };
 
     const loadListAsync = async (): Promise<void> => {
-      const responseDto = await api.menuItem.getListAsync(model.toRequestDto());
-      model.mapFromResponseDto(responseDto);
+      const responseDto = await api.menuItem.getListAsync(model().toRequestDto());
+      setModel(previous => previous.mapFromResponseDto(responseDto));
     };
 
     await Promise.all([loadCategoriesAsync(), loadListAsync()]);
   });
 
-  $watch(
-    [model.sortByAscending, model.sortByCriterion, model.page, model.searchContent, model.category],
-    handleReloadAsync,
-    { immediate: true }
-  );
+  createEffect(on(reloadFilters, handleReloadAsync, { defer: false }));
 
   // Templates.
   return (
     <EditorPage<MenuItemBasicModel>
       resourceName="menuItem"
-      model={model.items}
+      model={model().items}
       editorRoutePath={getMenuItemEditorRoutePath()}
       editorCreateRoutePath={getMenuItemEditorCreateRoutePath()}
       getEditorUpdateRoutePath={getMenuItemEditorUpdateRoutePath}
@@ -140,15 +153,15 @@ export default function MenuItemEditorPage(props: MenuItemEditorPageProps): JSXE
           <div class={joinClassName("gap-3 p-3 pt-2 grid grid-cols-2", !isEditorRoutePath && semiTransparentClassName)}>
             <FormField class="col-span-2" path="searchContent">
               <TextInput
-                value={model.searchContent}
-                onInput={(searchContent) => model.searchContent = searchContent}
+                value={model().searchContent}
+                onInput={(searchContent) => setModel(previous => ({ ...previous, searchContent }))}
               />
             </FormField>
 
             <FormField path="categoryId" displayName={displayNames.category}>
               <SelectInput
-                options={categoryOptions}
-                value={model.category?.id.toString() ?? ""}
+                options={categoryOptions()}
+                value={model().category?.id.toString() ?? ""}
                 onInput={handleCategoryInput}
               />
             </FormField>
@@ -156,7 +169,7 @@ export default function MenuItemEditorPage(props: MenuItemEditorPageProps): JSXE
             <FormField path="sortByCriterion">
               <SelectInput
                 options={criterionOptions}
-                value={model.sortByCriterion}
+                value={model().sortByCriterion}
                 onInput={handleSortingByCriterionInput}
               />
             </FormField>
@@ -164,13 +177,13 @@ export default function MenuItemEditorPage(props: MenuItemEditorPageProps): JSXE
         </div>
       )}
       renderLowerArea={(isEditorRoutePath, semiTransparentClassName) => (
-        <Show when={model.pageCount > 1}>
+        <Show when={model().pageCount > 1}>
           <Paginator
             class={joinClassName(!isEditorRoutePath && semiTransparentClassName)}
-            page={model.page}
-            pageCount={model.pageCount}
-            onPageChanged={(page) => model.page = page}
-            getPageButtonClassName={(_, isActive) => isActive ? "btn btn-primary" : "btn"}
+            page={model().page}
+            pageCount={model().pageCount}
+            onPageChanged={(page) => setModel(previous => ({ ...previous, page }))}
+            getPageButtonClassName={getPageButtonClassName}
           />
         </Show>
       )}

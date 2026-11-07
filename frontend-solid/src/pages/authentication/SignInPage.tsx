@@ -1,5 +1,5 @@
 import { useNavigate } from "@solidjs/router";
-import { SignInModel } from "#/models";
+import { createSignInModel, type SignInModel } from "#/models";
 import { useAuthenticationStore } from "#/stores";
 import { getHomeRoutePath, joinClassName } from "#/helpers";
 import logoUrl from "#/assets/images/logo.png";
@@ -14,17 +14,17 @@ export default function SignInPage(): JSXElement {
   const authenticationStore = useAuthenticationStore();
 
   // States.
-  const model = $state<SignInModel>(new SignInModel());
-  let isSignedIn = $state<boolean>(false);
+  const [model, setModel] = createSignal<SignInModel>(createSignInModel());
+  const [isSignedIn, setIsSignedIn] = createSignal<boolean>(false);
 
   // Callbacks.
   async function submitAsync(): Promise<void> {
-    await authenticationStore.signInAsync(model);
-    model.password = "";
+    await authenticationStore.signInAsync(model());
+    setModel(previous => ({ ...previous, password: "" }));
   }
 
   async function handledSucceeded(): Promise<void> {
-    isSignedIn = true;
+    setIsSignedIn(true);
 
     setTimeout(() => {
       navigate(getHomeRoutePath());
@@ -32,8 +32,8 @@ export default function SignInPage(): JSXElement {
   }
 
   // Effects.
-  $mount(() => {
-    if (authenticationStore.isAuthenticated) {
+  onMount(() => {
+    if (authenticationStore.isAuthenticated()) {
       navigate(getHomeRoutePath());
     }
   });
@@ -44,19 +44,19 @@ export default function SignInPage(): JSXElement {
       <Form class="panel max-w-87.5" action={submitAsync} onSucceeded={handledSucceeded} submitOnEnterKeyPressed>
         <div class="panel-body flex flex-col p-3 gap-3 min-w-75">
           <img src={logoUrl} class="img-thumbnail aspect-square shadow-xs" /> 
-          <Show when={!isSignedIn} fallback={<SignedInSuccessNotification />}>
+          <Show when={!isSignedIn()} fallback={<SignedInSuccessNotification />}>
             <FormField path="userName">
               <TextInput
-                value={model.userName}
-                onInput={(userName) => model.userName = userName}
+                value={model().userName}
+                onInput={(userName) => setModel(previous => ({ ...previous, userName }))}
               />
             </FormField>
 
             <FormField path="password">
               <TextInput
                 type="password"
-                value={model.password}
-                onInput={(password) => model.password = password}
+                value={model().password}
+                onInput={(password) => setModel(previous => ({ ...previous, password }))}
               />
             </FormField>
 

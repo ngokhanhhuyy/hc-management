@@ -6,7 +6,7 @@ import { FormField, NumberInput } from "#/components/form";
 // Props.
 type OrderItemProps = {
   model: OrderItemUpsertModel;
-  onUpdated(mutator: Mutator<OrderItemUpsertModel>): void;
+  onUpdated(updatedData: Partial<OrderItemUpsertModel>): void;
   onDeleted(): any;
   index: number;
   disabled: boolean;
@@ -21,7 +21,7 @@ export default function OrderItem(props: OrderItemProps): JSXElement {
       return;
     }
 
-    props.onUpdated((model) => model.quantity -= 1);
+    props.onUpdated({ quantity: props.model.quantity - 1 });
   }
 
   // Templates.
@@ -39,9 +39,7 @@ export default function OrderItem(props: OrderItemProps): JSXElement {
               <NumberInput
                 class="form-control-sm rounded-e-none text-end z-0"
                 value={props.model.amountBeforeVatPerUnit}
-                onInput={(amountBeforeVatPerUnit) => {
-                  props.onUpdated(model => model.amountBeforeVatPerUnit = amountBeforeVatPerUnit);
-                }}
+                onInput={(amountBeforeVatPerUnit) => props.onUpdated({ amountBeforeVatPerUnit })}
                 min={1}
                 max={999_999_999}
               />
@@ -64,7 +62,7 @@ export default function OrderItem(props: OrderItemProps): JSXElement {
               <NumberInput
                 class="form-control-sm rounded-none text-center z-0"
                 value={props.model.quantity}
-                onInput={quantity => props.onUpdated((model) => model.quantity = quantity)}
+                onInput={quantity => props.onUpdated({ quantity })}
                 min={1}
                 max={999}
               />
@@ -72,7 +70,7 @@ export default function OrderItem(props: OrderItemProps): JSXElement {
               <button
                 type="button"
                 class="btn btn-sm rounded-s-none border-s-0 px-2"
-                onClick={() => props.onUpdated((model) => model.quantity += 1)}
+                onClick={() => props.onUpdated({ quantity: props.model.quantity + 1 })}
               >
                 <i class="bi bi-plus-lg" />
               </button>

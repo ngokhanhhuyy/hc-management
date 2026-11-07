@@ -1,13 +1,13 @@
 import type { UserDetailResponseDto } from "#/api";
 
-export class UserDetailModel {
-  public id: number;
-  public userName: string;
-  public deletedDateTime: string | null;
-
-  public constructor(responseDto: UserDetailResponseDto) {
-    this.id = responseDto.id;
-    this.userName = responseDto.userName;
-    this.deletedDateTime = responseDto.deletedDateTime;
-  }
+export type UserDetailModel = {
+  id: number;
+  userName: string;
+  deletedDateTime: string | null;
 };
+
+export function createUserDetailModel(responseDto: UserDetailResponseDto): UserDetailModel {
+  return {
+    ...responseDto
+  };
+}

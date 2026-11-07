@@ -1,3 +1,4 @@
+import { Portal } from "solid-js/web";
 import { joinClassName } from "#/helpers";
 
 // Props.
@@ -13,19 +14,21 @@ type BaseModalProps = {
 };
 
 export default function BaseModal(props: BaseModalProps) {
-  // States.
-  let elementRef: HTMLDivElement | null;
-
   // Computed.
-  const backgroundClassName = $memo<string | undefined>(() => {
+  const backgroundClassName = createMemo<string | undefined>(() => {
+    let visibilityClassName = "opacity-0 pointer-events-none";
+    if (props.isOpen) {
+      visibilityClassName = "opacity-100";
+    }
+
     return joinClassName(
       "w-screen h-screen z-1000 contain-[layout-paint] fixed top-0 left-0 ease-in-out backdrop-blur-lg",
       "bg-black/40 flex justify-center items-center transition-opacity duration-150",
-      props.isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+      visibilityClassName
     );
   });
 
-  const modalClassName = $memo<string | undefined>(() => {
+  const modalClassName = createMemo<string | undefined>(() => {
     return joinClassName(
       "bg-white dark:bg-neutral-900 border border-black/50 rounded-xl shadow max-w-lg w-full mx-3 sm:mx-auto",
       props.modalClassName,
@@ -45,7 +48,7 @@ export default function BaseModal(props: BaseModalProps) {
 
 
   // Effects
-  $effect(() => {
+  createEffect(() => {
     if (props.isOpen) {
       document.body.style.overflow = "hidden";
       return;
@@ -58,12 +61,11 @@ export default function BaseModal(props: BaseModalProps) {
   return (
     <Portal>
       <div
-        ref={(element) => elementRef = element}
         id="customer-introducer-picker-modal"
-        class={backgroundClassName}
+        class={backgroundClassName()}
         onKeyDown={handleKeyDown}
       >
-        <div class={modalClassName}>
+        <div class={modalClassName()}>
           {/* Header */}
           <div class={headerClassName}>
             <div class="text-sm font-bold opacity-75">

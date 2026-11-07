@@ -18,7 +18,7 @@ export default function SeatingListPanel(props: SeatingListPanelProps): JSXEleme
   const navigate = useNavigate();
 
   // States.
-  const filters = $state<{ searchContent: string, criterion: string | null; }>({
+  const [filters, setFilters] = createSignal<{ searchContent: string; criterion: string | null; }>({
     searchContent: "",
     criterion: null,
   });
@@ -35,9 +35,14 @@ export default function SeatingListPanel(props: SeatingListPanelProps): JSXEleme
   });
 
   // Life cycle hooks.
-  $mount(() => {
-    filters.criterion = criterionOptions[1].value;
+  onMount(() => {
+    setFilters(previous => ({ ...previous, criterion: criterionOptions[1].value }));
   });
+
+  // Callbacks.
+  function handleCriterionInput(criterionAsString: string): void {
+    setFilters(previous => ({ ...previous, criterion: criterionAsString || null }));
+  }
 
   // Templates.
   return (
@@ -58,16 +63,16 @@ export default function SeatingListPanel(props: SeatingListPanelProps): JSXEleme
                 </span>
 
                 <TextInput
-                  class={joinClassName("z-0", filters.searchContent && "not-focus:border-e-transparent")}
-                  value={filters.searchContent}
-                  onInput={(content) => filters.searchContent = content}
+                  class={joinClassName("z-0", filters().searchContent && "not-focus:border-e-transparent")}
+                  value={filters().searchContent}
+                  onInput={(content) => setFilters(previous => ({ ...previous, searchContent: content }))}
                 />
 
-                <Show when={filters.searchContent}>
+                <Show when={filters().searchContent}>
                   <button
                     type="button"
                     class="btn btn-danger-outline group-has-[input:focus]:border-s-transparent"
-                    onClick={() => filters.searchContent = ""}
+                    onClick={() => setFilters(previous => ({ ...previous, searchContent: "" }))}
                   >
                     <i class="bi bi-x-lg" />
                   </button>
@@ -77,8 +82,8 @@ export default function SeatingListPanel(props: SeatingListPanelProps): JSXEleme
 
             <FormField path="sortByCriterion">
               <SelectInput
-                value={filters.criterion ?? ""}
-                onInput={(criterionAsString) => filters.criterion = criterionAsString || null}
+                value={filters().criterion ?? ""}
+                onInput={handleCriterionInput}
                 options={criterionOptions}
               />
             </FormField>
@@ -100,8 +105,8 @@ export default function SeatingListPanel(props: SeatingListPanelProps): JSXEleme
       <div class="panel-footer p-3">
         <FormField path="sortByCriterion">
           <SelectInput
-            value={filters.criterion ?? ""}
-            onInput={(criterionAsString) => filters.criterion = criterionAsString || null}
+            value={filters().criterion ?? ""}
+            onInput={handleCriterionInput}
             options={criterionOptions}
           />
         </FormField>

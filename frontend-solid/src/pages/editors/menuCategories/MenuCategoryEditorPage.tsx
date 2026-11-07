@@ -1,5 +1,5 @@
 import { api } from "#/api";
-import { MenuCategoryBasicModel } from "#/models";
+import { createMenuCategoryBasicModel, type MenuCategoryBasicModel } from "#/models";
 import {
   getMenuCategoryEditorRoutePath,
   getMenuCategoryEditorCreateRoutePath,
@@ -19,15 +19,12 @@ type MenuCategoryEditorPageProps = {
 export default function MenuCategoryEditorPage(props: MenuCategoryEditorPageProps): JSXElement {
 
   // States.
-  const model = $state<MenuCategoryBasicModel[]>([]);
+  const [model, setModel] = createSignal<MenuCategoryBasicModel[]>([]);
 
   // Callbacks.
   async function loadAsync(): Promise<void> {
     const responseDtos = await api.menuCategory.getAllAsync();
-    model.length = 0;
-    for (const dto of responseDtos) {
-      model.push(new MenuCategoryBasicModel(dto));
-    }
+    setModel(responseDtos.map(createMenuCategoryBasicModel));
   }
 
   async function handleDeleteAsync(id: number): Promise<void> {
@@ -35,20 +32,17 @@ export default function MenuCategoryEditorPage(props: MenuCategoryEditorPageProp
   }
 
   function handleItemRemoved(id: number): void {
-    const index = model.findIndex(i => i.id === id);
-    if (index > -1) {
-      model.splice(index, 1);
-    }
+    setModel(previous => previous.filter(item => item.id !== id));
   }
 
   // Life cycle hooks.
-  $mount(loadAsync);
+  onMount(loadAsync);
 
   // Templates.
   return (
     <EditorPage<MenuCategoryBasicModel>
       resourceName="menuItem"
-      model={model}
+      model={model()}
       editorRoutePath={getMenuCategoryEditorRoutePath()}
       editorCreateRoutePath={getMenuCategoryEditorCreateRoutePath()}
       getEditorUpdateRoutePath={getMenuCategoryEditorUpdateRoutePath}

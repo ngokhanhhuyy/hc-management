@@ -1,20 +1,19 @@
-import type { JSX } from "solid-js";
-import { ErrorCollectionModel } from "#/models";
+import { createErrorCollectionModel, type ErrorCollectionModel } from "#/models";
 import { ValidationError, OperationError } from "#/api";
 import { joinClassName } from "#/helpers";
 
 // Context.
 export type SubmissionState = "notSubmitting" | "submitting" | "submissionSucceeded";
 export type FormContextPayload = {
-  errorCollection: ErrorCollectionModel;
-  submissionState: SubmissionState;
-  isModelDirty: boolean;
+  errorCollection: Accessor<ErrorCollectionModel>;
+  submissionState: Accessor<SubmissionState>;
+  isModelDirty: Accessor<boolean>;
 };
 
-export const FormContext = $createContext<FormContextPayload>({
-  errorCollection: new ErrorCollectionModel(),
-  submissionState: "notSubmitting",
-  isModelDirty: false
+export const FormContext = createContext<FormContextPayload>({
+  errorCollection: createErrorCollectionModel,
+  submissionState: (): SubmissionState => "notSubmitting",
+  isModelDirty: () => false
 });
 
 // Props.
@@ -30,43 +29,30 @@ type FormProps<TUpsertResult> = {
 // Components.
 export function Form<TUpsertResult>(props: FormProps<TUpsertResult>) {
   // Props.
-  const defaultProps = $merge({
+  const defaultProps = mergeProps({
     autocomplete: "off" as typeof props.autocomplete,
     submitOnEnterKeyPressed: true
   }, props);
 
-  const {
-    render,
-    action,
-    onSucceeded,
-    onFailed,
-    isModelDirty,
-    autocomplete,
-    submitOnEnterKeyPressed,
-    ...domProps
-  } = $destructure(defaultProps);
+  const [local, domProps] = splitProps(defaultProps, [
+    "render", "action", "onSucceeded", "onFailed", "isModelDirty", "autocomplete", "submitOnEnterKeyPressed"
+  ]);
 
   // States.
-  const errorCollectionModel = $state(new ErrorCollectionModel());
-  let submissionState = $state<SubmissionState>("notSubmitting");
+  const [errorCollectionModel, setErrorCollectionModel] = createSignal(createErrorCollectionModel());
+  const [submissionState, setSubmissionState] = createSignal<SubmissionState>("notSubmitting");
 
   // Computed.
-  const submittingClassName = $memo(() => {
-    if (submissionState === "submitting") {
+  const submittingClassName = createMemo(() => {
+    if (submissionState() === "submitting") {
       return "opacity-50 pointer-events-none";
     }
   });
   
   const contextValue: FormContextPayload = {
-    get errorCollection() {
-      return errorCollectionModel;
-    },
-    get submissionState() {
-      return submissionState;
-    },
-    get isModelDirty() {
-      return props.isModelDirty ?? false;
-    }
+    errorCollection: errorCollectionModel,
+    submissionState,
+    isModelDirty: () => props.isModelDirty ?? false
   };
 
   // Callbacks.
@@ -84,7 +70,7 @@ export function Form<TUpsertResult>(props: FormProps<TUpsertResult>) {
     };
 
     if (event.key === "Enter") {
-      if (submitOnEnterKeyPressed) {
+      if (local.submitOnEnterKeyPressed) {
         return;
       }
 
@@ -97,23 +83,23 @@ export function Form<TUpsertResult>(props: FormProps<TUpsertResult>) {
 
   async function handleSubmissionAsync(event: SubmitEvent): Promise<void> {
     event.preventDefault();
-    errorCollectionModel.clear();
-    submissionState = "submitting";
+    setErrorCollectionModel(previous => previous.clear());
+    setSubmissionState("submitting");
 
     try {
-      const result = await action();
-      onSucceeded?.(result);
-      submissionState = "submissionSucceeded";
+      const result = await local.action();
+      local.onSucceeded?.(result);
+      setSubmissionState("submissionSucceeded");
 
     } catch (error) {
-      submissionState = "notSubmitting";
+      setSubmissionState("notSubmitting");
       if (error instanceof ValidationError || error instanceof OperationError) {
-        errorCollectionModel.mapFromApplicationError(error);
-        onFailed?.(error, true);
+        setErrorCollectionModel(previous => previous.mapFromApplicationError(error));
+        local.onFailed?.(error, true);
         return;
       }
 
-      onFailed?.(error as Error, false);
+      local.onFailed?.(error as Error, false);
       throw error;
     }
   }
@@ -123,19 +109,19 @@ export function Form<TUpsertResult>(props: FormProps<TUpsertResult>) {
     <FormContext.Provider value={contextValue}>
       <form
         {...domProps}
-        autocomplete={autocomplete}
+        autocomplete={local.autocomplete}
         class={joinClassName(
           domProps.class,
-          submittingClassName,
+          submittingClassName(),
           "transition transition-500",
-          submissionState === "submitting" && "cursor-wait"
+          submissionState() === "submitting" && "cursor-wait"
         )}
         noValidate
         onSubmit={handleSubmissionAsync}
         onKeyDown={handleKeyPressed}
       >
         {domProps.children}
-        {render?.(errorCollectionModel)}
+        {local.render?.(errorCollectionModel())}
       </form>
     </FormContext.Provider>
   );

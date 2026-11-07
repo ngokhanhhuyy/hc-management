@@ -1,4 +1,3 @@
-import type { JSX } from "solid-js";
 import { Portal } from "solid-js/web";
 import { joinClassName } from "#/helpers";
 import { FormFieldContext } from "./FormField";
@@ -18,14 +17,14 @@ export type SelectInputOption = {
 // Component.
 export function SelectInput(props: SelectInputProps): JSXElement {
   // Props.
-  const { value, onInput, ...domProps } = $destructure(props);
+  const [, domProps] = splitProps(props, ["value", "onInput", "options"]);
 
   // Dependencies.
-  const formFieldContext = $useContext(FormFieldContext);
+  const formFieldContext = useContext(FormFieldContext);
 
   // States.
-  let isMenuVisible = $state(false);
-  const menuRect = $state({ top: 0, left: 0, minWidth: 0 });
+  const [isMenuVisible, setIsMenuVisible] = createSignal(false);
+  const [menuRect, setMenuRect] = createSignal({ top: 0, left: 0, minWidth: 0 });
 
   let buttonElement: HTMLButtonElement;
   let portalElement: HTMLDivElement;
@@ -34,7 +33,7 @@ export function SelectInput(props: SelectInputProps): JSXElement {
   const observer: ResizeObserver = new ResizeObserver(updateMenuPosition);
 
   // Computed.
-  const displayName = $memo<string>(() => {
+  const displayName = createMemo<string>(() => {
     const option = props.options.find(o => o.value === props.value);
     if (option) {
       return option.displayName ?? option.value;
@@ -43,16 +42,16 @@ export function SelectInput(props: SelectInputProps): JSXElement {
     return "";
   });
 
-  const portalClassName = $memo<string>(() => {
+  const portalClassName = createMemo<string>(() => {
     return joinClassName(
       "fixed inset-0 w-screen h-screen",
-      !isMenuVisible && "pointer-events-none"
+      !isMenuVisible() && "pointer-events-none"
     )!;
   });
 
-  const menuContainerClassName = $memo<string | undefined>(() => {
+  const menuContainerClassName = createMemo<string | undefined>(() => {
     let visibilityClassName: string;
-    if (isMenuVisible) {
+    if (isMenuVisible()) {
       visibilityClassName = "opacity-100";
     } else {
       visibilityClassName = "opacity-0 pointer-events-none";
@@ -61,15 +60,15 @@ export function SelectInput(props: SelectInputProps): JSXElement {
     return joinClassName("absolute z-100 py-2", visibilityClassName);
   });
 
-  const menuContainerStyle = $memo<string>(() => {
+  const menuContainerStyle = createMemo<string>(() => {
     return (
-      `top: ${Math.round(menuRect.top)}px;` +
-      `left: ${Math.round(menuRect.left)}px;` +
-      `min-width: ${Math.round(menuRect.minWidth)}px`
+      `top: ${Math.round(menuRect().top)}px;` +
+      `left: ${Math.round(menuRect().left)}px;` +
+      `min-width: ${Math.round(menuRect().minWidth)}px`
     );
   });
 
-  const menuClassName = $memo<string | undefined>(() => {
+  const menuClassName = createMemo<string | undefined>(() => {
     return joinClassName(
       "bg-white/75 border border-black/20 shadow-lg backdrop-blur-sm h-fit",
       "rounded-lg transition-opacity duration-50 w-full min-w-fit"
@@ -78,7 +77,7 @@ export function SelectInput(props: SelectInputProps): JSXElement {
 
   // Callbacks.
   function updateMenuPosition(): void {
-    if (!isMenuVisible) {
+    if (!isMenuVisible()) {
       return;
     }
 
@@ -104,15 +103,11 @@ export function SelectInput(props: SelectInputProps): JSXElement {
       left = 0;
     }
 
-    $batch(() => {
-      menuRect.top = top;
-      menuRect.left = left;
-      menuRect.minWidth = buttonDOMRect.width;
-    });
+    setMenuRect(previous => ({ ...previous, top, left, minWidth: buttonDOMRect.width }));
   }
 
   function handleViewportChanged(): void {
-    if (!isMenuVisible) {
+    if (!isMenuVisible()) {
       return;
     }
 
@@ -121,12 +116,12 @@ export function SelectInput(props: SelectInputProps): JSXElement {
 
   function handleButtonOutsideClicked(event: MouseEvent): void {
     if (!buttonElement.contains(event.target as HTMLElement)) {
-      isMenuVisible = false;
+      setIsMenuVisible(false);
     }
   }
 
   // Life cycle hooks.
-  $mount(() => {
+  onMount(() => {
     observer.observe(buttonElement);
     observer.observe(menuContainerElement);
     document.addEventListener("click", handleButtonOutsideClicked);
@@ -134,15 +129,15 @@ export function SelectInput(props: SelectInputProps): JSXElement {
     window.addEventListener("scroll", handleViewportChanged, true);
   });
 
-  $cleanup(() => {
+  onCleanup(() => {
     observer.disconnect();
     document.removeEventListener("click", handleButtonOutsideClicked);
     window.removeEventListener("resize", handleViewportChanged);
     window.removeEventListener("scroll", handleViewportChanged, true);
   });
 
-  $watch(isMenuVisible, () => {
-    if (isMenuVisible) {
+  createEffect(on(() => isMenuVisible(), () => {
+    if (isMenuVisible()) {
       updateMenuPosition();
     }
 
@@ -150,8 +145,8 @@ export function SelectInput(props: SelectInputProps): JSXElement {
       return;
     }
 
-    portalElement.classList = portalClassName;
-  });
+    portalElement.classList = portalClassName();
+  }));
 
   // Template.
   return (
@@ -159,22 +154,22 @@ export function SelectInput(props: SelectInputProps): JSXElement {
       <button
         {...domProps}
         type="button"
-        name={formFieldContext?.path}
+        name={formFieldContext?.path()}
         class={joinClassName("form-control cursor-pointer text-start", domProps.class)}
         value={props.value}
-        onClick={() => isMenuVisible = !isMenuVisible}
+        onClick={() => setIsMenuVisible(!isMenuVisible())}
         ref={element => buttonElement = element}
       >
-        {displayName}
+        {displayName()}
       </button>
 
         <Portal ref={(element) => portalElement = element}>
           <div
-            class={menuContainerClassName}
-            style={menuContainerStyle}
+            class={menuContainerClassName()}
+            style={menuContainerStyle()}
             ref={(element) => menuContainerElement = element}
           >
-            <div class={menuClassName}>
+            <div class={menuClassName()}>
               <ul class="flex flex-col p-2 list-none">
                 <For each={props.options}>
                   {(option) => (

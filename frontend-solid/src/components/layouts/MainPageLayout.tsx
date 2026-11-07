@@ -17,8 +17,8 @@ export default function MainPageLayout(props: MainPageLayoutProps): JSXElement {
   const navigate = useNavigate();
   
   // Life cycle.
-  $effect(() => {
-    if (!authenticationStore.isAuthenticated) {
+  createEffect(() => {
+    if (!authenticationStore.isAuthenticated()) {
       api.authentication
         .clearAccessCookieAsync()
         .catch()
@@ -28,7 +28,7 @@ export default function MainPageLayout(props: MainPageLayoutProps): JSXElement {
 
   // Template.
   return (
-    <Show when={authenticationStore.isAuthenticated} fallback={<Navigate href={getSignInRoutePath()} />}>
+    <Show when={authenticationStore.isAuthenticated()} fallback={<Navigate href={getSignInRoutePath()} />}>
       <TopBar />
       <div class="hidden lg:grid grid-cols-[200px_1fr] max-w-350 w-full mx-auto gap-3 p-3 mt-(--topbar-height) h-fit">
         <NavigationMenu />

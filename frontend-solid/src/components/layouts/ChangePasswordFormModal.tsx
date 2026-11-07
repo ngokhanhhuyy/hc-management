@@ -1,5 +1,5 @@
 import { api } from "#/api";
-import { ChangePasswordModel } from "#/models";
+import { createChangePasswordModel, type ChangePasswordModel } from "#/models";
 import { joinClassName } from "#/helpers";
 
 // Child components.
@@ -20,17 +20,17 @@ type PasswordStrengthIndicatorProps = {
 // Components.
 export default function ChangePasswordFormModal(props: ChangePasswordFormModalProps): JSXElement {
   // States.
-  const model = $state<ChangePasswordModel>(new ChangePasswordModel());
-  let isSubmissionSuccess = $state<boolean>(false);
-  let isPasswordTextVisible = $state<boolean>(false);
+  const [model, setModel] = createSignal<ChangePasswordModel>(createChangePasswordModel());
+  const [isSubmissionSuccess, setIsSubmissionSuccess] = createSignal<boolean>(false);
+  const [isPasswordTextVisible, setIsPasswordTextVisible] = createSignal<boolean>(false);
 
   // Computed.
-  const passwordStrengthLevel = $memo<number>(() => {
-    const characters = Array.from(model.newPassword);
+  const passwordStrengthLevel = createMemo<number>(() => {
+    const characters = Array.from(model().newPassword);
     const criteria: boolean[] = [
-      model.newPassword.length >= 6,
-      /[^\p{L}\p{N}]/u.test(model.newPassword),
-      /[0-9]+/u.test(model.newPassword),
+      model().newPassword.length >= 6,
+      /[^\p{L}\p{N}]/u.test(model().newPassword),
+      /[0-9]+/u.test(model().newPassword),
       characters.some(char => char.toLowerCase() !== char.toUpperCase() && char === char.toLowerCase()),
       characters.some(char => char.toLowerCase() !== char.toUpperCase() && char === char.toUpperCase())
     ];
@@ -38,13 +38,29 @@ export default function ChangePasswordFormModal(props: ChangePasswordFormModalPr
     return criteria.filter(criterion => criterion).length;
   });
 
+  const closeButtonText = createMemo(() => {
+    if (isSubmissionSuccess()) {
+      return "Hoàn tất";
+    }
+
+    return "Huỷ bỏ";
+  });
+
+  const passwordInputType = createMemo(() => {
+    if (isPasswordTextVisible()) {
+      return "text";
+    }
+
+    return "password";
+  });
+
   // Callbacks.
   async function submitAsync(): Promise<void> {
-    await api.authentication.changePasswordAsync(model.toRequestDto());
+    await api.authentication.changePasswordAsync(model().toRequestDto());
   }
 
   function handleSubmissionSuccess(): void {
-    isSubmissionSuccess = true;
+    setIsSubmissionSuccess(true);
   }
 
   // Template.
@@ -66,10 +82,10 @@ export default function ChangePasswordFormModal(props: ChangePasswordFormModalPr
       footerChildren={(
         <div class="flex justify-between gap-2">
           <button type="button" class="btn" onClick={props.onClosed}>
-            {isSubmissionSuccess ? "Hoàn tất" : "Huỷ bỏ"}
+            {closeButtonText()}
           </button>
 
-          <Show when={!isSubmissionSuccess}>
+          <Show when={!isSubmissionSuccess()}>
             <button type="submit" class="btn" form="change-password-form">
               Xác nhận đổi
             </button>
@@ -77,7 +93,7 @@ export default function ChangePasswordFormModal(props: ChangePasswordFormModalPr
         </div>
       )}
     >
-      <Show when={!isSubmissionSuccess} fallback={renderSubmissionSucceededNotification()}>
+      <Show when={!isSubmissionSuccess()} fallback={renderSubmissionSucceededNotification()}>
         <Form
           id="change-password-form"
           class="flex flex-col gap-3 w-full p-3 pt-2"
@@ -87,25 +103,25 @@ export default function ChangePasswordFormModal(props: ChangePasswordFormModalPr
           <FormField path="currentPassword">
             <TextInput
               type="password"
-              value={model.currentPassword}
-              onInput={(currentPassword) => model.currentPassword = currentPassword}
+              value={model().currentPassword}
+              onInput={(currentPassword) => setModel(previous => ({ ...previous, currentPassword }))}
             />
           </FormField>
 
           <FormField path="newPassword">
             <div class="form-input-group">
               <TextInput
-                type={isPasswordTextVisible ? "text" : "password"}
+                type={passwordInputType()}
                 class="rounded-e-none z-0"
-                value={model.newPassword}
-                onInput={(newPassword) => model.newPassword = newPassword}
+                value={model().newPassword}
+                onInput={(newPassword) => setModel(previous => ({ ...previous, newPassword }))}
               />
               <button
                 type="button"
                 class="btn border-s-0"
-                onPointerDown={() => isPasswordTextVisible = true}
-                onPointerUp={() => isPasswordTextVisible = false}
-                onBlur={() => isPasswordTextVisible = false}
+                onPointerDown={() => setIsPasswordTextVisible(true)}
+                onPointerUp={() => setIsPasswordTextVisible(false)}
+                onBlur={() => setIsPasswordTextVisible(false)}
               >
                 <i class="bi bi-eye" />
               </button>
@@ -117,8 +133,8 @@ export default function ChangePasswordFormModal(props: ChangePasswordFormModalPr
                 <For each={Array.from({ length: 5 })}>
                   {(_, index) => (
                     <PasswordStrengthIndicator
-                      strengthLevel={index + 1}
-                      currentStrengthLevel={passwordStrengthLevel}
+                      strengthLevel={index() + 1}
+                      currentStrengthLevel={passwordStrengthLevel()}
                     />
                   )}
                 </For>
@@ -133,7 +149,7 @@ export default function ChangePasswordFormModal(props: ChangePasswordFormModalPr
 
 function PasswordStrengthIndicator(props: PasswordStrengthIndicatorProps): JSXElement {
   // Compute.
-  const backgroundClassName = $memo<string | undefined>(() => {
+  const backgroundClassName = createMemo<string | undefined>(() => {
     const backgroundClassNames = [
       "bg-neutral-400",
       "bg-red-400",
@@ -152,6 +168,6 @@ function PasswordStrengthIndicator(props: PasswordStrengthIndicatorProps): JSXEl
 
   // Templates.
   return (
-    <div class={backgroundClassName} />
+    <div class={backgroundClassName()} />
   );
 }

@@ -1,4 +1,9 @@
-import { MenuItemBasicModel, MenuCategoryBasicModel } from "./sharedModels";
+import {
+  createMenuCategoryBasicModel,
+  createMenuItemBasicModel,
+  type MenuCategoryBasicModel,
+  type MenuItemBasicModel
+} from "#/models";
 import {
   defaultMenuItemListRequestDto,
   MenuItemListSortingCriterion,
@@ -8,72 +13,81 @@ import {
   type MenuItemUpsertRequestDto,
 } from "#/api";
 
-export class MenuItemListModel {
-  public sortByAscending: boolean;
-  public sortByCriterion: MenuItemListSortingCriterion;
-  public page: number;
-  public resultsPerPage: number;
-  public category: MenuCategoryBasicModel | null;
-  public searchContent: string;
-  public items: MenuItemBasicModel[];
-  public itemCount: number;
-  public pageCount: number;
+export type MenuItemListModel = {
+  sortByAscending: boolean;
+  sortByCriterion: MenuItemListSortingCriterion;
+  page: number;
+  resultsPerPage: number;
+  category: MenuCategoryBasicModel | null;
+  searchContent: string;
+  items: MenuItemBasicModel[];
+  itemCount: number;
+  pageCount: number;
+  mapFromResponseDto(responseDto: MenuItemListResponseDto): MenuItemListModel;
+  toRequestDto(): MenuItemListRequestDto;
+};
 
-  public constructor() {
-    this.sortByAscending = defaultMenuItemListRequestDto.sortByAscending ?? true;
-    this.sortByCriterion = defaultMenuItemListRequestDto.sortByCriterion ?? MenuItemListSortingCriterion.Name;
-    this.page = defaultMenuItemListRequestDto.page ?? 1;
-    this.resultsPerPage = defaultMenuItemListRequestDto.resultsPerPage ?? 15;
-    this.category = null;
-    this.searchContent = "";
-    this.items = [];
-    this.itemCount = 0;
-    this.pageCount = 0;
-  }
+export type MenuItemUpsertModel = {
+  name: string;
+  unit: string;
+  defaultAmountBeforeVatPerUnit: number;
+  defaultVatPercentagePerUnit: number;
+  category: MenuCategoryBasicModel | null;
+  toRequestDto(): MenuItemUpsertRequestDto;
+};
 
-  public mapFromResponseDto(responseDto: MenuItemListResponseDto): void {
-    this.items = responseDto.items.map(dto => new MenuItemBasicModel(dto));
-    this.itemCount = responseDto.itemCount;
-    this.pageCount = responseDto.pageCount;
+export function createMenuItemListModel(): MenuItemListModel {
+  return {
+    sortByAscending: defaultMenuItemListRequestDto.sortByAscending ?? true,
+    sortByCriterion: defaultMenuItemListRequestDto.sortByCriterion ?? MenuItemListSortingCriterion.Name,
+    page: defaultMenuItemListRequestDto.page ?? 1,
+    resultsPerPage: defaultMenuItemListRequestDto.resultsPerPage ?? 15,
+    itemCount: 0,
+    pageCount: 0,
+    category: null,
+    searchContent: "",
+    items: [],
+    mapFromResponseDto(responseDto: MenuItemListResponseDto): MenuItemListModel {
+      return {
+        ...this,
+        items: responseDto.items.map(dto => createMenuItemBasicModel(dto)),
+        itemCount: responseDto.itemCount,
+        pageCount: responseDto.pageCount
+      };
+    },
+    toRequestDto(): MenuItemListRequestDto {
+      return {
+        sortByAscending: this.sortByAscending,
+        sortByCriterion: this.sortByCriterion,
+        page: this.page,
+        resultsPerPage: this.resultsPerPage,
+        categoryId: this.category?.id,
+        searchContent: this.searchContent || undefined
+      };
+    }
   };
-
-  public toRequestDto(): MenuItemListRequestDto {
-    return {
-      sortByAscending: this.sortByAscending,
-      sortByCriterion: this.sortByCriterion,
-      page: this.page,
-      resultsPerPage: this.resultsPerPage,
-      categoryId: this.category?.id,
-      searchContent: this.searchContent || undefined
-    };
-  }
 }
 
-export class MenuItemUpsertModel {
-  public name: string = "";
-  public unit: string = "";
-  public defaultAmountBeforeVatPerUnit: number = 0;
-  public defaultVatPercentagePerUnit: number = 0;
-  public category: MenuCategoryBasicModel | null = null;
+export function createMenuItemUpsertModel(responseDto?: MenuItemDetailResponseDto): MenuItemUpsertModel {
+  let category: MenuCategoryBasicModel | null = null;
+  if (responseDto?.category) {
+    category = createMenuCategoryBasicModel(responseDto.category);
+  }
 
-  public mapFromResponseDto(responseDto: MenuItemDetailResponseDto): void {
-    this.name = "";
-    this.unit = "";
-    this.defaultAmountBeforeVatPerUnit = 0;
-    this.defaultVatPercentagePerUnit = 0;
-
-    if (responseDto.category) {
-      this.category =new MenuCategoryBasicModel(responseDto.category);
+  return {
+    name: responseDto?.name ?? "",
+    unit: responseDto?.unit ?? "",
+    defaultAmountBeforeVatPerUnit: responseDto?.defaultAmountBeforeVatPerUnit ?? 0,
+    defaultVatPercentagePerUnit: responseDto?.defaultVatPercentagePerUnit ?? 0,
+    category,
+    toRequestDto(): MenuItemUpsertRequestDto {
+      return {
+        name: this.name,
+        unit: this.unit,
+        defaultAmountBeforeVatPerUnit: this.defaultAmountBeforeVatPerUnit,
+        defaultVatPercentagePerUnit: this.defaultVatPercentagePerUnit,
+        categoryId: this.category?.id ?? null
+      };
     }
-  }
-
-  public toRequestDto(): MenuItemUpsertRequestDto {
-    return {
-      name: this.name,
-      unit: this.unit,
-      defaultAmountBeforeVatPerUnit: this.defaultAmountBeforeVatPerUnit,
-      defaultVatPercentagePerUnit: this.defaultVatPercentagePerUnit,
-      categoryId: this.category?.id ?? null
-    };
-  }
+  };
 }

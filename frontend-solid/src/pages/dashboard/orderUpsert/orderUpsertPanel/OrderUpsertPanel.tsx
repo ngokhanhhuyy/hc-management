@@ -1,4 +1,4 @@
-import type { OrderUpsertModel } from "#/models";
+import type { OrderUpsertModel, OrderItemUpsertModel } from "#/models";
 import { joinClassName, getDisplayAmountText, calculateOrderAmount } from "#/helpers";
 
 // Child components.
@@ -10,7 +10,7 @@ export type LoadingState = "syncing" | "finishing" | "finished" | null;
 type OrderUpsertPanelProps = {
   model: OrderUpsertModel;
   loadingState: LoadingState;
-  onModelUpdated(mutator: Mutator<OrderUpsertModel>): void;
+  onModelUpdated(updatedData: Partial<OrderUpsertModel>): void;
   onFinished(): any;
   onSyncingRequestingAsync(): Promise<any>;
 };
@@ -18,10 +18,10 @@ type OrderUpsertPanelProps = {
 // Components.
 export default function OrderUpsertPanel(props: OrderUpsertPanelProps): JSXElement {
   // States.
-  let isBillModalVisible = $state<boolean>(false);
+  const [isBillModalVisible, setIsBillModalVisible] = createSignal<boolean>(false);
 
   // Computed.
-  const amountDisplayText = $memo(() => {
+  const amountDisplayText = createMemo(() => {
     const amount = calculateOrderAmount(props.model.toRequestDto());
     return {
       amountBeforeVat: getDisplayAmountText(amount.amountBeforeVat, { suffix: " vnđ" }),
@@ -32,16 +32,32 @@ export default function OrderUpsertPanel(props: OrderUpsertPanelProps): JSXEleme
 
   // Callbacks.
   function handleClearAllItemsButtonClicked(): void {
-    props.onModelUpdated((model) => model.items = []);
+    props.onModelUpdated({ items: [] });
+  }
+
+  function handleItemUpdated(guid: string, updatedData: Partial<OrderItemUpsertModel>): void {
+    const items = props.model.items.map(item => {
+      if (item.guid === guid) {
+        return { ...item, ...updatedData };
+      }
+
+      return item;
+    });
+
+    props.onModelUpdated({ items });
+  }
+
+  function handleItemDeleted(guid: string): void {
+    props.onModelUpdated({ items: props.model.items.filter(item => item.guid !== guid) });
   }
 
   async function handlePurchaseButtonClicked(): Promise<void> {
     await props.onSyncingRequestingAsync();
-    isBillModalVisible = true;
+    setIsBillModalVisible(true);
   }
 
   function handleBillModalFinishedButtonClicked(): void {
-    isBillModalVisible = false;
+    setIsBillModalVisible(false);
     props.onFinished();
   }
 
@@ -72,23 +88,9 @@ export default function OrderUpsertPanel(props: OrderUpsertPanelProps): JSXEleme
               {(item, index) => (
                 <OrderItem
                   model={item}
-                  onUpdated={(mutator) => {
-                    props.onModelUpdated?.((model) => {
-                      const itemToUpdate = model.items.find(i => i.guid === item.guid);
-                      if (itemToUpdate) {
-                        mutator(itemToUpdate);
-                      }
-                    });
-                  }}
-                  onDeleted={() => {
-                    props.onModelUpdated?.((model) => {
-                      const index = model.items.indexOf(item);
-                      if (index !== -1) {
-                        model.items.splice(index, 1);
-                      }
-                    });
-                  }}
-                  index={index}
+                  onUpdated={updatedData => handleItemUpdated(item.guid, updatedData)}
+                  onDeleted={() => handleItemDeleted(item.guid)}
+                  index={index()}
                   disabled={props.loadingState === "finished"}
                 />
               )}
@@ -98,17 +100,17 @@ export default function OrderUpsertPanel(props: OrderUpsertPanelProps): JSXEleme
           <div class="flex flex-col px-3 pt-1 pb-2 border-t border-black/15">
             <div class="flex justify-between">
               <span>Giá trước thuế</span>
-              <span class="text-blue-700">{amountDisplayText.amountBeforeVat}</span>
+              <span class="text-blue-700">{amountDisplayText().amountBeforeVat}</span>
             </div>
             
             <div class="flex justify-between">
               <span>Thuế VAT</span>
-              <span class="text-blue-700">{amountDisplayText.vatAmount}</span>
+              <span class="text-blue-700">{amountDisplayText().vatAmount}</span>
             </div>
             
             <div class="flex justify-between mt-3">
               <span class="font-bold">Tổng tiền</span>
-              <span class="text-blue-700 font-bold">{amountDisplayText.totalAmount}</span>
+              <span class="text-blue-700 font-bold">{amountDisplayText().totalAmount}</span>
             </div>
           </div>
         </Show>
@@ -149,8 +151,8 @@ export default function OrderUpsertPanel(props: OrderUpsertPanelProps): JSXEleme
 
       <BillModal
         model={props.model}
-        isOpen={isBillModalVisible}
-        onClosed={() => isBillModalVisible = false}
+        isOpen={isBillModalVisible()}
+        onClosed={() => setIsBillModalVisible(false)}
         onFinished={handleBillModalFinishedButtonClicked}
       />
     </div>

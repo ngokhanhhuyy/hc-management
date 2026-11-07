@@ -1,4 +1,3 @@
-import { lazy, type JSX } from "solid-js";
 import { Router, Route, Navigate } from "@solidjs/router";
 import { getDashboardRoutePath, getSeatingListRoutePath } from "#/helpers";
 

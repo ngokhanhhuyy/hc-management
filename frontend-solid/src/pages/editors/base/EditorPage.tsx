@@ -26,7 +26,7 @@ type EditorPageProps<TBasicModel extends IBasic> = {
   editorCreateRoutePath: string;
   getEditorUpdateRoutePath(id: number): string;
   onItemRemoved(id: number): any;
-  onReloading(): any
+  onReloading(): any;
   onDeletingAsync(id: number): Promise<any>;
   renderItemIcon(className: string): JSXElement;
   renderItemDescription?(item: TBasicModel): JSXElement;
@@ -45,17 +45,25 @@ export default function EditorPage<TBasicModel extends IBasic>(props: EditorPage
   let deletionSuccessModalHandler: ConfirmationModalHandler;
 
   // Computed.
-  const displayName = $memo<string>(() => {
+  const displayName = createMemo<string>(() => {
     return displayNames[props.resourceName]?.toLowerCase() ?? props.resourceName;
   });
 
-  const children = $children(props.children);
+  const resolvedChildren = children(() => props.children);
 
-  const isEditorRoutePath = $memo(() => {
+  const isEditorRoutePath = createMemo(() => {
     return location.pathname === props.editorRoutePath;
   });
 
-  const semiTransparentClassName = $memo(() => "opacity-25 pointer-events-none select-none");
+  const gridClassName = createMemo(() => {
+    if (resolvedChildren()) {
+      return "grid-cols-2";
+    }
+
+    return "grid-cols-1";
+  });
+
+  const semiTransparentClassName = createMemo(() => "opacity-25 pointer-events-none select-none");
 
   function isSelected(seating: TBasicModel): boolean {
     return params.id === seating.id.toString();
@@ -94,14 +102,14 @@ export default function EditorPage<TBasicModel extends IBasic>(props: EditorPage
   );
 
   return (
-    <div class={joinClassName("grid w-full gap-3 h-fit", !children ? "grid-cols-1" : "grid-cols-2")}>
+    <div class={joinClassName("grid w-full gap-3 h-fit", gridClassName())}>
       <div class="panel flex-1">
         <div class="panel-header">
           <span class="panel-header-title">
             Danh sách {displayNames[props.resourceName]}
           </span>
           
-          <Show when={isEditorRoutePath}>
+          <Show when={isEditorRoutePath()}>
             <A class="btn btn-sm gap-0.5" href={props.editorCreateRoutePath}>
               <i class="bi bi-plus-lg" />
               <span>Thêm {displayNames[props.resourceName].toLowerCase()} mới</span>
@@ -110,7 +118,7 @@ export default function EditorPage<TBasicModel extends IBasic>(props: EditorPage
         </div>
 
         <div class="panel-body p-3 flex flex-col gap-3">
-          {props.renderUpperArea?.(isEditorRoutePath, semiTransparentClassName)}
+          {props.renderUpperArea?.(isEditorRoutePath(), semiTransparentClassName())}
 
           <ul class="list-group bg-black/2.5">
             <For each={props.model} fallback={listFallback}>
@@ -118,7 +126,7 @@ export default function EditorPage<TBasicModel extends IBasic>(props: EditorPage
                 <li class="list-group-item flex p-0">
                   <div class={joinClassName(
                     "flex gap-2 p-2 justify-start items-center w-full",
-                    (children != null && !isSelected(item)) && semiTransparentClassName
+                    (resolvedChildren() != null && !isSelected(item)) && semiTransparentClassName()
                   )}>
                     <div class="img-thumbnail size-11 flex justify-center items-center">
                       {props.renderItemIcon("text-lg opacity-25")}
@@ -128,7 +136,7 @@ export default function EditorPage<TBasicModel extends IBasic>(props: EditorPage
                       <div class="flex gap-1.5 items-center">
                         <span class={joinClassName(
                           "font-bold",
-                          (!children|| isSelected(item)) && "text-blue-700"
+                          (!resolvedChildren()|| isSelected(item)) && "text-blue-700"
                         )}>
                           {item.name}
                         </span>
@@ -144,7 +152,7 @@ export default function EditorPage<TBasicModel extends IBasic>(props: EditorPage
                         </A>
                       </Show>
 
-                      <Show when={(isEditorRoutePath || isSelected(item))}>
+                      <Show when={(isEditorRoutePath() || isSelected(item))}>
                         <button type="button" class="btn btn-danger-outline" onClick={() => handleDeletionAsync(item)}>
                           <i class="bi bi-trash3" />
                         </button>
@@ -156,21 +164,21 @@ export default function EditorPage<TBasicModel extends IBasic>(props: EditorPage
             </For>
           </ul>
           
-          {props.renderLowerArea?.(isEditorRoutePath, semiTransparentClassName)}
+          {props.renderLowerArea?.(isEditorRoutePath(), semiTransparentClassName())}
         </div>
       </div>
 
       <EditorPageContext.Provider value={contextPayload}>
-        {children}
+        {resolvedChildren()}
       </EditorPageContext.Provider>
 
       <YesNoModal
-        title={`Xác nhận xoá ${displayName}`}
+        title={`Xác nhận xoá ${displayName()}`}
         renderIcon={renderConfirmationModalIcon}
         yesButtonClassName="btn btn-danger-outline"
         questionContent={[
           "Dữ liệu đã xoá có thể sẽ không thể khôi phục lại",
-          `Bạn có chắc chắn muốn xoá ${displayName} này?`
+          `Bạn có chắc chắn muốn xoá ${displayName()} này?`
         ]}
         ref={(handler) => yesNoModalHandler = handler}
       />

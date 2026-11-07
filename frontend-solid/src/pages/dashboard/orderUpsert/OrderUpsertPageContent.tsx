@@ -1,6 +1,6 @@
 import { useBeforeLeave } from "@solidjs/router";
 import { api, type OrderDetailResponseDto } from "#/api";
-import { OrderItemUpsertModel, OrderUpsertModel, type MenuItemBasicModel } from "#/models";
+import { createOrderItemUpsertModel, type OrderUpsertModel, type MenuItemBasicModel } from "#/models";
 import { joinClassName } from "#/helpers";
 
 // Child components.
@@ -15,40 +15,44 @@ type OrderUpsertPageContent = {
 // Components.
 export default function OrderUpsertPage(props: OrderUpsertPageContent): JSXElement {
   // States.
-  const model = $state<OrderUpsertModel>(props.model);
-  let loadingState = $state<LoadingState>(null);
-  let renderingKey = $state<number>(0);
+  const [model, setModel] = createSignal<OrderUpsertModel>(props.model);
+  const [loadingState, setLoadingState] = createSignal<LoadingState>(null);
+  const [renderingKey, setRenderingKey] = createSignal<number>(0);
   let currentTimeout: { id: number, callback: () => Promise<any> } | null = (null);
-  let currentRequestId: string | number | null = null;
 
   // Callbacks.
   function onMenuItemPicked(pickedMenuItem: MenuItemBasicModel): void {
-    $batch(() => {
-      model?.items.push(new OrderItemUpsertModel(pickedMenuItem));
-      renderingKey += 1;
+    batch(() => {
+      setModel(previous => ({
+        ...previous,
+        items: [...previous.items, createOrderItemUpsertModel(pickedMenuItem)]
+      }));
+      setRenderingKey(previous => previous + 1);
+    });
+  }
+
+  function handleModelUpdated(updatedData: Partial<OrderUpsertModel>): void {
+    batch(() => {
+      setModel(previous => ({ ...previous, ...updatedData }));
+      setRenderingKey(previous => previous + 1);
     });
   }
 
   async function syncDataAsync(): Promise<void> {
-    const requestId = crypto.randomUUID();
-    currentRequestId = requestId;
-
+    const currentModel = model();
     let responseDto: OrderDetailResponseDto;
-    loadingState = "syncing";
-    if (model.items.length) {
-      if (!model.id) {
-        responseDto = await api.order.createAsync(model.toRequestDto());
+    setLoadingState("syncing");
+    if (currentModel.items.length) {
+      if (!currentModel.id) {
+        responseDto = await api.order.createAsync(currentModel.toRequestDto());
       } else {
-        responseDto = await api.order.updateAsync(model.id, model.toRequestDto());
+        responseDto = await api.order.updateAsync(currentModel.id, currentModel.toRequestDto());
       }
 
-      model.mapFromResponseDto(responseDto);
-    } else if (model.id) {
-      await api.order.deleteAsync(model.id);
-      $batch(() => {
-        model.id = null;
-        model.items = [];
-      });
+      setModel(previous => previous.mapIdsFromResponseDto(responseDto));
+    } else if (currentModel.id) {
+      await api.order.deleteAsync(currentModel.id);
+      setModel(previous => ({ ...previous, id: null }));
     }
   };
 
@@ -57,18 +61,18 @@ export default function OrderUpsertPage(props: OrderUpsertPageContent): JSXEleme
       window.clearTimeout(currentTimeout.id);
     }
 
-    const timeoutCallback = async () => {
+    async function timeoutCallback(): Promise<void> {
       try {
         await Promise.all([
           syncDataAsync(),
           new Promise<void>(resolve => setTimeout(resolve, 300))
         ]);
       } finally {
-        loadingState = null;
+        setLoadingState(null);
       }
 
       currentTimeout = null;
-    };
+    }
 
     const timeoutId = window.setTimeout(timeoutCallback, 10_000);
 
@@ -87,23 +91,24 @@ export default function OrderUpsertPage(props: OrderUpsertPageContent): JSXEleme
   }
 
   async function handleFinishedAsync(): Promise<void> {
-    if (model.id != null) {
-      await api.order.finishAsync(model.id);
+    const id = model().id;
+    if (id != null) {
+      await api.order.finishAsync(id);
     }
 
-    loadingState = "finished";
+    setLoadingState("finished");
   }
 
   // Life cycle and effect.
-  $cleanup(clearDataAndSyncImmediately);
+  onCleanup(clearDataAndSyncImmediately);
 
-  $watch(() => renderingKey, () => {
-    if (renderingKey == 0) {
+  createEffect(on(() => renderingKey(), () => {
+    if (renderingKey() == 0) {
       return;
     }
 
     syncDataWithDelayAndDebounce();
-  });
+  }));
 
   useBeforeLeave(async (event) => {
     if (currentTimeout != null) {
@@ -117,21 +122,18 @@ export default function OrderUpsertPage(props: OrderUpsertPageContent): JSXEleme
   return (
     <div class={joinClassName(
       "grid grid-cols-[1fr_320px] gap-3 h-full transition-opacity",
-      loadingState === "syncing" && "opacity-50 pe-none"
+      loadingState() === "syncing" && "opacity-50 pe-none"
     )}>
       <MenuItemListPanel
-        pickedOrderItems={model.items}
+        pickedOrderItems={model().items}
         onPicked={onMenuItemPicked}
-        disabled={loadingState === "finished"}
+        disabled={loadingState() === "finished"}
       />
 
       <OrderUpsertPanel
-        model={model}
-        loadingState={loadingState}
-        onModelUpdated={mutator => {
-          mutator(model);
-          renderingKey += 1;
-        }}
+        model={model()}
+        loadingState={loadingState()}
+        onModelUpdated={handleModelUpdated}
         onFinished={handleFinishedAsync}
         onSyncingRequestingAsync={clearDataAndSyncImmediately}
       />

@@ -1,6 +1,5 @@
-// import React, { useState } from "react";
 import { api } from "#/api";
-import { SeatingBasicModel } from "#/models";
+import { createSeatingBasicModel, type SeatingBasicModel } from "#/models";
 
 // Child components.
 import SeatingListPanel from "./SeatingListPanel";
@@ -8,17 +7,17 @@ import SeatingListPanel from "./SeatingListPanel";
 // Components.
 export default function SeatingListPage(): JSXElement {
   // Dependencies.
-  let model = $state<SeatingBasicModel[]>([]);
+  const [model, setModel] = createSignal<SeatingBasicModel[]>([]);
 
-  $mount(async () => {
+  onMount(async () => {
     const responseDtos = await api.seating.getAllAsync();
-    model = responseDtos.map(dto => new SeatingBasicModel(dto));
+    setModel(responseDtos.map(dto => createSeatingBasicModel(dto)));
   });
 
   // Templates.
   return (
     <div class="grid grid-cols-1">
-      <SeatingListPanel model={model} />
+      <SeatingListPanel model={model()} />
     </div>
   );
 }

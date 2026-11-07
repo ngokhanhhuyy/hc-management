@@ -18,7 +18,8 @@ export default function MenuCategory(props: MenuCategoryProps): JSXElement {
         "menu-category btn flex-none w-fit rounded-lg px-3 cursor-pointer",
         "transition-all duration-200 whitespace-nowrap shadow-xs min-w-20",
         !props.isSelected && "shadow-none",
-        props.isSelected ? "btn-primary" : (props.model == null && "btn-primary-outline")
+        props.isSelected && "btn-primary",
+        !props.isSelected && props.model == null && "btn-primary-outline"
       )}
       onClick={props.onSelected}
     >

@@ -3,14 +3,14 @@ import { FormContext } from "./Form";
 
 // Types.
 export type FormFieldContextPayload = {
-  path?: string;
-  displayName: string | undefined;
-  isValidated: boolean;
-  hasError: boolean;
+  path: Accessor<string | undefined>;
+  displayName: Accessor<string | undefined>;
+  isValidated: Accessor<boolean>;
+  hasError: Accessor<boolean>;
 };
 
 // Context.
-export const FormFieldContext = $createContext<FormFieldContextPayload>();
+export const FormFieldContext = createContext<FormFieldContextPayload>();
 
 // Props.
 export type FormFieldProps = {
@@ -24,10 +24,10 @@ export type FormFieldProps = {
 // Components.
 export function FormField(props: FormFieldProps): JSXElement {
   // Dependencies.
-  const formContext = $useContext(FormContext);
+  const formContext = useContext(FormContext);
 
   // Computed.
-  const displayName = $memo(() => {
+  const displayName = createMemo(() => {
     if (props.displayName) {
       return props.displayName;
     }
@@ -45,12 +45,12 @@ export function FormField(props: FormFieldProps): JSXElement {
     return getDisplayNameByKey(lastIndexerOmittedPathElement) ?? undefined;
   });
 
-  const errorMessage = $memo(() => {
-    if (!formContext || !formContext.errorCollection.isValidated || !props.path) {
+  const errorMessage = createMemo(() => {
+    if (!formContext || !formContext.errorCollection().isValidated || !props.path) {
       return;
     }
 
-    const messages = formContext.errorCollection.details
+    const messages = formContext.errorCollection().details
       .filter(d => d.propertyPath === props.path)
       .map(d => d.message);
 
@@ -58,18 +58,18 @@ export function FormField(props: FormFieldProps): JSXElement {
       return;
     }
 
-    return messages[0].replaceAll("{propertyDisplayName}", displayName ?? "{propertyDisplayName}");
+    return messages[0].replaceAll("{propertyDisplayName}", displayName() ?? "{propertyDisplayName}");
   });
 
-  const labelClassName = $memo<string | undefined>(() => {
-    if (!props.hideValidationMessage && errorMessage) {
+  const labelClassName = createMemo<string | undefined>(() => {
+    if (!props.hideValidationMessage && errorMessage()) {
       return "text-red-900";
     }
   });
 
-  const validationMessageClassName = $memo<string | undefined>(() => {
-    if (formContext?.errorCollection.isValidated) {
-      if (errorMessage) {
+  const validationMessageClassName = createMemo<string | undefined>(() => {
+    if (formContext?.errorCollection().isValidated) {
+      if (errorMessage()) {
         return "text-red-600 text-sm";
       }
 
@@ -78,14 +78,10 @@ export function FormField(props: FormFieldProps): JSXElement {
   });
 
   const contextPayload: FormFieldContextPayload = {
-    path: props.path,
-    displayName: displayName,
-    get isValidated(): boolean {
-      return this.isValidated;
-    },
-    get hasError(): boolean {
-      return !!errorMessage;
-    }
+    path: () => props.path,
+    displayName,
+    isValidated: () => formContext.errorCollection().isValidated,
+    hasError: () => !!errorMessage()
   };
   
   // Template.
@@ -93,13 +89,13 @@ export function FormField(props: FormFieldProps): JSXElement {
     <div class={joinClassName(
       props.class,
       "form-field flex flex-col",
-      errorMessage && "field-validation-error"
+      errorMessage() && "field-validation-error"
     )}>
       {/* Label */}
-      <Show when={!props.hideLabel && displayName}>
+      <Show when={!props.hideLabel && displayName()}>
         {(displayName) => (
-          <label class={labelClassName} for={props.path}>
-            {displayName}
+          <label class={labelClassName()} for={props.path}>
+            {displayName()}
           </label>
         )}
       </Show>
@@ -110,10 +106,10 @@ export function FormField(props: FormFieldProps): JSXElement {
       </FormFieldContext.Provider>
 
       {/* Message */}
-      <Show when={!props.hideValidationMessage && errorMessage}>
+      <Show when={!props.hideValidationMessage && errorMessage()}>
         {(errorMessage) => (
-          <span class={validationMessageClassName}>
-            {errorMessage}
+          <span class={validationMessageClassName()}>
+            {errorMessage()}
           </span>
         )}
       </Show>

@@ -1,6 +1,8 @@
 import { useParams, useNavigate } from "@solidjs/router";
 import { api, menuItemContracts } from "#/api";
-import { MenuItemUpsertModel, MenuCategoryBasicModel } from "#/models";
+import {
+  createMenuItemUpsertModel, createMenuCategoryBasicModel, type MenuItemUpsertModel, type MenuCategoryBasicModel,
+} from "#/models";
 import { displayNames } from "#/api";
 import { getMenuItemEditorRoutePath } from "#/helpers";
 
@@ -15,15 +17,15 @@ export default function MenuItemUpsertPanel(): JSXElement {
   const navigate = useNavigate();
 
   // States.
-  const model = $state<MenuItemUpsertModel>(new MenuItemUpsertModel());
-  const categories = $state<MenuCategoryBasicModel[]>([]);
-  let isInitialLoaded = $state<boolean>(false);
+  const [model, setModel] = createSignal<MenuItemUpsertModel>(createMenuItemUpsertModel());
+  const [categories, setCategories] = createSignal<MenuCategoryBasicModel[]>([]);
+  const [isInitiallyLoaded, setIsInitiallyLoaded] = createSignal<boolean>(false);
 
   // Computed.
-  const categoryOptions = $memo<SelectInputOption[]>(() => {
+  const categoryOptions = createMemo<SelectInputOption[]>(() => {
     return [
       { displayName: "Không chọn", value: "" },
-      ...categories.map<SelectInputOption>(category => ({
+      ...categories().map<SelectInputOption>(category => ({
         displayName: category.name,
         value: category.id.toString()
       }))
@@ -33,30 +35,36 @@ export default function MenuItemUpsertPanel(): JSXElement {
   // Callbacks.
   function handleCategoryInput(categoryIdAsString: string): void {
     if (!categoryIdAsString) {
-      model.category = null;
+      setModel(previous => ({ ...previous, category: null }));
       return;
     }
 
-    const index = categories.findIndex(c => c.id === parseInt(categoryIdAsString));
-    const category = categories[index];
-    model.category = category;
+    const index = categories().findIndex(c => c.id === parseInt(categoryIdAsString));
+    const category = categories()[index];
+    setModel(previous => ({ ...previous, category }));
+  }
+
+  function handleAmountBeforeVatInput(defaultAmountBeforeVatPerUnit: number): void {
+    setModel(previous => ({ ...previous, defaultAmountBeforeVatPerUnit }));
+  }
+
+  function handleVatPercentageInput(defaultVatPercentagePerUnit: number): void {
+    setModel(previous => ({ ...previous, defaultVatPercentagePerUnit }));
   }
 
   async function handleCreatingAsync(): Promise<void> {
-    await api.menuItem.createAsync(model.toRequestDto());
+    await api.menuItem.createAsync(model().toRequestDto());
   }
 
   async function handleUpdatingAsync(id: number): Promise<void> {
-    await api.menuItem.updateAsync(id, model.toRequestDto());
+    await api.menuItem.updateAsync(id, model().toRequestDto());
   }
 
   // Life cycle hooks.
-  $mount(async () => {
+  onMount(async () => {
     const loadCategoriesAsync = async () => {
       const categoryResponseDtos = await api.menuCategory.getAllAsync();
-      for (const dto of categoryResponseDtos) {
-        categories.push(new MenuCategoryBasicModel(dto));
-      }
+      setCategories(categoryResponseDtos.map(createMenuCategoryBasicModel));
     };
 
     try {
@@ -76,29 +84,29 @@ export default function MenuItemUpsertPanel(): JSXElement {
         loadCategoriesAsync()
       ]);
       
-      model.mapFromResponseDto(menuItemResponseDto);
+      setModel(createMenuItemUpsertModel(menuItemResponseDto));
     } finally {
-      isInitialLoaded = true;
+      setIsInitiallyLoaded(true);
     }
   });
 
   // Templates.
   return (
-    <Show when={isInitialLoaded}>
+    <Show when={isInitiallyLoaded()}>
       <UpsertPanel<MenuItemUpsertModel>
         resourceName="menuItem"
         editorRoutePath={getMenuItemEditorRoutePath()}
-        model={model}
+        model={model()}
         nameMaxLength={menuItemContracts.nameMaxLength}
-        onModelUpdated={(mutator) => mutator(model)}
+        onModelUpdated={updatedData => setModel(previous => ({ ...previous, ...updatedData }))}
         onCreatingAsync={handleCreatingAsync}
         onUpdatingAsync={handleUpdatingAsync}
       >
         <FormField path="unit">
           <TextInput
             class="z-0"
-            value={model.unit}
-            onInput={(unit) => model.unit = unit}
+            value={model().unit}
+            onInput={(unit) => setModel(previous => ({ ...previous, unit }))}
           />
         </FormField>
         
@@ -107,10 +115,8 @@ export default function MenuItemUpsertPanel(): JSXElement {
             <div class="form-input-group">
               <NumberInput
                 class="z-0"
-                value={model.defaultAmountBeforeVatPerUnit}
-                onInput={(defaultAmountBeforeVatPerUnit) => {
-                  model.defaultAmountBeforeVatPerUnit = defaultAmountBeforeVatPerUnit;
-                }}
+                value={model().defaultAmountBeforeVatPerUnit}
+                onInput={handleAmountBeforeVatInput}
                 min={0}
                 max={99_999_999}
               />
@@ -125,10 +131,8 @@ export default function MenuItemUpsertPanel(): JSXElement {
             <div class="form-input-group">
               <NumberInput
                 class="z-0"
-                value={model.defaultVatPercentagePerUnit}
-                onInput={(defaultVatPercentagePerUnit) => {
-                  model.defaultVatPercentagePerUnit = defaultVatPercentagePerUnit;
-                }}
+                value={model().defaultVatPercentagePerUnit}
+                onInput={handleVatPercentageInput}
                 min={0}
                 max={100}
               />
@@ -142,8 +146,8 @@ export default function MenuItemUpsertPanel(): JSXElement {
 
         <FormField path="categoryId" displayName={displayNames.category}>
           <SelectInput
-            options={categoryOptions}
-            value={model.category?.id.toString() ?? ""}
+            options={categoryOptions()}
+            value={model().category?.id.toString() ?? ""}
             onInput={handleCategoryInput}
           />
         </FormField>

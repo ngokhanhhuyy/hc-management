@@ -1,18 +1,22 @@
 import type { MenuCategoryBasicResponseDto, MenuCategoryUpsertRequestDto } from "#/api";
 
-export class MenuCategoryUpsertModel {
-  public name: string = "";
-  public sortingIndex: number = -1;
+export type MenuCategoryUpsertModel = {
+  name: string;
+  sortingIndex: number;
+  toRequestDto(): MenuCategoryUpsertRequestDto;
+};
 
-  public mapFromResponseDto(responseDto: MenuCategoryBasicResponseDto): void {
-    this.name = responseDto.name;
-    this.sortingIndex = responseDto.sortingIndex ?? -1;
-  }
+export function createMenuCategoryUpsertModel(responseDto?: MenuCategoryBasicResponseDto): MenuCategoryUpsertModel {
+  return {
+    name: responseDto?.name ?? "",
+    sortingIndex: responseDto?.sortingIndex ?? -1,
+    toRequestDto(): MenuCategoryUpsertRequestDto {
+      let sortingIndex: number | null = this.sortingIndex;
+      if (sortingIndex < 0) {
+        sortingIndex = null;
+      }
 
-  public toRequestDto(): MenuCategoryUpsertRequestDto {
-    return {
-      name: this.name,
-      sortingIndex: this.sortingIndex < 0 ? null : this.sortingIndex
-    };
-  }
+      return { name: this.name, sortingIndex };
+    }
+  };
 }

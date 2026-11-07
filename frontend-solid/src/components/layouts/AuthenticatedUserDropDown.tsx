@@ -8,8 +8,8 @@ export default function AuthenticatedUserDropDown(): JSXElement {
   const authenticationStore = useAuthenticationStore();
 
   // States.
-  let isUserMenuVisible = $state<boolean>(false);
-  let isChangePasswordFormModalOpened = $state<boolean>(false);
+  const [isUserMenuVisible, setIsUserMenuVisible] = createSignal<boolean>(false);
+  const [isChangePasswordFormModalOpened, setIsChangePasswordFormModalOpened] = createSignal<boolean>(false);
   let userMenuContainerElementRef: HTMLDivElement;
 
   // Computed.
@@ -22,20 +22,20 @@ export default function AuthenticatedUserDropDown(): JSXElement {
   function handleMouseClickedOutside(event: MouseEvent): void {
     const userMenuContainsClickedElement = userMenuContainerElementRef?.contains(event.target as Node);
     if (!userMenuContainsClickedElement) {
-      $untrack(() => {
-        isUserMenuVisible = false;
+      untrack(() => {
+        setIsUserMenuVisible(false);
       });
     }
   }
 
   function handleChangePasswordButtonClicked(): void {
-    isUserMenuVisible = false;
-    isChangePasswordFormModalOpened = true;
+    setIsUserMenuVisible(false);
+    setIsChangePasswordFormModalOpened(true);
   };
 
   // Lifecycle.
-  $mount(() => window.addEventListener("click", handleMouseClickedOutside));
-  $cleanup(() => window.removeEventListener("click", handleMouseClickedOutside));
+  onMount(() => window.addEventListener("click", handleMouseClickedOutside));
+  onCleanup(() => window.removeEventListener("click", handleMouseClickedOutside));
 
   // Template.
   return (
@@ -43,12 +43,12 @@ export default function AuthenticatedUserDropDown(): JSXElement {
       <button
         type="button"
         class="btn bg-black/2.5 hover:bg-black/10 border border-black/15 rounded-full h-full aspect-square"
-        onClick={() => isUserMenuVisible = true}
+        onClick={() => setIsUserMenuVisible(true)}
       >
         <i class="bi bi-person opacity-50" />
       </button>
 
-      <Show when={isUserMenuVisible}>
+      <Show when={isUserMenuVisible()}>
         <div class={joinClassName(
           "bg-white border border-black/25 rounded-lg shadow-lg w-60 h-fit absolute",
           "flex flex-col gap-3 p-3 items-center top-full right-0 mt-1"
@@ -57,7 +57,7 @@ export default function AuthenticatedUserDropDown(): JSXElement {
             <i class="bi bi-person opacity-25 text-3xl" />
           </div>
 
-          <span>{authenticationStore.authenticatedUser?.userName}</span>
+          <span>{authenticationStore.authenticatedUser()?.userName}</span>
 
           <div class="flex justify-between w-full mt-5">
             <button type="button" class="btn btn-sm" onClick={handleChangePasswordButtonClicked}>
@@ -72,8 +72,8 @@ export default function AuthenticatedUserDropDown(): JSXElement {
       </Show>
 
       <ChangePasswordFormModal
-        isOpen={isChangePasswordFormModalOpened}
-        onClosed={() => isChangePasswordFormModalOpened = false}
+        isOpen={isChangePasswordFormModalOpened()}
+        onClosed={() => setIsChangePasswordFormModalOpened(false)}
       />
     </div>
   );

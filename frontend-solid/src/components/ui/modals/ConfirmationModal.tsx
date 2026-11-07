@@ -21,17 +21,17 @@ export type ConfirmationModalHandler = {
 // Components.
 export default function ConfirmationModal(props: ConfirmationModalProps): JSXElement {
   // States.
-  let isOpen = $state(false);
+  const [isOpen, setIsOpen] = createSignal(false);
   let confirmationPromise: ((value: void | PromiseLike<void>) => void) | null = null;
 
   // Callbacks.
-  const handleOkButtonClicked = () => {
-    isOpen = false;
-  };
+  function handleOkButtonClicked(): void {
+    setIsOpen(false);
+  }
 
   // Effects.
-  $effect(() => {
-    if (!isOpen && confirmationPromise != null) {
+  createEffect(() => {
+    if (!isOpen() && confirmationPromise != null) {
       confirmationPromise();
     }
   });
@@ -39,7 +39,7 @@ export default function ConfirmationModal(props: ConfirmationModalProps): JSXEle
   // Handler.
   const handler: ConfirmationModalHandler = {
     confirmAsync() {
-      isOpen = true;
+      setIsOpen(true);
       return new Promise<void>(resolve => confirmationPromise = resolve);
     },
   };
@@ -61,8 +61,8 @@ export default function ConfirmationModal(props: ConfirmationModalProps): JSXEle
 
   return (
     <BaseModal
-      isOpen={isOpen}
-      onClosed={() => isOpen = false}
+      isOpen={isOpen()}
+      onClosed={() => setIsOpen(false)}
       title={props.title}
       footerChildren={footerChildren}
     >
@@ -72,7 +72,7 @@ export default function ConfirmationModal(props: ConfirmationModalProps): JSXEle
         <div class="flex flex-col">
           <Show when={Array.isArray(props.informationContent) && props.informationContent} fallback={fallbackElement}>
             {(sentences) => (
-              <For each={sentences}>
+              <For each={sentences()}>
                 {(sentence) => (<span>{sentence}</span>)}
               </For>
             )}

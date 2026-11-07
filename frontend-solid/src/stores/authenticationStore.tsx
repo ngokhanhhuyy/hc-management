@@ -1,40 +1,35 @@
-
 import { api, AuthenticationError, type UserDetailResponseDto } from "#/api";
-import { SignInModel, UserDetailModel } from "#/models";
+import { createUserDetailModel, type SignInModel, type UserDetailModel } from "#/models";
 
 export type AuthenticationStore = {
-  readonly authenticatedUser: UserDetailModel | null;
-  readonly isAuthenticated: boolean;
+  readonly authenticatedUser: Accessor<UserDetailModel | null>;
+  readonly isAuthenticated: Accessor<boolean>;
   readonly setAuthenticatedUser: (user: UserDetailModel | UserDetailResponseDto | null) => void;
   readonly signInAsync: (model: SignInModel) => Promise<void>;
   readonly signOutAsync: () => Promise<void>;
 };
 
-const Context = $createContext<AuthenticationStore>({
-  authenticatedUser: null,
-  isAuthenticated: false,
+const Context = createContext<AuthenticationStore>({
+  authenticatedUser: () => null,
+  isAuthenticated: () => false,
   setAuthenticatedUser: () => { },
   signInAsync: () => Promise.resolve(),
   signOutAsync: () => Promise.resolve()
 });
 
 export function useAuthenticationStore() {
-  return $useContext(Context);
+  return useContext(Context);
 }
 
 export function AuthenticationContextProvider(props: { children: JSXElement }): JSXElement {
   // States.
-  let authenticatedUser = $state(initialAuthenticatedUser);
-  const isAuthenticated = $memo(() => authenticatedUser != null);
+  const [authenticatedUser, setAuthenticatedUser] = createSignal(initialAuthenticatedUser);
+  const isAuthenticated = createMemo(() => authenticatedUser() != null);
   const payload: AuthenticationStore = {
-    get authenticatedUser(): UserDetailModel | null {
-      return authenticatedUser;
-    },
-    get isAuthenticated(): boolean {
-      return isAuthenticated;
-    },
+    authenticatedUser,
+    isAuthenticated,
     setAuthenticatedUser: (user: UserDetailModel | UserDetailResponseDto | null): void => {
-      authenticatedUser = user;
+      setAuthenticatedUser(user);
     },
     signInAsync,
     signOutAsync,
@@ -43,12 +38,12 @@ export function AuthenticationContextProvider(props: { children: JSXElement }): 
   // Callbacks.
   async function signInAsync(model: SignInModel): Promise<void> {
     await api.authentication.getAccessCookieAsync(model.toRequestDto());
-    authenticatedUser = await getAuthenticatedUserAsync();
+    setAuthenticatedUser(await getAuthenticatedUserAsync());
   }
 
   async function signOutAsync(): Promise<void> {
     try {
-      authenticatedUser = null;
+      setAuthenticatedUser(null);
       await api.authentication.clearAccessCookieAsync();
     } catch (error) {
       if (error instanceof AuthenticationError) {
@@ -71,7 +66,7 @@ const initialAuthenticatedUser = await getAuthenticatedUserAsync();
 async function getAuthenticatedUserAsync(): Promise<UserDetailModel | null> {
   try {
     const responseDto = await api.authentication.getCallerDetailAsync();
-    return new UserDetailModel(responseDto);
+    return createUserDetailModel(responseDto);
   } catch (error) {
     if (error instanceof AuthenticationError) {
       return null;

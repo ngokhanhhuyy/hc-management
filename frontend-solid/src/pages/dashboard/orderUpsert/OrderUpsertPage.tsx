@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "@solidjs/router";
 import { api } from "#/api";
-import { OrderUpsertModel } from "#/models";
+import { createOrderUpsertModel, type OrderUpsertModel } from "#/models";
 
 // Child components.
 import OrderUpsertPageContent from "./OrderUpsertPageContent";
@@ -12,27 +12,29 @@ export default function OrderUpsertPage(): JSXElement {
   const navigate = useNavigate();
 
   // States.
-  let model = $state<OrderUpsertModel | null>(null);
+  const [model, setModel] = createSignal<OrderUpsertModel | null>(null);
 
   // Life cycle and effect.
-  $mount(async () => {
+  onMount(async () => {
     if (params.id == null) {
       navigate(-1);
       return;
     }
 
     const seatingResponseDto = await api.seating.getDetailAsync(parseInt(params.id));
-    model = new OrderUpsertModel(seatingResponseDto);
+    let orderModel = createOrderUpsertModel(seatingResponseDto);
     if (seatingResponseDto.activeOrder) {
       const orderResponseDto = await api.order.getDetailAsync(seatingResponseDto.activeOrder.id);
-      model.mapFromResponseDto(orderResponseDto);
+      orderModel = orderModel.mapFromResponseDto(orderResponseDto);
     }
+
+    setModel(orderModel);
   });
   
   // Templates.
   return (
-    <Show when={model}>
-      {(model) => (<OrderUpsertPageContent model={model} />)}
+    <Show when={model()}>
+      {(model) => (<OrderUpsertPageContent model={model()} />)}
     </Show>
   );
 }

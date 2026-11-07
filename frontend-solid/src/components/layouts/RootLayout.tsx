@@ -1,4 +1,3 @@
-import { Suspense } from "solid-js";
 import { Navigate } from "@solidjs/router";
 import { AuthenticationError, NotFoundError } from "#/api";
 import { getSignInRoutePath, getDashboardRoutePath } from "#/helpers";

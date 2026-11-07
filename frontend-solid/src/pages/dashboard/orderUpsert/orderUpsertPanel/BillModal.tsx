@@ -18,26 +18,29 @@ type BillModalProps = {
 export default function BillModal(props: BillModalProps): JSXElement {
   // States.
   let billElementRef: HTMLDivElement | undefined;
-  let isPrinting = $state(false);
-  let printError = $state<string | null>(null);
+  const [isPrinting, setIsPrinting] = createSignal(false);
+  const [printError, setPrintError] = createSignal<string | null>(null);
   const printer = createElementPrinter();
-  $cleanup(() => printer.dispose());
+  onCleanup(() => printer.dispose());
 
   // Computed.
-  const orderAmount = $memo(() => calculateOrderAmount(props.model.toRequestDto()));
+  const orderAmount = createMemo(() => calculateOrderAmount(props.model.toRequestDto()));
 
   // Callbacks.
   async function handlePrint(): Promise<void> {
-    if (!billElementRef || isPrinting) return;
-    isPrinting = true;
-    printError = null;
+    if (!billElementRef || isPrinting()) {
+      return;
+    }
+
+    setIsPrinting(true);
+    setPrintError(null);
     try {
       await printer.print(billElementRef, `Hoá đơn thanh toán ${props.model.seating.name}`);
     } catch (error) {
-      printError = "Không thể chuẩn bị hóa đơn để in. Vui lòng thử lại.";
+      setPrintError("Không thể chuẩn bị hóa đơn để in. Vui lòng thử lại.");
       console.error(error);
     } finally {
-      isPrinting = false;
+      setIsPrinting(false);
     }
   }
 
@@ -65,7 +68,7 @@ export default function BillModal(props: BillModalProps): JSXElement {
           </button>
 
           <div class="flex gap-2">
-            <button type="button" class="btn" onClick={handlePrint} disabled={isPrinting}>
+            <button type="button" class="btn" onClick={handlePrint} disabled={isPrinting()}>
               <i class="bi bi-printer" />
               <span>In tạm tính</span>
             </button>
@@ -78,8 +81,8 @@ export default function BillModal(props: BillModalProps): JSXElement {
         </div>
       }
     >
-      <Show when={printError}>
-        <p role="alert" class="text-red-600 p-3">{printError}</p>
+      <Show when={printError()}>
+        <p role="alert" class="text-red-600 p-3">{printError()}</p>
       </Show>
       <div class="h-full max-h-[80vh] overflow-y-auto">
         <table class="data-table w-full">
@@ -98,7 +101,7 @@ export default function BillModal(props: BillModalProps): JSXElement {
             <For each={props.model.items}>
               {(item, index) => (
                 <tr>
-                  <td>{index + 1}</td>
+                  <td>{index() + 1}</td>
                   <td>{item.menuItem.name}</td>
                   <td>{getDisplayAmountText(item.amountBeforeVatPerUnit)}</td>
                   <td>{item.vatPercentagePerUnit}%</td>
@@ -114,17 +117,17 @@ export default function BillModal(props: BillModalProps): JSXElement {
 
             <tr>
               <td class="font-bold text-end" colSpan={4}>Giá tiền trước thuế</td>
-              <td colSpan={2}>{getDisplayAmountText(orderAmount.amountBeforeVat)}</td>
+              <td colSpan={2}>{getDisplayAmountText(orderAmount().amountBeforeVat)}</td>
             </tr>
 
             <tr>
               <td class="font-bold text-end" colSpan={4}>Tổng thuế</td>
-              <td colSpan={2}>{getDisplayAmountText(orderAmount.vatAmount)}</td>
+              <td colSpan={2}>{getDisplayAmountText(orderAmount().vatAmount)}</td>
             </tr>
 
             <tr>
               <td class="font-bold text-end" colSpan={4}>Tổng đơn giá</td>
-              <td class="text-blue-600 font-bold" colSpan={2}>{getDisplayAmountText(orderAmount.totalAmount)}</td>
+              <td class="text-blue-600 font-bold" colSpan={2}>{getDisplayAmountText(orderAmount().totalAmount)}</td>
             </tr>
           </tbody>
         </table>

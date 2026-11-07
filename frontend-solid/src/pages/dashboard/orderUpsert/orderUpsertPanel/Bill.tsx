@@ -11,7 +11,7 @@ type BillProps = {
 // Components.
 export default function Bill(props: BillProps): JSXElement {
   // Computed.
-  const currentDateTimeText = $memo(() => {
+  const currentDateTimeText = createMemo(() => {
     const now = new Date();
     const date = now.getDate().toString().padStart(2, "0");
     const month = (now.getMonth() + 1).toString().padStart(2, "0");
@@ -25,7 +25,7 @@ export default function Bill(props: BillProps): JSXElement {
     };
   });
 
-  const totalAmountText = $memo<string>(() => {
+  const totalAmountText = createMemo<string>(() => {
     const amount = props.model.items.reduce((total, item) => {
       return total + calculateOrderItemAmount(item);
     }, 0);
@@ -55,8 +55,8 @@ export default function Bill(props: BillProps): JSXElement {
           <span class="font-bold">{props.model.seating.name}</span>
         </div>
 
-        <span class="text-sm mt-5">{currentDateTimeText.date}</span>
-        <span class="text-sm">{currentDateTimeText.time}</span>
+        <span class="text-sm mt-5">{currentDateTimeText().date}</span>
+        <span class="text-sm">{currentDateTimeText().time}</span>
         <div class="border border-black/25">
           <table class="data-table w-full">
             <thead class=" text-xs">
@@ -73,7 +73,7 @@ export default function Bill(props: BillProps): JSXElement {
               <For each={props.model.items}>
               {(item, index) => (
                 <tr class="align-top text-xs">
-                  <td class="px-0 pe-1 py-1 text-end">{index + 1}</td>
+                  <td class="px-0 pe-1 py-1 text-end">{index() + 1}</td>
                   <td class="px-1.5 py-1">{item.menuItem.name}</td>
                   <td class="px-1.5 py-1 text-center">{item.quantity}</td>
                   <td class="px-1.5 py-1">{getDisplayAmountText(item.amountBeforeVatPerUnit)}</td>
@@ -88,7 +88,7 @@ export default function Bill(props: BillProps): JSXElement {
 
               <tr>
                 <td class="font-bold text-end" colSpan={3}>Tổng tiền</td>
-                <td class="font-bold" colSpan={2}>{totalAmountText}</td>
+                <td class="font-bold" colSpan={2}>{totalAmountText()}</td>
               </tr>
             </tbody>
           </table>

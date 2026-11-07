@@ -1,5 +1,17 @@
-import { OrderItemUpsertModel, OrderItemDetailModel } from "./orderItemModels";
-import { SeatingBasicModel, OrderBasicModel, UserBasicModel } from "./sharedModels";
+import {
+  createOrderItemUpsertModel,
+  createOrderItemDetailModel,
+  type OrderItemUpsertModel ,
+  type OrderItemDetailModel
+} from "./orderItemModels";
+import {
+  createSeatingBasicModel,
+  createOrderBasicModel,
+  createUserBasicModel,
+  type SeatingBasicModel,
+  type OrderBasicModel,
+  type UserBasicModel
+} from "./sharedModels";
 import {
   OrderListSortingCriterion,
   type SeatingDetailResponseDto,
@@ -10,117 +22,135 @@ import {
 } from "#/api";
 import { isSeatingDetailResponseDto, getDisplayDateTimeString } from "#/helpers";
 
-export class OrderListModel {
-  public sortByAscending: boolean;
-  public sortByCriteria: OrderListSortingCriterion;
-  public page: number;
-  public resultsPerPage: number;
-  public items: OrderBasicModel[];
-  public itemCount: number;
-  public pageCount: number;
+export type OrderListModel = {
+  sortByAscending: boolean;
+  sortByCriteria: OrderListSortingCriterion;
+  page: number;
+  resultsPerPage: number;
+  items: OrderBasicModel[];
+  itemCount: number;
+  pageCount: number;
+  mapFromRequestDto(requestDto: OrderListRequestDto): OrderListModel;
+  mapFromResponseDto(responseDto: OrderListResponseDto): OrderListModel;
+  toRequestDto(): OrderListRequestDto;
+};
 
-  public constructor() {
-    this.sortByAscending = false;
-    this.sortByCriteria = OrderListSortingCriterion.CreatedDateTime;
-    this.page = 1;
-    this.resultsPerPage = 20;
-    this.items = [];
-    this.itemCount = 0;
-    this.pageCount = 0;
-  }
+export type OrderDetailModel = {
+  id: number;
+  createdDateTime: string;
+  lastUpdatedDateTime: string | null;
+  finishedDateTime: string | null;
+  itemAmount: number;
+  items: OrderItemDetailModel[];
+  createdUser: UserBasicModel;
+  lastUpdatedUser: UserBasicModel | null;
+  finishedUser: UserBasicModel | null;
+  seating: SeatingBasicModel;
+};
 
-  public mapFromRequestDto(requestDto: OrderListRequestDto): void {
-    this.sortByAscending = requestDto.sortByAscending ?? this.sortByAscending;
-    this.sortByCriteria = requestDto.sortByCriterion ?? this.sortByCriteria;
-    this.page = requestDto.page ?? this.page;
-    this.resultsPerPage = requestDto.resultsPerPage ?? this.resultsPerPage;
-  }
+export type OrderUpsertModel = {
+  id: number | null;
+  seating: SeatingBasicModel;
+  items: OrderItemUpsertModel[];
+  mapFromResponseDto(responseDto: OrderDetailResponseDto): OrderUpsertModel;
+  mapIdsFromResponseDto(responseDto: OrderDetailResponseDto): OrderUpsertModel;
+  toRequestDto(): OrderUpsertRequestDto;
+};
 
-  public mapFromResponseDto(responseDto: OrderListResponseDto): void {
-    this.items = responseDto.items.map(dto => new OrderBasicModel(dto));
-    this.itemCount = responseDto.itemCount;
-    this.pageCount = responseDto.pageCount;
-  }
-
-  toRequestDto(): OrderListRequestDto {
-    return {
-      sortByAscending: this.sortByAscending,
-      sortByCriterion: this.sortByCriteria,
-      page: this.page,
-      resultsPerPage: this.resultsPerPage
-    };
-  }
+export function createOrderListModel(): OrderListModel {
+  return {
+    sortByAscending: false,
+    sortByCriteria: OrderListSortingCriterion.CreatedDateTime,
+    page: 1,
+    resultsPerPage: 20,
+    items: [],
+    itemCount: 0,
+    pageCount: 0,
+    mapFromRequestDto(requestDto: OrderListRequestDto): OrderListModel {
+      return {
+        ...this,
+        sortByAscending: requestDto.sortByAscending ?? this.sortByAscending,
+        sortByCriteria: requestDto.sortByCriterion ?? this.sortByCriteria,
+        page: requestDto.page ?? this.page,
+        resultsPerPage: requestDto.resultsPerPage ?? this.resultsPerPage
+      };
+    },
+    mapFromResponseDto(responseDto: OrderListResponseDto): OrderListModel {
+      return {
+        ...this,
+        items: responseDto.items.map(createOrderBasicModel),
+        itemCount: responseDto.itemCount,
+        pageCount: responseDto.pageCount
+      };
+    },
+    toRequestDto(): OrderListRequestDto {
+      return {
+        sortByAscending: this.sortByAscending,
+        sortByCriterion: this.sortByCriteria,
+        page: this.page,
+        resultsPerPage: this.resultsPerPage
+      };
+    }
+  };
 }
 
-export class OrderDetailModel {
-  public id: number;
-  public createdDateTime: string;
-  public lastUpdatedDateTime: string | null;
-  public finishedDateTime: string | null;
-  public itemAmount: number;
-  public items: OrderItemDetailModel[];
-  public createdUser: UserBasicModel;
-  public lastUpdatedUser: UserBasicModel | null;
-  public finishedUser: UserBasicModel | null;
-  public seating: SeatingBasicModel;
-
-  public constructor(responseDto: OrderDetailResponseDto) {
-    this.id = responseDto.id;
-    this.createdDateTime = getDisplayDateTimeString(responseDto.createdDateTime);
-    this.lastUpdatedDateTime = responseDto.lastUpdatedDateTime && getDisplayDateTimeString(responseDto.lastUpdatedDateTime);
-    this.finishedDateTime = responseDto.finishedDateTime && getDisplayDateTimeString(responseDto.finishedDateTime);
-    this.itemAmount = responseDto.itemAmount;
-    this.items = responseDto.items.map(dto => new OrderItemDetailModel(dto));
-    this.createdUser = new UserBasicModel(responseDto.createdUser);
-    this.lastUpdatedUser = responseDto.lastUpdatedUser && new UserBasicModel(responseDto.lastUpdatedUser);
-    this.finishedUser = responseDto.finishedUser && new UserBasicModel(responseDto.finishedUser);
-    this.seating = new SeatingBasicModel(responseDto.seating);
-  }
+export function createOrderDetailModel(responseDto: OrderDetailResponseDto): OrderDetailModel {
+  return {
+    id: responseDto.id,
+    createdDateTime: getDisplayDateTimeString(responseDto.createdDateTime),
+    lastUpdatedDateTime: responseDto.lastUpdatedDateTime && getDisplayDateTimeString(responseDto.lastUpdatedDateTime),
+    finishedDateTime: responseDto.finishedDateTime && getDisplayDateTimeString(responseDto.finishedDateTime),
+    itemAmount: responseDto.itemAmount,
+    items: responseDto.items.map(createOrderItemDetailModel),
+    createdUser: createUserBasicModel(responseDto.createdUser),
+    lastUpdatedUser: responseDto.lastUpdatedUser && createUserBasicModel(responseDto.lastUpdatedUser),
+    finishedUser: responseDto.finishedUser && createUserBasicModel(responseDto.finishedUser),
+    seating: createSeatingBasicModel(responseDto.seating)
+  };
 }
 
-export class OrderUpsertModel {
-  public id: number | null;
-  public seating: SeatingBasicModel;
-  public items: OrderItemUpsertModel[];
+export function createOrderUpsertModel(seating: SeatingBasicModel | SeatingDetailResponseDto): OrderUpsertModel {
+  let seatingModel;
+  if (isSeatingDetailResponseDto(seating)) {
+    seatingModel = createSeatingBasicModel({ ...seating, isDeleted: false });
+  } else {
+    seatingModel = seating;
+  }
 
-  public constructor(seating: SeatingBasicModel | SeatingDetailResponseDto) {
-    let seatingModel;
-    if (isSeatingDetailResponseDto(seating)) {
-      seatingModel = new SeatingBasicModel({ ...seating, isDeleted: false });
-    } else {
-      seatingModel = seating;
+  return {
+    id: seatingModel.activeOrder?.id ?? null,
+    seating: seatingModel,
+    items: [],
+    mapFromResponseDto(responseDto: OrderDetailResponseDto): OrderUpsertModel {
+      return {
+        ...this,
+        id: responseDto.id,
+        items: responseDto.items.map(createOrderItemUpsertModel),
+      };
+    },
+    mapIdsFromResponseDto(responseDto: OrderDetailResponseDto): OrderUpsertModel {
+      return {
+        ...this,
+        id: responseDto.id,
+        items: this.items.map(item => {
+          if (item.id != null) {
+            return item;
+          }
+
+          const itemResponseDto = responseDto.items.find(i => i.guid == item.guid);
+          if (!itemResponseDto) {
+            return item;
+          }
+
+          return { ...item, id: itemResponseDto.id };
+        })
+      };
+    },
+    toRequestDto(): OrderUpsertRequestDto {
+      return {
+        seatingId: this.seating.id,
+        items: this.items.map(item => item.toRequestDto()),
+      };
     }
-
-    this.id = seatingModel.activeOrder?.id ?? null;
-    this.seating = seatingModel;
-    this.items = [];
-  }
-
-  public mapFromResponseDto(responseDto: OrderDetailResponseDto): void {
-    this.id = responseDto.id;
-    this.items = responseDto.items.map(dto => new OrderItemUpsertModel(dto));
-  }
-
-  public mapIdsFromResponseDto(responseDto: OrderDetailResponseDto): void {
-    this.id = responseDto.id;
-    for (const item of this.items) {
-      if (item.id != null) {
-        continue;
-      }
-
-      const itemResponseDto = responseDto.items.find(i => i.guid == item.guid);
-      if (!itemResponseDto) {
-        continue;
-      }
-
-      item.id = itemResponseDto.id;
-    }
-  }
-
-  public toRequestDto(): OrderUpsertRequestDto {
-    return {
-      seatingId: this.seating.id,
-      items: this.items.map(item => item.toRequestDto()),
-    };
-  }
+  };
 }

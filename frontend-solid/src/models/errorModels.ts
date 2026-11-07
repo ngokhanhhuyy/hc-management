@@ -1,20 +1,31 @@
 import type { ValidationError, OperationError } from "#/api";
 
 export type ErrorDetailModel = { propertyPath: string; message: string; };
+export type ErrorCollectionModel = {
+  isValidated: boolean;
+  details: ErrorDetailModel[];
+  mapFromApplicationError(error: ValidationError | OperationError): ErrorCollectionModel;
+  clear(): ErrorCollectionModel;
+};
 
-export class ErrorCollectionModel {
-  public isValidated: boolean = false;;
-  public details: ErrorDetailModel[] = [];
+export function createErrorCollectionModel(): ErrorCollectionModel {
+  const model: ErrorCollectionModel = {
+    isValidated: false,
+    details: [],
+    mapFromApplicationError(error) {
+      return {
+        ...this,
+        isValidated: true,
+        details: Object
+          .entries(error.details)
+          .map(([key, value]) => ({ propertyPath: key, message: value }))
+          .filter((detail) => detail.message)
+      };
+    },
+    clear() {
+      return { ...this, details: [] };
+    },
+  };
 
-  public mapFromApplicationError(error: ValidationError | OperationError): void {
-    this.isValidated = true;
-    this.details = Object
-      .entries(error.details)
-      .map(([key, value]) => ({ propertyPath: key, message: value }))
-      .filter((detail) => detail.message);
-  }
-
-  public clear(): void {
-    this.details = [];
-  }
-}
+  return model;
+};

@@ -12,7 +12,7 @@ type MenuItemProps = {
 // Components.
 export default function MenuItem(props: MenuItemProps): JSXElement {
   // Computed.
-  const pickedQuantity = $memo(() => {
+  const pickedQuantity = createMemo(() => {
     return props.pickedOrderItems
       .filter(pi => pi.menuItem.id == props.model.id)
       .reduce((total, item) => total + item.quantity, 0);
@@ -67,12 +67,12 @@ export default function MenuItem(props: MenuItemProps): JSXElement {
         </div>
       </div>
 
-      <Show when={pickedQuantity > 0}>
+      <Show when={pickedQuantity() > 0}>
         <div class={joinClassName(
           "alert alert-red-outline in-[.menu-item:hover]:alert-red",
           "alert-sm absolute top-1.5 right-1.5 min-w-5"
         )}>
-          {pickedQuantity}
+          {pickedQuantity()}
         </div>
       </Show>
     </button>

@@ -22,29 +22,29 @@ export type YesNoModalHandler = {
 // Component.
 export default function YesNoModal(props: YesNoModalProps): JSXElement {
   // States.
-  let isOpen = $state(false);
+  const [isOpen, setIsOpen] = createSignal(false);
   let answerPromise: ((value: boolean | PromiseLike<boolean>) => void) | null = null;
 
   // Callbacks.
-  const handleYesButtonClicked = () => {
-    isOpen = false;
+  function handleYesButtonClicked(): void {
+    setIsOpen(false);
     setTimeout(() => {
       answerPromise?.(true);
     }, 200);
 
-  };
+  }
 
-  const handleNoButtonClicked = () => {
-    isOpen = false;
+  function handleNoButtonClicked(): void {
+    setIsOpen(false);
     setTimeout(() => {
       answerPromise?.(false);
     }, 200);
-  };
+  }
 
   // Handler.
   const handler: YesNoModalHandler = {
     getAnswerAsync(): Promise<boolean> {
-      isOpen = true;
+      setIsOpen(true);
       return new Promise<boolean>(resolve => answerPromise = resolve);
     },
   };
@@ -75,14 +75,14 @@ export default function YesNoModal(props: YesNoModalProps): JSXElement {
   );
 
   return (
-    <BaseModal isOpen={isOpen} onClosed={() => isOpen = false} title={props.title} footerChildren={footerChildren}>
+    <BaseModal isOpen={isOpen()} onClosed={() => setIsOpen(false)} title={props.title} footerChildren={footerChildren}>
       <div class="grid grid-cols-[auto_1fr] items-center gap-4 p-5">
         {props.renderIcon("text-3xl shrink-0 grow-0")}
         
         <div class="flex flex-col">
           <Show when={Array.isArray(props.questionContent) && props.questionContent} fallback={fallbackElement}>
             {(sentences) => (
-              <For each={sentences}>
+              <For each={sentences()}>
                 {(sentence) => <span>{sentence}</span>}
               </For>
             )}

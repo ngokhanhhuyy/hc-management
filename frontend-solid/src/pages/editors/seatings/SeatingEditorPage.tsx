@@ -1,5 +1,5 @@
 import { api } from "#/api";
-import { SeatingBasicModel } from "#/models";
+import { createSeatingBasicModel, type SeatingBasicModel } from "#/models";
 import {
   getSeatingEditorRoutePath,
   getSeatingEditorCreateRoutePath,
@@ -18,15 +18,12 @@ type SeatingEditorPageProps = {
 // Components.
 export default function SeatingEditorPage(props: SeatingEditorPageProps): JSXElement {
   // States.
-  const model = $state<SeatingBasicModel[]>([]);
+  const [model, setModel] = createSignal<SeatingBasicModel[]>([]);
 
   // Callbacks.
   async function loadAsync(): Promise<void> {
     const responseDtos = await api.seating.getAllAsync();
-    model.length = 0;
-    for (const dto of responseDtos) {
-      model.push(new SeatingBasicModel(dto));
-    }
+    setModel(responseDtos.map(createSeatingBasicModel));
   }
 
   async function handleDeleteAsync(id: number): Promise<void> {
@@ -34,20 +31,17 @@ export default function SeatingEditorPage(props: SeatingEditorPageProps): JSXEle
   }
 
   function handleItemRemoved(id: number): void {
-    const index = model.findIndex(i => i.id === id);
-    if (index > -1) {
-      model.splice(index, 1);
-    }
+    setModel(previous => previous.filter(item => item.id !== id));
   }
 
   // Life cycle hooks.
-  $mount(loadAsync);
+  onMount(loadAsync);
 
   // Templates.
   return (
     <EditorPage<SeatingBasicModel>
       resourceName="seating"
-      model={model}
+      model={model()}
       editorRoutePath={getSeatingEditorRoutePath()}
       editorCreateRoutePath={getSeatingEditorCreateRoutePath()}
       getEditorUpdateRoutePath={getSeatingEditorUpdateRoutePath}
